@@ -19,3 +19,4 @@ pluginManagement {
 rootProject.name = 'foundation-workspace'
 
 include("foundation")
+include("foundation-processor")
