@@ -1,4 +1,4 @@
 package net.ntworld.foundation.annotation
 
-@Retention(AnnotationRetention.SOURCE)
+// @Retention(AnnotationRetention.SOURCE)
 annotation class EventType
