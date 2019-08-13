@@ -4,6 +4,8 @@ import kotlin.reflect.KClass
 
 
 interface Infrastructure {
+    fun setNext(next: Infrastructure): Infrastructure
+
     fun <A : Aggregate> factoryOf(type: KClass<A>): AggregateFactory<A>
 
     fun <A : Aggregate> storeOf(type: KClass<A>): AggregateStore<A>
