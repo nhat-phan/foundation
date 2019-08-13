@@ -20,5 +20,6 @@ dependencies {
 
     implementation(kotlin("stdlib"))
     implementation("com.squareup:kotlinpoet:$kotlinPoetVersion")
+    implementation("com.github.javafaker:javafaker:1.0.0")
 }
 
