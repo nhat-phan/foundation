@@ -1,11 +1,12 @@
 package net.ntworld.foundation.eventSourcing
 
 import net.ntworld.foundation.Aggregate
+import net.ntworld.foundation.Infrastructure
 import kotlin.reflect.KClass
 
 object Utility {
     fun <T : AbstractEventSourced, A : Aggregate> retrieveEventSourcedAggregate(
-        infrastructure: EventSourcingInfrastructure,
+        infrastructure: Infrastructure,
         aggregate: A,
         aggregateKlass: KClass<A>,
         eventSourced: T

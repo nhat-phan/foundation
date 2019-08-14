@@ -1,5 +1,7 @@
 package net.ntworld.foundation.eventSourcing
 
+import net.ntworld.foundation.Infrastructure
+
 object Converter {
     internal data class EncryptorInfo(
         val cipherId: String,
@@ -22,7 +24,7 @@ object Converter {
         eventData: EventData,
         name: String,
         value: T,
-        infrastructure: EventSourcingInfrastructure
+        infrastructure: Infrastructure
     ): Converter {
         val infoKey = encryptorInfoKey(name)
         val encryptor = infrastructure.encryptor()
@@ -40,7 +42,7 @@ object Converter {
         return eventData.metadata[name] as T
     }
 
-    fun <T : Any> decrypt(eventData: EventData, name: String, infrastructure: EventSourcingInfrastructure): T {
+    fun <T : Any> decrypt(eventData: EventData, name: String, infrastructure: Infrastructure): T {
         val infoKey = encryptorInfoKey(name)
         if (!eventData.metadata.containsKey(infoKey)) {
             return read(eventData, name)

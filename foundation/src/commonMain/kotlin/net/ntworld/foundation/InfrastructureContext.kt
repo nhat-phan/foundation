@@ -1,5 +1,6 @@
 package net.ntworld.foundation
 
+import net.ntworld.foundation.eventSourcing.*
 import kotlin.reflect.KClass
 
 open class InfrastructureContext(open val self: Infrastructure) {
@@ -11,6 +12,28 @@ open class InfrastructureContext(open val self: Infrastructure) {
 
     @InfrastructureDsl
     fun <T : Any> idGeneratorOf(type: KClass<T>): IdGenerator = self.idGeneratorOf(type)
+
+    @InfrastructureDsl
+    fun eventBus(): EventBus = self.eventBus()
+
+    @InfrastructureDsl
+    fun encryptor(): Encryptor = self.encryptor()
+
+    @InfrastructureDsl
+    fun encryptor(cipherId: String, algorithm: String): Encryptor = self.encryptor(cipherId, algorithm)
+
+    @InfrastructureDsl
+    fun eventStreamOf(eventSourced: AbstractEventSourced): EventStream = eventStreamOf(eventSourced, 0)
+
+    @InfrastructureDsl
+    fun eventStreamOf(eventSourced: AbstractEventSourced, version: Int): EventStream =
+        self.eventStreamOf(eventSourced, version)
+
+    @InfrastructureDsl
+    fun eventConverter(eventType: String): EventConverter<Event> = self.eventConverter(eventType)
+
+    @InfrastructureDsl
+    fun <T : Aggregate> snapshotStoreOf(type: KClass<T>): SnapshotStore<T> = self.snapshotStoreOf(type)
 
     @InfrastructureDsl
     inline fun <reified T : Aggregate> save(instance: T) {

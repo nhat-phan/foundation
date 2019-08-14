@@ -1,5 +1,6 @@
 package net.ntworld.foundation
 
+import net.ntworld.foundation.eventSourcing.*
 import kotlin.reflect.KClass
 
 open class InfrastructureProvider(
@@ -66,4 +67,45 @@ open class InfrastructureProvider(
         throw CannotResolveException("Infrastructure.idGeneratorOf() cannot resolve $type")
     }
 
+    override fun eventBus(): EventBus {
+        if (null !== next) {
+            return next!!.eventBus()
+        }
+        throw CannotResolveException("Infrastructure.eventBus() cannot be resolved")
+    }
+
+    override fun encryptor(): Encryptor {
+        if (null !== next) {
+            return next!!.encryptor()
+        }
+        throw CannotResolveException("Infrastructure.encryptor() cannot be resolved")
+    }
+
+    override fun encryptor(cipherId: String, algorithm: String): Encryptor {
+        if (null !== next) {
+            return next!!.encryptor(cipherId, algorithm)
+        }
+        throw CannotResolveException("Infrastructure.encryptor() cannot resolve ($cipherId, $algorithm)")
+    }
+
+    override fun eventStreamOf(eventSourced: AbstractEventSourced, version: Int): EventStream {
+        if (null !== next) {
+            return next!!.eventStreamOf(eventSourced, version)
+        }
+        throw CannotResolveException("Infrastructure.eventStreamOf() cannot resolve ($eventSourced, $version)")
+    }
+
+    override fun eventConverter(eventType: String): EventConverter<Event> {
+        if (null !== next) {
+            return next!!.eventConverter(eventType)
+        }
+        throw CannotResolveException("Infrastructure.eventConverter() cannot resolve $eventType")
+    }
+
+    override fun <T : Aggregate> snapshotStoreOf(type: KClass<T>): SnapshotStore<T> {
+        if (null !== next) {
+            return next!!.snapshotStoreOf(type)
+        }
+        throw CannotResolveException("Infrastructure.snapshotStoreOf() cannot resolve $type")
+    }
 }
