@@ -13,16 +13,9 @@ object Utility {
         val snapshot = infrastructure.snapshotStoreOf(aggregateKlass).findSnapshot(aggregate)
         val stream = infrastructure.eventStreamOf(eventSourced, snapshot.version)
 
-        val converters = mutableMapOf<String, EventConverter<Event>>()
         val events = stream.read().map {
-            // TODO: move instance cache mechanism to infrastructure level
-            if (!converters.containsKey(it.type)) {
-                converters[it.type] = infrastructure.eventConverter(it.type)
-            }
-
-            val converter = converters[it.type] as EventConverter<Event>
             HydratedEvent(
-                __event = converter.fromEventData(it),
+                __event = infrastructure.eventConverter(it.type).fromEventData(it),
                 __eventData = it
             )
         }

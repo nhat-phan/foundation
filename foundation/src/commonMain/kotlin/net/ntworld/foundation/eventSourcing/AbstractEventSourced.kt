@@ -6,15 +6,19 @@ abstract class AbstractEventSourced : Aggregate {
     internal var version: Int = 0
         private set
 
+    internal val unpublishedEvents = mutableListOf<Event>()
+
     abstract val streamType: String
 
     abstract fun apply(event: Event)
 
     internal fun rehydrate(events: Iterable<HydratedEvent>) {
         events.forEach {
-            apply(it)
+            if (version < it.eventData.version) {
+                apply(it)
 
-            version = it.eventData.version
+                version = it.eventData.version
+            }
         }
     }
 
@@ -25,5 +29,6 @@ abstract class AbstractEventSourced : Aggregate {
         }
 
         println("publishing $event")
+        unpublishedEvents.add(event)
     }
 }
