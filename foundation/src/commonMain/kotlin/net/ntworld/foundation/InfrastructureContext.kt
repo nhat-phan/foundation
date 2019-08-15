@@ -30,7 +30,7 @@ open class InfrastructureContext(open val self: Infrastructure) {
         self.eventStreamOf(eventSourced, version)
 
     @InfrastructureDsl
-    fun eventConverter(type: String, variant: Int): EventConverter<Event> = self.eventConverter(type, variant)
+    fun eventConverter(type: String, variant: Int): EventConverter<Event> = self.eventConverterOf(type, variant)
 
     @InfrastructureDsl
     fun <T : Aggregate> snapshotStoreOf(type: KClass<T>): SnapshotStore<T> = self.snapshotStoreOf(type)

@@ -65,10 +65,15 @@ class MemorizedInfrastructure(base: Infrastructure) : InfrastructureWrapper(base
         return _eventStreams[key] as EventStream
     }
 
-    override fun eventConverter(type: String, variant: Int): EventConverter<Event> {
+    override fun eventConverterOf(event: Event): EventConverter<Event> {
+        // TODO: "find the way to memorize the event"
+        return super.eventConverterOf(event)
+    }
+
+    override fun eventConverterOf(type: String, variant: Int): EventConverter<Event> {
         val key = "$type:$variant"
         if (!_eventConverters.contains(key)) {
-            _eventConverters[key] = super.eventConverter(type, variant)
+            _eventConverters[key] = super.eventConverterOf(type, variant)
         }
         return _eventConverters[key] as EventConverter<Event>
     }

@@ -4,11 +4,19 @@ import net.ntworld.foundation.eventSourcing.*
 import kotlin.reflect.KClass
 
 open class InfrastructureWrapper(private val base: Infrastructure) : Infrastructure {
+    override val root: Infrastructure
+        get() = base.root
+
+    override fun wire(root: Infrastructure, list: List<Infrastructure>) {
+        this.base.wire(root, list)
+    }
+
+    override fun setRoot(root: Infrastructure) {
+        this.base.setRoot(root)
+    }
+
     override fun setNext(next: Infrastructure): Infrastructure {
-        if (this.base is InfrastructureProvider) {
-            return this.base.setNext(next)
-        }
-        throw CannotSetInfrastructureProviderChain()
+        return this.base.setNext(next)
     }
 
     override fun <A : Aggregate> factoryOf(type: KClass<A>): AggregateFactory<A> {
@@ -39,8 +47,12 @@ open class InfrastructureWrapper(private val base: Infrastructure) : Infrastruct
         return base.eventStreamOf(eventSourced, version)
     }
 
-    override fun eventConverter(type: String, variant: Int): EventConverter<Event> {
-        return base.eventConverter(type, variant)
+    override fun eventConverterOf(event: Event): EventConverter<Event> {
+        return base.eventConverterOf(event)
+    }
+
+    override fun eventConverterOf(type: String, variant: Int): EventConverter<Event> {
+        return base.eventConverterOf(type, variant)
     }
 
     override fun <T : Aggregate> snapshotStoreOf(type: KClass<T>): SnapshotStore<T> {

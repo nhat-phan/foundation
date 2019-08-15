@@ -6,18 +6,20 @@ import kotlin.reflect.KClass
 open class InfrastructureProvider(
     next: Infrastructure? = null
 ) : Infrastructure {
-    private var included: List<InfrastructureProvider> = listOf()
+    private var included: List<Infrastructure> = listOf()
     private var next: Infrastructure? = null
     private var nextOrigin: Infrastructure? = next
-    var root: InfrastructureProvider = this
-        private set
+    private var _root: Infrastructure = this
 
     init {
         wire()
     }
 
-    protected fun wire(root: InfrastructureProvider, list: List<InfrastructureProvider>) {
-        this.root = root
+    override val root: Infrastructure
+        get() = _root
+
+    override fun wire(root: Infrastructure, list: List<Infrastructure>) {
+        this._root = root
         this.included = list
         wire()
     }
@@ -28,13 +30,21 @@ open class InfrastructureProvider(
             return
         }
 
-        var accumulator: InfrastructureProvider = this
-        for (index in 0..included.lastIndex) {
-            included[index].root = this.root
+        var accumulator: Infrastructure = this
+        for (item in included) {
+            item.setRoot(this._root)
 
-            accumulator.next = included[index]
-            accumulator = included[index]
+            if (accumulator is InfrastructureProvider) {
+                accumulator.next = item
+            } else {
+                accumulator.setNext(item)
+            }
+            accumulator = item
         }
+    }
+
+    override fun setRoot(root: Infrastructure) {
+        this._root = root
     }
 
     override fun setNext(next: Infrastructure): Infrastructure {
@@ -95,11 +105,18 @@ open class InfrastructureProvider(
         throw CannotResolveException("Infrastructure.eventStreamOf() cannot resolve ($eventSourced, $version)")
     }
 
-    override fun eventConverter(type: String, variant: Int): EventConverter<Event> {
+    override fun eventConverterOf(event: Event): EventConverter<Event> {
         if (null !== next) {
-            return next!!.eventConverter(type, variant)
+            return next!!.eventConverterOf(event)
         }
-        throw CannotResolveException("Infrastructure.eventConverter() cannot resolve ($type, $variant)")
+        throw CannotResolveException("Infrastructure.eventConverterOf() cannot resolve ($event)")
+    }
+
+    override fun eventConverterOf(type: String, variant: Int): EventConverter<Event> {
+        if (null !== next) {
+            return next!!.eventConverterOf(type, variant)
+        }
+        throw CannotResolveException("Infrastructure.eventConverterOf() cannot resolve ($type, $variant)")
     }
 
     override fun <T : Aggregate> snapshotStoreOf(type: KClass<T>): SnapshotStore<T> {

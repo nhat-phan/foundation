@@ -28,7 +28,7 @@ abstract class AbstractEventSourced : Aggregate {
             return
         }
 
-        println("publishing $event")
+        println("put $event for publishing later")
         unpublishedEvents.add(event)
     }
 }

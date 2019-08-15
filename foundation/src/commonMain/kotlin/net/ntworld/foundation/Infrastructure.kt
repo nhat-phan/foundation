@@ -4,6 +4,12 @@ import net.ntworld.foundation.eventSourcing.*
 import kotlin.reflect.KClass
 
 interface Infrastructure {
+    val root: Infrastructure
+
+    fun wire(root: Infrastructure, list: List<Infrastructure>)
+
+    fun setRoot(root: Infrastructure)
+
     fun setNext(next: Infrastructure): Infrastructure
 
     fun <A : Aggregate> factoryOf(type: KClass<A>): AggregateFactory<A>
@@ -24,7 +30,9 @@ interface Infrastructure {
 
     fun eventStreamOf(eventSourced: AbstractEventSourced, version: Int): EventStream
 
-    fun eventConverter(type: String, variant: Int): EventConverter<Event>
+    fun eventConverterOf(event: Event): EventConverter<Event>
+
+    fun eventConverterOf(type: String, variant: Int): EventConverter<Event>
 
     fun <T : Aggregate> snapshotStoreOf(type: KClass<T>): SnapshotStore<T>
 
