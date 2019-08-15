@@ -39,8 +39,8 @@ open class InfrastructureWrapper(private val base: Infrastructure) : Infrastruct
         return base.eventStreamOf(eventSourced, version)
     }
 
-    override fun eventConverter(eventType: String): EventConverter<Event> {
-        return base.eventConverter(eventType)
+    override fun eventConverter(type: String, variant: Int): EventConverter<Event> {
+        return base.eventConverter(type, variant)
     }
 
     override fun <T : Aggregate> snapshotStoreOf(type: KClass<T>): SnapshotStore<T> {

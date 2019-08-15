@@ -24,7 +24,7 @@ interface Infrastructure {
 
     fun eventStreamOf(eventSourced: AbstractEventSourced, version: Int): EventStream
 
-    fun eventConverter(eventType: String): EventConverter<Event>
+    fun eventConverter(type: String, variant: Int): EventConverter<Event>
 
     fun <T : Aggregate> snapshotStoreOf(type: KClass<T>): SnapshotStore<T>
 

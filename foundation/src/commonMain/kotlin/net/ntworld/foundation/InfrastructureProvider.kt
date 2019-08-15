@@ -95,11 +95,11 @@ open class InfrastructureProvider(
         throw CannotResolveException("Infrastructure.eventStreamOf() cannot resolve ($eventSourced, $version)")
     }
 
-    override fun eventConverter(eventType: String): EventConverter<Event> {
+    override fun eventConverter(type: String, variant: Int): EventConverter<Event> {
         if (null !== next) {
-            return next!!.eventConverter(eventType)
+            return next!!.eventConverter(type, variant)
         }
-        throw CannotResolveException("Infrastructure.eventConverter() cannot resolve $eventType")
+        throw CannotResolveException("Infrastructure.eventConverter() cannot resolve ($type, $variant)")
     }
 
     override fun <T : Aggregate> snapshotStoreOf(type: KClass<T>): SnapshotStore<T> {

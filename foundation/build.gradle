@@ -39,6 +39,7 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
+                implementation "com.fasterxml.uuid:java-uuid-generator:3.2.0"
             }
         }
         jvmTest {

@@ -16,7 +16,7 @@ object Utility {
 
         val events = stream.read().map {
             HydratedEvent(
-                __event = infrastructure.eventConverter(it.type).fromEventData(it),
+                __event = infrastructure.eventConverter(it.type, it.variant).fromEventData(it),
                 __eventData = it
             )
         }

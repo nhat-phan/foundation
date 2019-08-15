@@ -20,4 +20,5 @@ rootProject.name = 'foundation-workspace'
 
 include("foundation")
 include("foundation-processor")
+include("foundation-generator")
 include("example-jvm")
