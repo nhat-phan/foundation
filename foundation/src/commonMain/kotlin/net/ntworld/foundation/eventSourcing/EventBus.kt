@@ -1,9 +1,9 @@
 package net.ntworld.foundation.eventSourcing
 
 interface EventBus {
-    fun publish(event: Event)
+    fun publish(eventData: EventData, event: Event)
 
-    fun subscribe(type: String)
+    fun subscribe(type: String, listener: EventListener)
 
-    fun unsubscribe(type: String)
+    fun unsubscribe(type: String, listener: EventListener)
 }

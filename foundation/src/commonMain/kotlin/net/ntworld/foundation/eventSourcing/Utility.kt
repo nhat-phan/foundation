@@ -42,11 +42,11 @@ object Utility {
                 event
             )
         }
-        infrastructure.eventStreamOf(eventSourced).write(events)
+        // infrastructure.eventStreamOf(eventSourced).write(events)
 
         val eventBus = infrastructure.eventBus()
-        for (event in eventSourced.unpublishedEvents) {
-            eventBus.publish(event)
+        for (i in 0..events.lastIndex) {
+            eventBus.publish(events[i], eventSourced.unpublishedEvents[i])
         }
 
         infrastructure.snapshotStoreOf(aggregateKlass).saveSnapshot(

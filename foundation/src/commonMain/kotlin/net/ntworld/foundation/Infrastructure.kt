@@ -1,5 +1,6 @@
 package net.ntworld.foundation
 
+import net.ntworld.foundation.cqrs.*
 import net.ntworld.foundation.eventSourcing.*
 import kotlin.reflect.KClass
 
@@ -19,6 +20,12 @@ interface Infrastructure {
     fun <T : Any> idGeneratorOf(type: KClass<T>): IdGenerator
 
     fun idGeneratorOf(): IdGenerator = idGeneratorOf(Any::class)
+
+//    fun <T : Command> handlerOf(type: KClass<T>): CommandHandler<T>
+//
+//    fun <T : Query<R>, R> handlerOf(type: KClass<T>): QueryHandler<T, R>
+//
+//    fun <T : Event> handlerOf(type: KClass<T>): EventHandler<T>
 
     fun eventBus(): EventBus
 
