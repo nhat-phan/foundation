@@ -1,128 +1,86 @@
 package net.ntworld.foundation
 
-import net.ntworld.foundation.eventSourcing.*
+import net.ntworld.foundation.eventSourcing.Event
+import net.ntworld.foundation.eventSourcing.EventConverter
+import net.ntworld.foundation.internal.resolver.AggregateFactoryResolver
+import net.ntworld.foundation.internal.resolver.EventConverterResolver
+import net.ntworld.foundation.internal.resolver.MessageConverterResolver
 import kotlin.reflect.KClass
 
-open class InfrastructureProvider(
-    next: Infrastructure? = null
-) : Infrastructure {
-    private var included: List<Infrastructure> = listOf()
-    private var next: Infrastructure? = null
-    private var nextOrigin: Infrastructure? = next
-    private var _root: Infrastructure = this
+open class InfrastructureProvider : InfrastructureResolver() {
+    private val aggregateFactoryResolver = AggregateFactoryResolver()
+    private val eventConverterResolver = EventConverterResolver()
+    private val messageConverterResolver = MessageConverterResolver()
 
-    init {
-        wire()
+    // -----------------------------------------------------------------------------------
+    // Factory
+    // -----------------------------------------------------------------------------------
+
+    fun registerFactory(kClass: KClass<*>, fn: () -> AggregateFactory<*>) {
+        aggregateFactoryResolver.register(kClass, fn)
     }
 
-    override val root: Infrastructure
-        get() = _root
-
-    override fun wire(root: Infrastructure, list: List<Infrastructure>) {
-        this._root = root
-        this.included = list
-        wire()
-    }
-
-    private fun wire() {
-        if (included.isEmpty()) {
-            next = nextOrigin
-            return
-        }
-
-        var accumulator: Infrastructure = this
-        for (item in included) {
-            item.setRoot(this._root)
-
-            if (accumulator is InfrastructureProvider) {
-                accumulator.next = item
-            } else {
-                accumulator.setNext(item)
-            }
-            accumulator = item
-        }
-    }
-
-    override fun setRoot(root: Infrastructure) {
-        this._root = root
-    }
-
-    override fun setNext(next: Infrastructure): Infrastructure {
-        if (included.isEmpty()) {
-            this.next = next
-
-            return next
-        }
-        return included.last().setNext(next)
+    fun registerFactory(kClass: KClass<*>, converter: AggregateFactory<*>) {
+        aggregateFactoryResolver.register(kClass, converter)
     }
 
     override fun <A : Aggregate> factoryOf(type: KClass<A>): AggregateFactory<A> {
-        if (null !== next) {
-            return next!!.factoryOf(type)
+        if (aggregateFactoryResolver.canResolve(type)) {
+            return aggregateFactoryResolver.resolve(type)
         }
-        throw CannotResolveException("Infrastructure.factoryOf() cannot resolve $type")
+        return super.factoryOf(type)
     }
 
-    override fun <A : Aggregate> storeOf(type: KClass<A>): AggregateStore<A> {
-        if (null !== next) {
-            return next!!.storeOf(type)
-        }
-        throw CannotResolveException("Infrastructure.storeOf() cannot resolve $type")
+    // -----------------------------------------------------------------------------------
+    // EventConverter
+    // -----------------------------------------------------------------------------------
+
+    fun registerEventConverter(kClass: KClass<out Event>, fn: () -> EventConverter<*>) {
+        eventConverterResolver.register(kClass, fn)
     }
 
-    override fun <T : Any> idGeneratorOf(type: KClass<T>): IdGenerator {
-        if (null !== next) {
-            return next!!.idGeneratorOf(type)
-        }
-        throw CannotResolveException("Infrastructure.idGeneratorOf() cannot resolve $type")
+    fun registerEventConverter(kClass: KClass<out Event>, converter: EventConverter<*>) {
+        eventConverterResolver.register(kClass, converter)
     }
 
-    override fun eventBus(): EventBus {
-        if (null !== next) {
-            return next!!.eventBus()
-        }
-        throw CannotResolveException("Infrastructure.eventBus() cannot be resolved")
+    fun registerEventConverter(type: String, variant: Int, fn: () -> EventConverter<*>) {
+        eventConverterResolver.register(type, variant, fn)
     }
 
-    override fun encryptor(): Encryptor {
-        if (null !== next) {
-            return next!!.encryptor()
-        }
-        throw CannotResolveException("Infrastructure.encryptor() cannot be resolved")
-    }
-
-    override fun encryptor(cipherId: String, algorithm: String): Encryptor {
-        if (null !== next) {
-            return next!!.encryptor(cipherId, algorithm)
-        }
-        throw CannotResolveException("Infrastructure.encryptor() cannot resolve ($cipherId, $algorithm)")
-    }
-
-    override fun eventStreamOf(eventSourced: AbstractEventSourced, version: Int): EventStream {
-        if (null !== next) {
-            return next!!.eventStreamOf(eventSourced, version)
-        }
-        throw CannotResolveException("Infrastructure.eventStreamOf() cannot resolve ($eventSourced, $version)")
+    fun registerEventConverter(type: String, variant: Int, converter: EventConverter<*>) {
+        eventConverterResolver.register(type, variant, converter)
     }
 
     override fun eventConverterOf(event: Event): EventConverter<Event> {
-        if (null !== next) {
-            return next!!.eventConverterOf(event)
+        if (eventConverterResolver.canResolve(event)) {
+            return eventConverterResolver.resolve(event)
         }
-        throw CannotResolveException("Infrastructure.eventConverterOf() cannot resolve ($event)")
+        return super.eventConverterOf(event)
     }
 
     override fun eventConverterOf(type: String, variant: Int): EventConverter<Event> {
-        if (null !== next) {
-            return next!!.eventConverterOf(type, variant)
+        if (eventConverterResolver.canResolve(type, variant)) {
+            return eventConverterResolver.resolve(type, variant)
         }
-        throw CannotResolveException("Infrastructure.eventConverterOf() cannot resolve ($type, $variant)")
+        return super.eventConverterOf(type, variant)
     }
 
-    override fun <T : Aggregate> snapshotStoreOf(type: KClass<T>): SnapshotStore<T> {
-        if (null !== next) {
-            return next!!.snapshotStoreOf(type)
+    // -----------------------------------------------------------------------------------
+    // MessageConverter
+    // -----------------------------------------------------------------------------------
+
+    fun registerMessageConverter(kClass: KClass<*>, fn: () -> MessageConverter<*>) {
+        messageConverterResolver.register(kClass, fn)
+    }
+
+    fun registerMessageConverter(kClass: KClass<*>, converter: MessageConverter<*>) {
+        messageConverterResolver.register(kClass, converter)
+    }
+
+    override fun <T : Any> messageConverterOf(type: KClass<T>): MessageConverter<T> {
+        if (messageConverterResolver.canResolve(type)) {
+            return messageConverterResolver.resolve(type)
         }
-        throw CannotResolveException("Infrastructure.snapshotStoreOf() cannot resolve $type")
+        return super.messageConverterOf(type)
     }
 }

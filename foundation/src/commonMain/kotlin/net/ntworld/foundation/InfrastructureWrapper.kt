@@ -1,5 +1,7 @@
 package net.ntworld.foundation
 
+import net.ntworld.foundation.cqrs.CommandBus
+import net.ntworld.foundation.cqrs.QueryBus
 import net.ntworld.foundation.eventSourcing.*
 import kotlin.reflect.KClass
 
@@ -31,6 +33,14 @@ open class InfrastructureWrapper(private val base: Infrastructure) : Infrastruct
         return base.idGeneratorOf(type)
     }
 
+    override fun queryBus(): QueryBus {
+        return base.queryBus()
+    }
+
+    override fun commandBus(): CommandBus {
+        return base.commandBus()
+    }
+
     override fun eventBus(): EventBus {
         return base.eventBus()
     }
@@ -53,6 +63,10 @@ open class InfrastructureWrapper(private val base: Infrastructure) : Infrastruct
 
     override fun eventConverterOf(type: String, variant: Int): EventConverter<Event> {
         return base.eventConverterOf(type, variant)
+    }
+
+    override fun <T : Any> messageConverterOf(type: KClass<T>): MessageConverter<T> {
+        return base.messageConverterOf(type)
     }
 
     override fun <T : Aggregate> snapshotStoreOf(type: KClass<T>): SnapshotStore<T> {

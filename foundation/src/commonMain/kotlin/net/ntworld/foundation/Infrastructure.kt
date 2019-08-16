@@ -21,11 +21,9 @@ interface Infrastructure {
 
     fun idGeneratorOf(): IdGenerator = idGeneratorOf(Any::class)
 
-//    fun <T : Command> handlerOf(type: KClass<T>): CommandHandler<T>
-//
-//    fun <T : Query<R>, R> handlerOf(type: KClass<T>): QueryHandler<T, R>
-//
-//    fun <T : Event> handlerOf(type: KClass<T>): EventHandler<T>
+    fun queryBus(): QueryBus
+
+    fun commandBus(): CommandBus
 
     fun eventBus(): EventBus
 
@@ -40,6 +38,8 @@ interface Infrastructure {
     fun eventConverterOf(event: Event): EventConverter<Event>
 
     fun eventConverterOf(type: String, variant: Int): EventConverter<Event>
+
+    fun <T: Any> messageConverterOf(type: KClass<T>): MessageConverter<T>
 
     fun <T : Aggregate> snapshotStoreOf(type: KClass<T>): SnapshotStore<T>
 

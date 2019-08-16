@@ -4,10 +4,10 @@ import net.ntworld.foundation.Message
 import net.ntworld.foundation.MessageConverter
 import net.ntworld.foundation.internal.MessageImpl
 
-object EventMessageConverter : MessageConverter<EventData> {
+object EventMessageConverter {
     const val MESSAGE_TYPE = "EventMessage"
 
-    override fun toMessage(input: EventData): Message {
+    fun toMessage(input: EventData): Message {
         val attributes = mapOf(
             "id" to input.id,
             "type" to input.type,
@@ -19,9 +19,5 @@ object EventMessageConverter : MessageConverter<EventData> {
             "metadata" to input.metadata
         )
         return MessageImpl(id = null, type = MESSAGE_TYPE, attributes = attributes)
-    }
-
-    override fun fromMessage(message: Message): EventData {
-        throw Exception("Convert from message to EventData should be generated automatically")
     }
 }

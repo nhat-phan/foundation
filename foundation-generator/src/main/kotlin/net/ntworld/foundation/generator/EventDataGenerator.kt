@@ -9,19 +9,19 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 object EventDataGenerator {
     private val map = Map::class.parameterizedBy(String::class, Any::class)
 
-    fun generate(settings: EventDataGeneratorSettings, out: Appendable) {
+    fun generate(settings: EventDataSettings, out: Appendable) {
         buildFile(settings).writeTo(out)
     }
 
-    fun generate(settings: EventDataGeneratorSettings, out: Filer) {
+    fun generate(settings: EventDataSettings, out: Filer) {
         buildFile(settings).writeTo(out)
     }
 
-    fun generate(settings: EventDataGeneratorSettings, out: File) {
+    fun generate(settings: EventDataSettings, out: File) {
         buildFile(settings).writeTo(out)
     }
 
-    internal fun buildFile(settings: EventDataGeneratorSettings): FileSpec {
+    internal fun buildFile(settings: EventDataSettings): FileSpec {
         val target = findTarget(settings)
         val file = FileSpec.builder(target.packageName, target.className)
         Framework.addFileHeader(file, this::class.qualifiedName)
@@ -30,7 +30,7 @@ object EventDataGenerator {
         return file.build()
     }
 
-    internal fun buildClass(settings: EventDataGeneratorSettings, target: ClassInfo): TypeSpec {
+    internal fun buildClass(settings: EventDataSettings, target: ClassInfo): TypeSpec {
         return TypeSpec.classBuilder(target.className)
             .addModifiers(KModifier.DATA)
             .primaryConstructor(buildPrimaryConstructor())
@@ -69,7 +69,7 @@ object EventDataGenerator {
             .build()
     }
 
-    internal fun findTarget(settings: EventDataGeneratorSettings): ClassInfo {
+    internal fun findTarget(settings: EventDataSettings): ClassInfo {
         if (null == settings.target) {
             return ClassInfo(
                 className = "${settings.event.className}Data",

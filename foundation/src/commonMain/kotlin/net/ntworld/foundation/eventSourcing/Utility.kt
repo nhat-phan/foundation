@@ -10,11 +10,14 @@ object Utility {
      * Save event sourced aggregated to store and publish events.
      *
      * There are 4 steps:
-     *   1. Save give aggregate to persistence using AggregateStore
-     *   2. Convert unpublished events to event data then save to EventStream
-     *   3. Publish events via event bus
-     *   4. Save snapshot to persistence using SnapshotStore
-     * The step 2/3/4 never run if there is no unpublished events in eventSourced
+     *   1. Convert unpublished events to event data then save to EventStream
+     *   2. Publish events via event bus
+     *   3. Save snapshot to persistence using SnapshotStore
+     *   4. Save given aggregate to persistence using AggregateStore
+     * The step 4 is skipped if SnapshotStore & AggregateStore are the same instance
+     *
+     * Please note that because we are using Event Sourcing then the EventStream is
+     * single source of truth, then if there is no events this function will do nothing
      */
     fun <A : Aggregate> saveEventSourcedAggregateAndPublishEvents(
         infrastructure: Infrastructure,
@@ -24,11 +27,7 @@ object Utility {
         eventSourced: AbstractEventSourced
     ): Boolean {
         if (eventSourced.unpublishedEvents.isEmpty()) {
-            return store.save(data)
-        }
-
-        if (!store.save(data)) {
-            return false
+            return true
         }
 
         val streamId = eventSourced.id
@@ -49,9 +48,14 @@ object Utility {
             eventBus.publish(events[i], eventSourced.unpublishedEvents[i])
         }
 
-        infrastructure.snapshotStoreOf(aggregateKlass).saveSnapshot(
+        val snapshotStore = infrastructure.snapshotStoreOf(aggregateKlass)
+        snapshotStore.saveSnapshot(
             Snapshot(aggregate = eventSourced, version = events.last().version) as Snapshot<A>
         )
+
+        if (snapshotStore !== store) {
+            store.save(data)
+        }
         return true
     }
 

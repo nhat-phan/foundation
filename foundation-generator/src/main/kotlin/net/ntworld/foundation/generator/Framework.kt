@@ -10,7 +10,13 @@ object Framework {
 
     val namespace = "net.ntworld.foundation"
 
+    val InfrastructureProvider = ClassName(namespace, "InfrastructureProvider")
+
+    val Message = ClassName(namespace, "Message")
+    val MessageConverter = ClassName(namespace, "MessageConverter")
+
     val EventData = ClassName("$namespace.eventSourcing", "EventData")
+    val EventMessageConverter = ClassName("$namespace.eventSourcing", "EventMessageConverter")
 
     fun addFileHeader(file: FileSpec.Builder, generator: String?) {
         if (!shouldAddHeader) {

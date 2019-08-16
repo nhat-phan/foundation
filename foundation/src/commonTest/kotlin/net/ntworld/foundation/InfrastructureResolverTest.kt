@@ -2,7 +2,7 @@ package net.ntworld.foundation
 
 import kotlin.test.Test
 
-class InfrastructureProviderTest {
+class InfrastructureResolverTest {
     @Test fun testWire() {
 
     }
