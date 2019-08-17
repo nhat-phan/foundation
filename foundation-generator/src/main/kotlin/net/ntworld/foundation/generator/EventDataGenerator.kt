@@ -1,10 +1,11 @@
 package net.ntworld.foundation.generator
 
 import com.squareup.kotlinpoet.*
-import net.ntworld.foundation.generator.common.ClassInfo
+import net.ntworld.foundation.generator.type.ClassInfo
 import java.io.File
 import javax.annotation.processing.Filer
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import net.ntworld.foundation.generator.setting.EventDataSettings
 
 object EventDataGenerator {
     private val map = Map::class.parameterizedBy(String::class, Any::class)
@@ -22,7 +23,7 @@ object EventDataGenerator {
     }
 
     internal fun buildFile(settings: EventDataSettings): FileSpec {
-        val target = findTarget(settings)
+        val target = Utility.findEventDataTarget(settings)
         val file = FileSpec.builder(target.packageName, target.className)
         Framework.addFileHeader(file, this::class.qualifiedName)
         file.addType(buildClass(settings, target))
@@ -68,15 +69,4 @@ object EventDataGenerator {
             .addParameter("metadata", map)
             .build()
     }
-
-    internal fun findTarget(settings: EventDataSettings): ClassInfo {
-        if (null == settings.target) {
-            return ClassInfo(
-                className = "${settings.event.className}Data",
-                packageName = "${settings.event.packageName}.generated"
-            )
-        }
-        return settings.target
-    }
-
 }

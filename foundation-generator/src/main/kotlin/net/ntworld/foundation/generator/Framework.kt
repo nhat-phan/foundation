@@ -10,6 +10,7 @@ object Framework {
 
     val namespace = "net.ntworld.foundation"
 
+    val Infrastructure = ClassName(namespace, "Infrastructure")
     val InfrastructureProvider = ClassName(namespace, "InfrastructureProvider")
 
     val Faker = ClassName(namespace, "Faker")
@@ -19,6 +20,8 @@ object Framework {
 
     val EventData = ClassName("$namespace.eventSourcing", "EventData")
     val EventMessageConverter = ClassName("$namespace.eventSourcing", "EventMessageConverter")
+    val EventConverter = ClassName("$namespace.eventSourcing", "EventConverter")
+    val Converter = ClassName("$namespace.eventSourcing", "Converter")
 
     val FakerRelatedSource_FakedData = "FakedData"
     val FakerRelatedSource_JavaFakerWrapper_Jvm = "JavaFakerWrapper"

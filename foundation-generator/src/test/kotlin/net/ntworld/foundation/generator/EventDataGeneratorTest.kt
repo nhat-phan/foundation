@@ -1,6 +1,7 @@
 package net.ntworld.foundation.generator
 
-import net.ntworld.foundation.generator.common.ClassInfo
+import net.ntworld.foundation.generator.setting.EventDataSettings
+import net.ntworld.foundation.generator.type.ClassInfo
 import kotlin.test.Test
 
 class EventDataGeneratorTest {

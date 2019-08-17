@@ -2,7 +2,8 @@ package net.ntworld.foundation.generator
 
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import net.ntworld.foundation.generator.common.ClassInfo
+import net.ntworld.foundation.generator.setting.EventDataSettings
+import net.ntworld.foundation.generator.type.ClassInfo
 import java.io.File
 import javax.annotation.processing.Filer
 import kotlin.reflect.KClass
@@ -21,8 +22,9 @@ object EventDataMessageConverterGenerator {
     }
 
     fun buildFile(settings: EventDataSettings): FileSpec {
-        val target = EventDataGenerator.findTarget(settings)
-        val converterTarget = findConverterTarget(settings)
+        val target = Utility.findEventDataTarget(settings)
+        val converterTarget = Utility.findEventDataMessageConverterTarget(settings)
+
         val file = FileSpec.builder(converterTarget.packageName, converterTarget.className)
         Framework.addFileHeader(file, this::class.qualifiedName)
         file.addType(buildClass(settings, target, converterTarget))
@@ -37,7 +39,6 @@ object EventDataMessageConverterGenerator {
                     ClassName(target.packageName, target.className)
                 )
             )
-            // .addFunction(buildMessageConverterOfFunction(target))
             .addFunction(buildFromMessageFunction(target))
             .addFunction(buildToMessageFunction(target))
             .addFunction(buildCanConvertFunction(settings))
@@ -73,7 +74,7 @@ object EventDataMessageConverterGenerator {
             .addModifiers(KModifier.OVERRIDE)
             .addParameter("message", Framework.Message)
             .addStatement(
-                """return message.type == %T.MESSAGE_TYPE && message.attributes["type"] == %S && message.attributes["variant"] == %L""",
+                "return %T.canConvert(message, %S, %L)",
                 Framework.EventMessageConverter,
                 settings.type,
                 settings.variant
@@ -94,22 +95,12 @@ object EventDataMessageConverterGenerator {
             .addStatement("""data = message.attributes["data"] as Map<String, Any>,""")
             .addStatement("""metadata = message.attributes["metadata"] as Map<String, Any>""")
             .unindent()
-            .add(")")
+            .add(")\n")
             .build()
         return FunSpec.builder("fromMessage")
             .addModifiers(KModifier.OVERRIDE)
             .addParameter("message", Framework.Message)
             .addCode(codeBlock)
             .build()
-    }
-
-    internal fun findConverterTarget(settings: EventDataSettings): ClassInfo {
-        if (null == settings.converterTarget) {
-            return ClassInfo(
-                className = "${settings.event.className}DataMessageConverter",
-                packageName = "${settings.event.packageName}.generated"
-            )
-        }
-        return settings.converterTarget
     }
 }
