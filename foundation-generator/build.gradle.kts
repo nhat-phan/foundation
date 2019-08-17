@@ -19,7 +19,9 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib"))
     implementation("com.squareup:kotlinpoet:$kotlinPoetVersion")
+    implementation("com.github.javafaker:javafaker:1.0.0")
 
     testImplementation(kotlin("test"))
     testImplementation(kotlin("test-junit"))
+    testImplementation("com.github.javafaker:javafaker:1.0.0")
 }

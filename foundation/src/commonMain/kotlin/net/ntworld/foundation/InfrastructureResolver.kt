@@ -114,6 +114,13 @@ open class InfrastructureResolver(
         throw CannotResolveException("Infrastructure.encryptor() cannot resolve ($cipherId, $algorithm)")
     }
 
+    override fun faker(): Faker {
+        if (null !== next) {
+            return next!!.faker()
+        }
+        throw CannotResolveException("Infrastructure.faker() cannot be resolved)")
+    }
+
     override fun eventStreamOf(eventSourced: AbstractEventSourced, version: Int): EventStream {
         if (null !== next) {
             return next!!.eventStreamOf(eventSourced, version)

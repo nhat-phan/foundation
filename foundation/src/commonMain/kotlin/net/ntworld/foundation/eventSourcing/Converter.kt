@@ -42,7 +42,7 @@ object Converter {
         return eventData.metadata[name] as T
     }
 
-    fun <T : Any> decrypt(eventData: EventData, name: String, infrastructure: Infrastructure): T {
+    fun <T : Any> decrypt(eventData: EventData, name: String, fakedType: String?, infrastructure: Infrastructure): T {
         val infoKey = encryptorInfoKey(name)
         if (!eventData.metadata.containsKey(infoKey)) {
             return read(eventData, name)

@@ -28,6 +28,9 @@ open class InfrastructureContext(open val self: Infrastructure) {
     fun encryptor(): Encryptor = self.encryptor()
 
     @InfrastructureDsl
+    fun faker(): Faker = self.faker()
+
+    @InfrastructureDsl
     fun encryptor(cipherId: String, algorithm: String): Encryptor = self.encryptor(cipherId, algorithm)
 
     @InfrastructureDsl

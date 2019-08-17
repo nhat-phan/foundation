@@ -12,11 +12,28 @@ object Framework {
 
     val InfrastructureProvider = ClassName(namespace, "InfrastructureProvider")
 
+    val Faker = ClassName(namespace, "Faker")
+
     val Message = ClassName(namespace, "Message")
     val MessageConverter = ClassName(namespace, "MessageConverter")
 
     val EventData = ClassName("$namespace.eventSourcing", "EventData")
     val EventMessageConverter = ClassName("$namespace.eventSourcing", "EventMessageConverter")
+
+    val FakerRelatedSource_FakedData = "FakedData"
+    val FakerRelatedSource_JavaFakerWrapper_Jvm = "JavaFakerWrapper"
+
+    val JavaFaker = ClassName("com.github.javafaker", "Faker")
+
+    fun addGeneratedByToolHeader(file: FileSpec.Builder, generator: String?) {
+        file.addComment("+-------------------------------------------------------------------------+\n")
+        file.addComment("| This file was generated automatically by tools in foundation-generator. |\n")
+        file.addComment("|                                                                         |\n")
+        file.addComment("| Please do not edit!                                                     |\n")
+        file.addComment("+-------------------------------------------------------------------------+\n")
+        file.addComment("+- by  : $generator\n")
+        file.addComment("+- when: ${now()}")
+    }
 
     fun addFileHeader(file: FileSpec.Builder, generator: String?) {
         if (!shouldAddHeader) {

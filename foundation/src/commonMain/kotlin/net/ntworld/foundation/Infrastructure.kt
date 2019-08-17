@@ -29,6 +29,8 @@ interface Infrastructure {
 
     fun encryptor(): Encryptor
 
+    fun faker(): Faker
+
     fun encryptor(cipherId: String, algorithm: String): Encryptor
 
     fun eventStreamOf(eventSourced: AbstractEventSourced): EventStream = eventStreamOf(eventSourced, 0)

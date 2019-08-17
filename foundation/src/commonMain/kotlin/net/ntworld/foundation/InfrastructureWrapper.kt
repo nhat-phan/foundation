@@ -53,6 +53,10 @@ open class InfrastructureWrapper(private val base: Infrastructure) : Infrastruct
         return base.encryptor(cipherId, algorithm)
     }
 
+    override fun faker(): Faker {
+        return base.faker()
+    }
+
     override fun eventStreamOf(eventSourced: AbstractEventSourced, version: Int): EventStream {
         return base.eventStreamOf(eventSourced, version)
     }

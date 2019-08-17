@@ -13,6 +13,7 @@ class MemorizedInfrastructure(base: Infrastructure) : InfrastructureWrapper(base
     private var _commandBus: CommandBus? = null
     private var _eventBus: EventBus? = null
     private var _encryptor: Encryptor? = null
+    private var _faker: Faker? = null
     private var _encryptors = mutableMapOf<String, Encryptor>()
     private var _eventStreams = mutableMapOf<String, EventStream>()
     private var _eventConverterClasses = mutableMapOf<KClass<*>, EventConverter<*>>()
@@ -75,6 +76,13 @@ class MemorizedInfrastructure(base: Infrastructure) : InfrastructureWrapper(base
             _encryptors[key] = super.encryptor(cipherId, algorithm)
         }
         return _encryptors[key] as Encryptor
+    }
+
+    override fun faker(): Faker {
+        if (null === _faker) {
+            _faker = super.faker()
+        }
+        return _faker!!
     }
 
     override fun eventStreamOf(eventSourced: AbstractEventSourced, version: Int): EventStream {
