@@ -16,6 +16,8 @@ class EventDataGeneratorTest {
             type = "created",
             variant = 0
         )
-        EventDataGenerator.buildFile(settings).writeTo(System.out)
+
+        val result = EventDataGenerator.generate(settings)
+        println(result.content)
     }
 }

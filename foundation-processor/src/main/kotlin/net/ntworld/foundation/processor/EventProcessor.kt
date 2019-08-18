@@ -1,16 +1,12 @@
 package net.ntworld.foundation.processor
 
 import net.ntworld.foundation.FrameworkAnnotation
-import net.ntworld.foundation.eventSourcing.Encrypted
-import net.ntworld.foundation.eventSourcing.Event
-import net.ntworld.foundation.eventSourcing.Metadata
-import net.ntworld.foundation.generator.EventDataGenerator
-import net.ntworld.foundation.generator.GeneratorSettings
-import net.ntworld.foundation.generator.SettingsSerializer
+import net.ntworld.foundation.Utility
+import net.ntworld.foundation.eventSourcing.EventSourcing
+import net.ntworld.foundation.generator.*
 import net.ntworld.foundation.generator.setting.EventSettings
 import net.ntworld.foundation.generator.type.ClassInfo
 import net.ntworld.foundation.generator.type.EventField
-import java.io.File
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.RoundEnvironment
 import javax.annotation.processing.SupportedAnnotationTypes
@@ -19,11 +15,10 @@ import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.PackageElement
 import javax.lang.model.element.TypeElement
-import javax.tools.Diagnostic
 
 @SupportedAnnotationTypes(
-    FrameworkAnnotation.EventType,
-    FrameworkAnnotation.EventVariant,
+    FrameworkAnnotation.EventSourcing,
+    FrameworkAnnotation.Metadata,
     FrameworkAnnotation.Encrypted
 )
 @SupportedOptions(FrameworkAnnotation.KAPT_KOTLIN_GENERATED_OPTION_NAME)
@@ -50,28 +45,22 @@ class EventProcessor : AbstractProcessor() {
             return true
         }
 
-        this.processElementsAnnotatedByEventType(roundEnv.getElementsAnnotatedWith(Event.Type::class.java))
-        this.processElementsAnnotatedByEventVariant(roundEnv.getElementsAnnotatedWith(Event.Variant::class.java))
-        this.processElementsAnnotatedByEncrypted(roundEnv.getElementsAnnotatedWith(Encrypted::class.java))
-        this.processElementsAnnotatedByMetadata(roundEnv.getElementsAnnotatedWith(Metadata::class.java))
+        this.processElementsAnnotatedByEventSourcing(roundEnv.getElementsAnnotatedWith(EventSourcing::class.java))
+        this.processElementsAnnotatedByEncrypted(roundEnv.getElementsAnnotatedWith(EventSourcing.Encrypted::class.java))
+        this.processElementsAnnotatedByMetadata(roundEnv.getElementsAnnotatedWith(EventSourcing.Metadata::class.java))
 
         val settings = translateCollectedDataToGeneratorSettings()
 
-        val kaptKotlinGeneratedDir =
-            processingEnv.options[FrameworkAnnotation.KAPT_KOTLIN_GENERATED_OPTION_NAME] ?: run {
-                processingEnv.messager.printMessage(
-                    Diagnostic.Kind.ERROR,
-                    "Can't find the target directory for generated Kotlin files."
-                )
-                return false
-            }
-
-        File(kaptKotlinGeneratedDir + "/log.json").writeText(SettingsSerializer.serialize(settings))
-
+        Utility.writeText(processingEnv, "/", "settings.json", SettingsSerializer.serialize(settings))
+        settings.events.forEach {
+            Utility.writeGeneratedFile(processingEnv, EventDataGenerator.generate(it))
+            Utility.writeGeneratedFile(processingEnv, EventConverterGenerator.generate(it))
+            Utility.writeGeneratedFile(processingEnv, EventDataMessageConverterGenerator.generate(it))
+        }
         return true
     }
 
-    private fun processElementsAnnotatedByEventType(elements: Set<Element>) {
+    private fun processElementsAnnotatedByEventSourcing(elements: Set<Element>) {
         elements
             .filter { it.kind.isClass }
             .forEach {
@@ -80,71 +69,53 @@ class EventProcessor : AbstractProcessor() {
                 val key = "$packageName.$className"
                 initEventSettingsIfNeeded(packageName, className)
 
+                val annotation = it.getAnnotation(EventSourcing::class.java)
                 it.enclosedElements.filter { it.kind == ElementKind.FIELD }
                     .forEach {
                         initEventFieldIfNeeded(packageName, className, it.simpleName.toString())
                     }
 
-                data[key] = data[key]!!.copy(type = it.getAnnotation(Event.Type::class.java).type)
-            }
-    }
-
-    private fun processElementsAnnotatedByEventVariant(elements: Set<Element>) {
-        elements
-            .filter { it.kind.isClass }
-            .forEach {
-                val packageName = this.getPackageNameOfEvent(it)
-                val className = it.simpleName.toString()
-                val key = "$packageName.$className"
-                initEventSettingsIfNeeded(packageName, className)
-
-                data[key] = data[key]!!.copy(variant = it.getAnnotation(Event.Variant::class.java).value)
+                data[key] = data[key]!!.copy(
+                    type = annotation.type,
+                    variant = annotation.variant
+                )
             }
     }
 
     private fun processElementsAnnotatedByEncrypted(elements: Set<Element>) {
         elements
             .forEach {
-                if (it.kind !== ElementKind.FIELD || it.enclosingElement.kind !== ElementKind.CLASS) {
-                    throw FoundationProcessorException(
-                        "@Encrypt only support field inside an Event class"
+                this.collectEventField(it) { item ->
+                    item.copy(
+                        encrypted = true,
+                        faked = it.getAnnotation(EventSourcing.Encrypted::class.java).faked
                     )
                 }
-
-                val packageName = this.getPackageNameOfEvent(it.enclosingElement)
-                val className = it.enclosingElement.simpleName.toString()
-                val fieldName = it.simpleName.toString()
-                val key = "$packageName.$className"
-                initEventSettingsIfNeeded(packageName, className)
-                initEventFieldIfNeeded(packageName, className, fieldName)
-
-                data[key]!!.fields[fieldName] = data[key]!!.fields[fieldName]!!.copy(
-                    encrypted = true,
-                    faked = it.getAnnotation(Encrypted::class.java).faked
-                )
             }
     }
 
     private fun processElementsAnnotatedByMetadata(elements: Set<Element>) {
         elements
             .forEach {
-                if (it.kind !== ElementKind.FIELD || it.enclosingElement.kind !== ElementKind.CLASS) {
-                    throw FoundationProcessorException(
-                        "@Encrypt only support field inside an Event class"
-                    )
-                }
-
-                val packageName = this.getPackageNameOfEvent(it.enclosingElement)
-                val className = it.enclosingElement.simpleName.toString()
-                val fieldName = it.simpleName.toString()
-                val key = "$packageName.$className"
-                initEventSettingsIfNeeded(packageName, className)
-                initEventFieldIfNeeded(packageName, className, fieldName)
-
-                data[key]!!.fields[fieldName] = data[key]!!.fields[fieldName]!!.copy(
-                    metadata = true
-                )
+                this.collectEventField(it) { item -> item.copy(metadata = true) }
             }
+    }
+
+    private fun collectEventField(element: Element, block: (item: CollectedEventField) -> CollectedEventField) {
+        if (element.kind !== ElementKind.FIELD || element.enclosingElement.kind !== ElementKind.CLASS) {
+            throw FoundationProcessorException(
+                "@Encrypt only support field inside an Event class"
+            )
+        }
+
+        val packageName = this.getPackageNameOfEvent(element.enclosingElement)
+        val className = element.enclosingElement.simpleName.toString()
+        val fieldName = element.simpleName.toString()
+        val key = "$packageName.$className"
+        initEventSettingsIfNeeded(packageName, className)
+        initEventFieldIfNeeded(packageName, className, fieldName)
+
+        data[key]!!.fields[fieldName] = block.invoke(data[key]!!.fields[fieldName]!!)
     }
 
     private fun getPackageNameOfEvent(element: Element): String {

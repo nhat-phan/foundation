@@ -25,6 +25,8 @@ class EventConverterGeneratorTest {
             type = "any",
             variant = 1
         )
-        EventConverterGenerator.generate(settings, System.out)
+
+        val result = EventConverterGenerator.generate(settings)
+        println(result.content)
     }
 }

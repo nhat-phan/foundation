@@ -5,24 +5,18 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import net.ntworld.foundation.generator.setting.EventSettings
 import net.ntworld.foundation.generator.type.ClassInfo
 import net.ntworld.foundation.generator.type.EventField
-import java.io.File
-import javax.annotation.processing.Filer
 
 object EventConverterGenerator {
-    fun generate(settings: EventSettings, out: Appendable) {
-        buildFile(settings).writeTo(out)
-    }
-
-    fun generate(settings: EventSettings, out: Filer) {
-        buildFile(settings).writeTo(out)
-    }
-
-    fun generate(settings: EventSettings, out: File) {
-        buildFile(settings).writeTo(out)
-    }
-
-    internal fun buildFile(settings: EventSettings): FileSpec {
+    fun generate(settings: EventSettings): GeneratedFile {
         val target = Utility.findEventConverterTarget(settings)
+        val file = buildFile(settings, target)
+        val stringBuffer = StringBuffer()
+        file.writeTo(stringBuffer)
+
+        return Utility.buildGeneratedFile(target, stringBuffer.toString())
+    }
+
+    internal fun buildFile(settings: EventSettings, target: ClassInfo): FileSpec {
         val file = FileSpec.builder(target.packageName, target.className)
         Framework.addFileHeader(file, this::class.qualifiedName)
         file.addType(buildClass(settings, target))

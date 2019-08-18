@@ -6,8 +6,8 @@ import net.ntworld.foundation.eventSourcing.EventSourcing
 import net.ntworld.foundation.eventSourcing.EventSourcing.Encrypted
 import net.ntworld.foundation.eventSourcing.EventSourcing.Metadata
 
-@EventSourcing("todo:created", 1)
-data class TodoCreatedEvent(
+@EventSourcing(type = "todo:updated", variant = 0)
+data class TodoUpdatedEvent(
 
     val id: String,
 

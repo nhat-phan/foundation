@@ -16,6 +16,8 @@ class EventDataMessageConverterGeneratorTest {
             type = "created",
             variant = 0
         )
-        EventDataMessageConverterGenerator.buildFile(settings).writeTo(System.out)
+
+        val result = EventDataMessageConverterGenerator.generate(settings)
+        println(result.content)
     }
 }

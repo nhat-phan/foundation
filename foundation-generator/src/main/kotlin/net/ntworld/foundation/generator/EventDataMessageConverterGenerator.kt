@@ -9,38 +9,33 @@ import javax.annotation.processing.Filer
 import kotlin.reflect.KClass
 
 object EventDataMessageConverterGenerator {
-    fun generate(settings: EventSettings, out: Appendable) {
-        buildFile(settings).writeTo(out)
+    fun generate(settings: EventSettings): GeneratedFile {
+        val target = Utility.findEventDataMessageConverterTarget(settings)
+        val file = buildFile(settings, target)
+        val stringBuffer = StringBuffer()
+        file.writeTo(stringBuffer)
+
+        return Utility.buildGeneratedFile(target, stringBuffer.toString())
     }
 
-    fun generate(settings: EventSettings, out: Filer) {
-        buildFile(settings).writeTo(out)
-    }
-
-    fun generate(settings: EventSettings, out: File) {
-        buildFile(settings).writeTo(out)
-    }
-
-    fun buildFile(settings: EventSettings): FileSpec {
-        val target = Utility.findEventDataTarget(settings)
-        val converterTarget = Utility.findEventDataMessageConverterTarget(settings)
-
-        val file = FileSpec.builder(converterTarget.packageName, converterTarget.className)
+    fun buildFile(settings: EventSettings, target: ClassInfo): FileSpec {
+        val eventDataTarget = Utility.findEventDataTarget(settings)
+        val file = FileSpec.builder(target.packageName, target.className)
         Framework.addFileHeader(file, this::class.qualifiedName)
-        file.addType(buildClass(settings, target, converterTarget))
+        file.addType(buildClass(settings, eventDataTarget, target))
 
         return file.build()
     }
 
-    internal fun buildClass(settings: EventSettings, target: ClassInfo, converterTarget: ClassInfo): TypeSpec {
-        return TypeSpec.objectBuilder(converterTarget.className)
+    internal fun buildClass(settings: EventSettings, eventData: ClassInfo, target: ClassInfo): TypeSpec {
+        return TypeSpec.objectBuilder(target.className)
             .addSuperinterface(
                 Framework.MessageConverter.parameterizedBy(
-                    ClassName(target.packageName, target.className)
+                    ClassName(eventData.packageName, eventData.className)
                 )
             )
-            .addFunction(buildFromMessageFunction(target))
-            .addFunction(buildToMessageFunction(target))
+            .addFunction(buildFromMessageFunction(eventData))
+            .addFunction(buildToMessageFunction(eventData))
             .addFunction(buildCanConvertFunction(settings))
             .build()
     }

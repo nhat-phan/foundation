@@ -3,7 +3,7 @@ package net.ntworld.foundation.generator
 import net.ntworld.foundation.generator.setting.EventSettings
 import net.ntworld.foundation.generator.type.ClassInfo
 
-object Utility {
+internal object Utility {
     fun findEventConverterTarget(settings: EventSettings): ClassInfo {
         return ClassInfo(
             className = "${settings.event.className}Converter",
@@ -22,6 +22,17 @@ object Utility {
         return ClassInfo(
             className = "${settings.event.className}Data",
             packageName = findTargetNamespace(settings.event.packageName)
+        )
+    }
+
+    fun buildGeneratedFile(target: ClassInfo, content: String): GeneratedFile {
+        val directory = target.packageName.replace(".", "/")
+        val fileName = target.className + ".kt"
+        return GeneratedFile(
+            directory = "/$directory",
+            fileName = fileName,
+            path = "/$directory/$fileName",
+            content = content
         )
     }
 
