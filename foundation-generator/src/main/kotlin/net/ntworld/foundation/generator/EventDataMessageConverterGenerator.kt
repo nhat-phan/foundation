@@ -2,26 +2,26 @@ package net.ntworld.foundation.generator
 
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import net.ntworld.foundation.generator.setting.EventDataSettings
+import net.ntworld.foundation.generator.setting.EventSettings
 import net.ntworld.foundation.generator.type.ClassInfo
 import java.io.File
 import javax.annotation.processing.Filer
 import kotlin.reflect.KClass
 
 object EventDataMessageConverterGenerator {
-    fun generate(settings: EventDataSettings, out: Appendable) {
+    fun generate(settings: EventSettings, out: Appendable) {
         buildFile(settings).writeTo(out)
     }
 
-    fun generate(settings: EventDataSettings, out: Filer) {
+    fun generate(settings: EventSettings, out: Filer) {
         buildFile(settings).writeTo(out)
     }
 
-    fun generate(settings: EventDataSettings, out: File) {
+    fun generate(settings: EventSettings, out: File) {
         buildFile(settings).writeTo(out)
     }
 
-    fun buildFile(settings: EventDataSettings): FileSpec {
+    fun buildFile(settings: EventSettings): FileSpec {
         val target = Utility.findEventDataTarget(settings)
         val converterTarget = Utility.findEventDataMessageConverterTarget(settings)
 
@@ -32,7 +32,7 @@ object EventDataMessageConverterGenerator {
         return file.build()
     }
 
-    internal fun buildClass(settings: EventDataSettings, target: ClassInfo, converterTarget: ClassInfo): TypeSpec {
+    internal fun buildClass(settings: EventSettings, target: ClassInfo, converterTarget: ClassInfo): TypeSpec {
         return TypeSpec.objectBuilder(converterTarget.className)
             .addSuperinterface(
                 Framework.MessageConverter.parameterizedBy(
@@ -69,7 +69,7 @@ object EventDataMessageConverterGenerator {
             .build()
     }
 
-    internal fun buildCanConvertFunction(settings: EventDataSettings): FunSpec {
+    internal fun buildCanConvertFunction(settings: EventSettings): FunSpec {
         return FunSpec.builder("canConvert")
             .addModifiers(KModifier.OVERRIDE)
             .addParameter("message", Framework.Message)

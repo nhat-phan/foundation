@@ -21,7 +21,9 @@ class EventConverterGeneratorTest {
                 EventField(name = "firstName", metadata = false, encrypted = true, faked = "firstName"),
                 EventField(name = "lastName", metadata = false, encrypted = true, faked = "lastName"),
                 EventField(name = "createdAt", metadata = false, encrypted = true, faked = "")
-            )
+            ),
+            type = "any",
+            variant = 1
         )
         EventConverterGenerator.generate(settings, System.out)
     }

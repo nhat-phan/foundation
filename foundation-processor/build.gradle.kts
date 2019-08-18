@@ -15,11 +15,8 @@ repositories {
 }
 
 dependencies {
-    // implementation(project(path = ":foundation", configuration = "jvmDefault"))
-    // compile(project(path = ":foundation", configuration = "default"))
-
     implementation(kotlin("stdlib"))
-    implementation("com.squareup:kotlinpoet:$kotlinPoetVersion")
-    implementation("com.github.javafaker:javafaker:1.0.0")
+    implementation(project(":foundation", "jvmDefault"))
+    implementation(project(":foundation-generator"))
 }
 

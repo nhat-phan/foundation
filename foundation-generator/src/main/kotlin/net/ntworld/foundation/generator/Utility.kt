@@ -1,6 +1,5 @@
 package net.ntworld.foundation.generator
 
-import net.ntworld.foundation.generator.setting.EventDataSettings
 import net.ntworld.foundation.generator.setting.EventSettings
 import net.ntworld.foundation.generator.type.ClassInfo
 
@@ -12,16 +11,9 @@ object Utility {
         )
     }
 
-    fun findEventDataMessageConverterTarget(settings: EventDataSettings): ClassInfo {
+    fun findEventDataMessageConverterTarget(settings: EventSettings): ClassInfo {
         return ClassInfo(
             className = "${settings.event.className}DataMessageConverter",
-            packageName = findTargetNamespace(settings.event.packageName)
-        )
-    }
-
-    fun findEventDataTarget(settings: EventDataSettings): ClassInfo {
-        return ClassInfo(
-            className = "${settings.event.className}Data",
             packageName = findTargetNamespace(settings.event.packageName)
         )
     }
@@ -33,7 +25,7 @@ object Utility {
         )
     }
 
-    fun findTargetNamespace(input: String): String {
+    private fun findTargetNamespace(input: String): String {
         return "$input.generated"
     }
 }

@@ -5,8 +5,8 @@ import com.squareup.kotlinpoet.FileSpec
 import java.text.SimpleDateFormat
 import java.util.*
 
-object Framework {
-    internal var shouldAddHeader: Boolean = true
+internal object Framework {
+    var shouldAddHeader: Boolean = true
 
     val namespace = "net.ntworld.foundation"
 
