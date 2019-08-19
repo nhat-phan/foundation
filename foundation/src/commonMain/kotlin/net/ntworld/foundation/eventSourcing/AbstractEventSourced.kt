@@ -8,11 +8,14 @@ abstract class AbstractEventSourced : Aggregate {
 
     internal val unpublishedEvents = mutableListOf<Event>()
 
+    private var rehydrating: Boolean = false
+
     abstract val streamType: String
 
     abstract fun apply(event: Event)
 
     internal fun rehydrate(events: Iterable<HydratedEvent>) {
+        rehydrating = true
         events.forEach {
             if (version < it.eventData.version) {
                 apply(it)
@@ -20,15 +23,13 @@ abstract class AbstractEventSourced : Aggregate {
                 version = it.eventData.version
             }
         }
+        rehydrating = false
     }
 
     fun publish(event: Event) {
-        if (event is HydratedEvent) {
-            println("hydrated $event, do not publish")
+        if (rehydrating || event is HydratedEvent) {
             return
         }
-
-        println("put $event for publishing later")
         unpublishedEvents.add(event)
     }
 }

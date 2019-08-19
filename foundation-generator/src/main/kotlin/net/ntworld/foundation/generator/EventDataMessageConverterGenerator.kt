@@ -4,8 +4,6 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import net.ntworld.foundation.generator.setting.EventSettings
 import net.ntworld.foundation.generator.type.ClassInfo
-import java.io.File
-import javax.annotation.processing.Filer
 import kotlin.reflect.KClass
 
 object EventDataMessageConverterGenerator {
@@ -59,7 +57,7 @@ object EventDataMessageConverterGenerator {
             .returns(Framework.Message)
             .addStatement(
                 "return %T.toMessage(input)",
-                Framework.EventMessageConverter
+                Framework.EventMessageConverterUtility
             )
             .build()
     }
@@ -70,7 +68,7 @@ object EventDataMessageConverterGenerator {
             .addParameter("message", Framework.Message)
             .addStatement(
                 "return %T.canConvert(message, %S, %L)",
-                Framework.EventMessageConverter,
+                Framework.EventMessageConverterUtility,
                 settings.type,
                 settings.variant
             )

@@ -19,9 +19,10 @@ internal object Framework {
     val MessageConverter = ClassName(namespace, "MessageConverter")
 
     val EventData = ClassName("$namespace.eventSourcing", "EventData")
-    val EventMessageConverter = ClassName("$namespace.eventSourcing", "EventMessageConverter")
     val EventConverter = ClassName("$namespace.eventSourcing", "EventConverter")
-    val Converter = ClassName("$namespace.eventSourcing", "Converter")
+
+    val EventMessageConverterUtility = ClassName("$namespace.eventSourcing", "EventMessageConverterUtility")
+    val EventConverterUtility = ClassName("$namespace.eventSourcing", "EventConverterUtility")
 
     val FakerRelatedSource_FakedData = "FakedData"
     val FakerRelatedSource_JavaFakerWrapper_Jvm = "JavaFakerWrapper"

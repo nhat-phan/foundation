@@ -2,7 +2,7 @@ package net.ntworld.foundation.eventSourcing
 
 import net.ntworld.foundation.internal.EventListenerCollection
 
-object LocalEventBus : EventBus {
+class LocalEventBus : EventBus {
     private val channels = mutableMapOf<String, EventListenerCollection>()
 
     override fun publish(eventData: EventData, event: Event) {

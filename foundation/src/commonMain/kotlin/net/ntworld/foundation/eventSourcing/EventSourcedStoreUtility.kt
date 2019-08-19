@@ -5,7 +5,7 @@ import net.ntworld.foundation.AggregateStore
 import net.ntworld.foundation.Infrastructure
 import kotlin.reflect.KClass
 
-object Utility {
+object EventSourcedStoreUtility {
     /**
      * Save event sourced aggregated to store and publish events.
      *
@@ -19,7 +19,7 @@ object Utility {
      * Please note that because we are using Event Sourcing then the EventStream is
      * single source of truth, then if there is no events this function will do nothing
      */
-    fun <A : Aggregate> saveEventSourcedAggregateAndPublishEvents(
+    fun <A : Aggregate> savePublishEvents(
         infrastructure: Infrastructure,
         aggregateKlass: KClass<A>,
         store: AggregateStore<A>,
@@ -41,7 +41,7 @@ object Utility {
                 event
             )
         }
-        // infrastructure.eventStreamOf(eventSourced).write(events)
+        infrastructure.eventStreamOf(eventSourced).write(events)
 
         val eventBus = infrastructure.eventBus()
         for (i in 0..events.lastIndex) {
@@ -57,25 +57,5 @@ object Utility {
             store.save(data)
         }
         return true
-    }
-
-    fun <T : AbstractEventSourced, A : Aggregate> retrieveEventSourcedAggregate(
-        infrastructure: Infrastructure,
-        aggregate: A,
-        aggregateKlass: KClass<A>,
-        eventSourced: T
-    ): T {
-        val snapshot = infrastructure.snapshotStoreOf(aggregateKlass).findSnapshot(aggregate)
-        val stream = infrastructure.eventStreamOf(eventSourced, snapshot.version)
-
-        val events = stream.read().map {
-            HydratedEvent(
-                __event = infrastructure.eventConverterOf(it.type, it.variant).fromEventData(it),
-                __eventData = it
-            )
-        }
-
-        eventSourced.rehydrate(events)
-        return eventSourced
     }
 }

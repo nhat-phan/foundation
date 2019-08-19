@@ -1,6 +1,6 @@
 package net.ntworld.foundation.processor
 
-import net.ntworld.foundation.FrameworkAnnotation
+import net.ntworld.foundation.FrameworkProcessor
 import net.ntworld.foundation.Utility
 import net.ntworld.foundation.eventSourcing.EventSourcing
 import net.ntworld.foundation.generator.*
@@ -17,11 +17,11 @@ import javax.lang.model.element.PackageElement
 import javax.lang.model.element.TypeElement
 
 @SupportedAnnotationTypes(
-    FrameworkAnnotation.EventSourcing,
-    FrameworkAnnotation.Metadata,
-    FrameworkAnnotation.Encrypted
+    FrameworkProcessor.EventSourcing,
+    FrameworkProcessor.Metadata,
+    FrameworkProcessor.Encrypted
 )
-@SupportedOptions(FrameworkAnnotation.KAPT_KOTLIN_GENERATED_OPTION_NAME)
+@SupportedOptions(FrameworkProcessor.KAPT_KOTLIN_GENERATED_OPTION_NAME)
 class EventProcessor : AbstractProcessor() {
     internal data class CollectedEventField(
         val name: String,
@@ -49,14 +49,20 @@ class EventProcessor : AbstractProcessor() {
         this.processElementsAnnotatedByEncrypted(roundEnv.getElementsAnnotatedWith(EventSourcing.Encrypted::class.java))
         this.processElementsAnnotatedByMetadata(roundEnv.getElementsAnnotatedWith(EventSourcing.Metadata::class.java))
 
-        val settings = translateCollectedDataToGeneratorSettings()
+        val settings = Utility.readSettingsFile(processingEnv)
+        val collectedSettings = translateCollectedDataToGeneratorSettings()
+        val mergedSettings = settings.copy(
+            events = collectedSettings.events
+        )
 
-        Utility.writeText(processingEnv, "/", "settings.json", SettingsSerializer.serialize(settings))
+        Utility.updateSettingsFile(processingEnv, mergedSettings)
         settings.events.forEach {
             Utility.writeGeneratedFile(processingEnv, EventDataGenerator.generate(it))
             Utility.writeGeneratedFile(processingEnv, EventConverterGenerator.generate(it))
             Utility.writeGeneratedFile(processingEnv, EventDataMessageConverterGenerator.generate(it))
         }
+        Utility.writeGeneratedFile(processingEnv, InfrastructureProviderGenerator().generate(mergedSettings))
+
         return true
     }
 

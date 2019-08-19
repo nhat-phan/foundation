@@ -51,7 +51,7 @@ object EventConverterGenerator {
         val eventDataTarget = Utility.findEventDataTarget(settings)
         val codeBlock = CodeBlock.builder()
 
-        codeBlock.add("%T\n", Framework.Converter)
+        codeBlock.add("%T\n", Framework.EventConverterUtility)
         codeBlock.indent()
         settings.fields.forEach {
             codeBlock.add(getWriteEventToEventDataLine(it)).add("\n")
@@ -135,12 +135,12 @@ object EventConverterGenerator {
     internal fun getReadEventFromEventDataLine(field: EventField): CodeBlock {
         // metadata field, don't care about the other settings
         if (field.metadata) {
-            return CodeBlock.of("%L = %T.readMetadata(data, %S)", field.name, Framework.Converter, field.name)
+            return CodeBlock.of("%L = %T.readMetadata(data, %S)", field.name, Framework.EventConverterUtility, field.name)
         }
 
         // data field, no encrypted
         if (!field.encrypted) {
-            return CodeBlock.of("%L = %T.read(data, %S)", field.name, Framework.Converter, field.name)
+            return CodeBlock.of("%L = %T.read(data, %S)", field.name, Framework.EventConverterUtility, field.name)
         }
 
         // encrypted field but no faked data
@@ -148,7 +148,7 @@ object EventConverterGenerator {
             return CodeBlock.of(
                 "%L = %T.decrypt(data, %S, null, infrastructure.root)",
                 field.name,
-                Framework.Converter,
+                Framework.EventConverterUtility,
                 field.name
             )
         }
@@ -157,7 +157,7 @@ object EventConverterGenerator {
         return CodeBlock.of(
             "%L = %T.decrypt(data, %S, %S, infrastructure.root)",
             field.name,
-            Framework.Converter,
+            Framework.EventConverterUtility,
             field.name,
             field.faked
         )

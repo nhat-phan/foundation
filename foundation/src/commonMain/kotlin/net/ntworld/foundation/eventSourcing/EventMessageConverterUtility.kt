@@ -1,10 +1,9 @@
 package net.ntworld.foundation.eventSourcing
 
 import net.ntworld.foundation.Message
-import net.ntworld.foundation.MessageConverter
 import net.ntworld.foundation.internal.MessageImpl
 
-object EventMessageConverter {
+object EventMessageConverterUtility {
     const val MESSAGE_TYPE = "EventMessage"
 
     fun canConvert(message: Message, type: String, variant: Int): Boolean {

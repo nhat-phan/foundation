@@ -2,19 +2,19 @@ package net.ntworld.foundation.eventSourcing
 
 import net.ntworld.foundation.Infrastructure
 
-object Converter {
+object EventConverterUtility {
     internal data class EncryptorInfo(
         val cipherId: String,
         val algorithm: String
     )
 
-    fun <T : Any> write(eventData: EventData, name: String, value: T): Converter {
+    fun <T : Any> write(eventData: EventData, name: String, value: T): EventConverterUtility {
         (eventData.data as MutableMap<String, Any>)[name] = value
 
         return this
     }
 
-    fun <T : Any> writeMetadata(eventData: EventData, name: String, value: T): Converter {
+    fun <T : Any> writeMetadata(eventData: EventData, name: String, value: T): EventConverterUtility {
         (eventData.metadata as MutableMap<String, Any>)[name] = value
 
         return this
@@ -25,7 +25,7 @@ object Converter {
         name: String,
         value: T,
         infrastructure: Infrastructure
-    ): Converter {
+    ): EventConverterUtility {
         val infoKey = encryptorInfoKey(name)
         val encryptor = infrastructure.encryptor()
         this.write(eventData, name, encryptor.encrypt(value))
