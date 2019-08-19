@@ -6,8 +6,8 @@ import net.ntworld.foundation.eventSourcing.*
 import kotlin.reflect.KClass
 
 class MemorizedInfrastructure(base: Infrastructure) : InfrastructureWrapper(base) {
-    private val _factories = mutableMapOf<KClass<*>, AggregateFactory<*>>()
-    private val _stores = mutableMapOf<KClass<*>, AggregateStore<*>>()
+    private val _factories = mutableMapOf<KClass<*>, AggregateFactory<*, *>>()
+    private val _stores = mutableMapOf<KClass<*>, StateStore<*>>()
     private val _idGenerators = mutableMapOf<KClass<*>, IdGenerator>()
     private var _queryBus: QueryBus? = null
     private var _commandBus: CommandBus? = null
@@ -21,18 +21,18 @@ class MemorizedInfrastructure(base: Infrastructure) : InfrastructureWrapper(base
     private var _messageConverters = mutableMapOf<KClass<*>, MessageConverter<*>>()
     private var _snapshotStores = mutableMapOf<KClass<*>, SnapshotStore<*>>()
 
-    override fun <A : Aggregate> factoryOf(type: KClass<A>): AggregateFactory<A> {
+    override fun <A : Aggregate<D>, D : State> factoryOf(type: KClass<A>): AggregateFactory<A, D> {
         if (!_factories.containsKey(type)) {
             _factories[type] = super.factoryOf(type)
         }
-        return _factories[type] as AggregateFactory<A>
+        return _factories[type] as AggregateFactory<A, D>
     }
 
-    override fun <A : Aggregate> storeOf(type: KClass<A>): AggregateStore<A> {
+    override fun <A : Aggregate<D>, D : State> storeOf(type: KClass<A>): StateStore<D> {
         if (!_stores.containsKey(type)) {
             _stores[type] = super.storeOf(type)
         }
-        return _stores[type] as AggregateStore<A>
+        return _stores[type] as StateStore<D>
     }
 
     override fun <T : Any> idGeneratorOf(type: KClass<T>): IdGenerator {
@@ -85,7 +85,7 @@ class MemorizedInfrastructure(base: Infrastructure) : InfrastructureWrapper(base
         return _faker!!
     }
 
-    override fun eventStreamOf(eventSourced: AbstractEventSourced, version: Int): EventStream {
+    override fun eventStreamOf(eventSourced: AbstractEventSourced<*>, version: Int): EventStream {
         val key = "${eventSourced.streamType}:${eventSourced.id}:$version"
         if (!_eventStreams.containsKey(key)) {
             _eventStreams[key] = super.eventStreamOf(eventSourced, version)
@@ -116,10 +116,10 @@ class MemorizedInfrastructure(base: Infrastructure) : InfrastructureWrapper(base
         return _messageConverters[type] as MessageConverter<T>
     }
 
-    override fun <T : Aggregate> snapshotStoreOf(type: KClass<T>): SnapshotStore<T> {
+    override fun <A: Aggregate<D>, D: State> snapshotStoreOf(type: KClass<A>): SnapshotStore<D> {
         if (!_snapshotStores.containsKey(type)) {
             _snapshotStores[type] = super.snapshotStoreOf(type)
         }
-        return _snapshotStores[type] as SnapshotStore<T>
+        return _snapshotStores[type] as SnapshotStore<D>
     }
 }

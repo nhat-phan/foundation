@@ -16,15 +16,15 @@ open class InfrastructureProvider : InfrastructureResolver() {
     // Factory
     // -----------------------------------------------------------------------------------
 
-    fun registerFactory(kClass: KClass<*>, fn: () -> AggregateFactory<*>) {
+    fun registerFactory(kClass: KClass<*>, fn: () -> AggregateFactory<*, *>) {
         aggregateFactoryResolver.register(kClass, fn)
     }
 
-    fun registerFactory(kClass: KClass<*>, converter: AggregateFactory<*>) {
+    fun registerFactory(kClass: KClass<*>, converter: AggregateFactory<*, *>) {
         aggregateFactoryResolver.register(kClass, converter)
     }
 
-    override fun <A : Aggregate> factoryOf(type: KClass<A>): AggregateFactory<A> {
+    override fun <A : Aggregate<S>, S: State> factoryOf(type: KClass<A>): AggregateFactory<A, S> {
         if (aggregateFactoryResolver.canResolve(type)) {
             return aggregateFactoryResolver.resolve(type)
         }

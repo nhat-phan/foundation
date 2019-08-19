@@ -99,9 +99,10 @@ object EventConverterGenerator {
 
     internal fun getCreateEventDataCodeBlock(eventDataTarget: ClassInfo): CodeBlock {
         val codeBlock = CodeBlock.builder()
+        val eventData = ClassName(eventDataTarget.packageName, eventDataTarget.className)
         codeBlock.add("val data = %T(\n", ClassName(eventDataTarget.packageName, eventDataTarget.className))
             .indent()
-            .add("id = infrastructure.root.idGeneratorOf().generate(),\n")
+            .add("id = infrastructure.root.idGeneratorOf(%T::class).generate(),\n", eventData)
             .add("streamId = streamId,\n")
             .add("streamType = streamType,\n")
             .add("version = version,\n")
@@ -126,7 +127,7 @@ object EventConverterGenerator {
 
         // encrypted
         return CodeBlock.of(
-            ".encrypt(data, %S, event.%L, infrastructure.root)",
+            ".encrypt(data, %S, event.%L, infrastructure)",
             field.name,
             field.name
         )
@@ -135,7 +136,12 @@ object EventConverterGenerator {
     internal fun getReadEventFromEventDataLine(field: EventField): CodeBlock {
         // metadata field, don't care about the other settings
         if (field.metadata) {
-            return CodeBlock.of("%L = %T.readMetadata(data, %S)", field.name, Framework.EventConverterUtility, field.name)
+            return CodeBlock.of(
+                "%L = %T.readMetadata(data, %S)",
+                field.name,
+                Framework.EventConverterUtility,
+                field.name
+            )
         }
 
         // data field, no encrypted
@@ -146,7 +152,7 @@ object EventConverterGenerator {
         // encrypted field but no faked data
         if (field.faked.isEmpty()) {
             return CodeBlock.of(
-                "%L = %T.decrypt(data, %S, null, infrastructure.root)",
+                "%L = %T.decrypt(data, %S, null, infrastructure)",
                 field.name,
                 Framework.EventConverterUtility,
                 field.name
@@ -155,7 +161,7 @@ object EventConverterGenerator {
 
         // encrypted field with faked data
         return CodeBlock.of(
-            "%L = %T.decrypt(data, %S, %S, infrastructure.root)",
+            "%L = %T.decrypt(data, %S, %S, infrastructure)",
             field.name,
             Framework.EventConverterUtility,
             field.name,

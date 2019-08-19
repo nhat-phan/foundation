@@ -7,10 +7,10 @@ import kotlin.reflect.KClass
 
 open class InfrastructureContext(open val self: Infrastructure) {
     @InfrastructureDsl
-    fun <A : Aggregate> factoryOf(type: KClass<A>): AggregateFactory<A> = self.factoryOf(type)
+    fun <A : Aggregate<S>, S: State> factoryOf(type: KClass<A>): AggregateFactory<A, S> = self.factoryOf(type)
 
     @InfrastructureDsl
-    fun <A : Aggregate> storeOf(type: KClass<A>): AggregateStore<A> = self.storeOf(type)
+    fun <A : Aggregate<S>, S: State> storeOf(type: KClass<A>): StateStore<S> = self.storeOf(type)
 
     @InfrastructureDsl
     fun <T : Any> idGeneratorOf(type: KClass<T>): IdGenerator = self.idGeneratorOf(type)
@@ -34,10 +34,10 @@ open class InfrastructureContext(open val self: Infrastructure) {
     fun encryptor(cipherId: String, algorithm: String): Encryptor = self.encryptor(cipherId, algorithm)
 
     @InfrastructureDsl
-    fun eventStreamOf(eventSourced: AbstractEventSourced): EventStream = eventStreamOf(eventSourced, 0)
+    fun eventStreamOf(eventSourced: AbstractEventSourced<*>): EventStream = eventStreamOf(eventSourced, 0)
 
     @InfrastructureDsl
-    fun eventStreamOf(eventSourced: AbstractEventSourced, version: Int): EventStream =
+    fun eventStreamOf(eventSourced: AbstractEventSourced<*>, version: Int): EventStream =
         self.eventStreamOf(eventSourced, version)
 
     @InfrastructureDsl
@@ -47,10 +47,10 @@ open class InfrastructureContext(open val self: Infrastructure) {
     fun <T : Any> messageConverterOf(type: KClass<T>): MessageConverter<T> = self.messageConverterOf(type)
 
     @InfrastructureDsl
-    fun <T : Aggregate> snapshotStoreOf(type: KClass<T>): SnapshotStore<T> = self.snapshotStoreOf(type)
+    fun <A: Aggregate<S>, S : State> snapshotStoreOf(type: KClass<A>): SnapshotStore<S> = self.snapshotStoreOf(type)
 
     @InfrastructureDsl
-    inline fun <reified T : Aggregate> save(instance: T) {
-        self.storeOf(T::class).save(instance)
+    inline fun <reified A : Aggregate<S>, S: State> save(instance: A) {
+        self.storeOf(A::class).save(instance.data)
     }
 }

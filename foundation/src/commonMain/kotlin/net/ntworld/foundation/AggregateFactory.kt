@@ -1,11 +1,11 @@
 package net.ntworld.foundation
 
-interface AggregateFactory<out A: Aggregate> {
+interface AggregateFactory<out A : Aggregate<S>, S: State> {
+    fun make(state: S): A
+
     fun generate(): A
 
     fun retrieve(id: String): A?
-
-    // fun retrieveAll(): Iterable<A>
 
     fun retrieveOrGenerate(id: String): A {
         val instance = this.retrieve(id)

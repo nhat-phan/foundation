@@ -58,14 +58,14 @@ open class InfrastructureResolver(
         return included.last().setNext(next)
     }
 
-    override fun <A : Aggregate> factoryOf(type: KClass<A>): AggregateFactory<A> {
+    override fun <A : Aggregate<D>, D : State> factoryOf(type: KClass<A>): AggregateFactory<A, D> {
         if (null !== next) {
             return next!!.factoryOf(type)
         }
         throw CannotResolveException("Infrastructure.factoryOf() cannot resolve $type")
     }
 
-    override fun <A : Aggregate> storeOf(type: KClass<A>): AggregateStore<A> {
+    override fun <A : Aggregate<D>, D : State> storeOf(type: KClass<A>): StateStore<D> {
         if (null !== next) {
             return next!!.storeOf(type)
         }
@@ -121,7 +121,7 @@ open class InfrastructureResolver(
         throw CannotResolveException("Infrastructure.faker() cannot be resolved)")
     }
 
-    override fun eventStreamOf(eventSourced: AbstractEventSourced, version: Int): EventStream {
+    override fun eventStreamOf(eventSourced: AbstractEventSourced<*>, version: Int): EventStream {
         if (null !== next) {
             return next!!.eventStreamOf(eventSourced, version)
         }
@@ -149,7 +149,7 @@ open class InfrastructureResolver(
         throw CannotResolveException("Infrastructure.messageConverterOf() cannot resolve $type")
     }
 
-    override fun <T : Aggregate> snapshotStoreOf(type: KClass<T>): SnapshotStore<T> {
+    override fun <A : Aggregate<D>, D : State> snapshotStoreOf(type: KClass<A>): SnapshotStore<D> {
         if (null !== next) {
             return next!!.snapshotStoreOf(type)
         }

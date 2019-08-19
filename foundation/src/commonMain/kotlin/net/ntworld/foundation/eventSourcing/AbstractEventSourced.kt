@@ -1,8 +1,9 @@
 package net.ntworld.foundation.eventSourcing
 
 import net.ntworld.foundation.Aggregate
+import net.ntworld.foundation.State
 
-abstract class AbstractEventSourced : Aggregate {
+abstract class AbstractEventSourced<T: State> : Aggregate<T> {
     internal var version: Int = 0
         private set
 

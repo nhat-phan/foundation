@@ -1,7 +1,8 @@
 package net.ntworld.foundation.eventSourcing
 
 import net.ntworld.foundation.Aggregate
-import net.ntworld.foundation.AggregateStore
+import net.ntworld.foundation.StateStore
+import net.ntworld.foundation.State
 import net.ntworld.foundation.Infrastructure
 import kotlin.reflect.KClass
 
@@ -13,18 +14,17 @@ object EventSourcedStoreUtility {
      *   1. Convert unpublished events to event data then save to EventStream
      *   2. Publish events via event bus
      *   3. Save snapshot to persistence using SnapshotStore
-     *   4. Save given aggregate to persistence using AggregateStore
-     * The step 4 is skipped if SnapshotStore & AggregateStore are the same instance
+     *   4. Save given aggregate to persistence using StateStore
+     * The step 4 is skipped if SnapshotStore & StateStore are the same instance
      *
      * Please note that because we are using Event Sourcing then the EventStream is
      * single source of truth, then if there is no events this function will do nothing
      */
-    fun <A : Aggregate> savePublishEvents(
+    fun <A : Aggregate<D>, D : State> savePublishEvents(
         infrastructure: Infrastructure,
         aggregateKlass: KClass<A>,
-        store: AggregateStore<A>,
-        data: A,
-        eventSourced: AbstractEventSourced
+        store: StateStore<D>,
+        eventSourced: AbstractEventSourced<D>
     ): Boolean {
         if (eventSourced.unpublishedEvents.isEmpty()) {
             return true
@@ -34,27 +34,27 @@ object EventSourcedStoreUtility {
         val streamType = eventSourced.streamType
         val version = eventSourced.version + 1
         val events = eventSourced.unpublishedEvents.mapIndexed { index, event ->
-            infrastructure.eventConverterOf(event).toEventData(
+            infrastructure.root.eventConverterOf(event).toEventData(
                 streamId,
                 streamType,
                 version + index,
                 event
             )
         }
-        infrastructure.eventStreamOf(eventSourced).write(events)
+        infrastructure.root.eventStreamOf(eventSourced).write(events)
 
-        val eventBus = infrastructure.eventBus()
+        val eventBus = infrastructure.root.eventBus()
         for (i in 0..events.lastIndex) {
             eventBus.publish(events[i], eventSourced.unpublishedEvents[i])
         }
 
-        val snapshotStore = infrastructure.snapshotStoreOf(aggregateKlass)
+        val snapshotStore = infrastructure.root.snapshotStoreOf(aggregateKlass)
         snapshotStore.saveSnapshot(
-            Snapshot(aggregate = eventSourced, version = events.last().version) as Snapshot<A>
+            Snapshot(data = eventSourced.data, version = events.last().version)
         )
 
         if (snapshotStore !== store) {
-            store.save(data)
+            store.save(eventSourced.data)
         }
         return true
     }

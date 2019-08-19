@@ -13,9 +13,9 @@ interface Infrastructure {
 
     fun setNext(next: Infrastructure): Infrastructure
 
-    fun <A : Aggregate> factoryOf(type: KClass<A>): AggregateFactory<A>
+    fun <A : Aggregate<S>, S : State> factoryOf(type: KClass<A>): AggregateFactory<A, S>
 
-    fun <A : Aggregate> storeOf(type: KClass<A>): AggregateStore<A>
+    fun <A : Aggregate<S>, S : State> storeOf(type: KClass<A>): StateStore<S>
 
     fun <T : Any> idGeneratorOf(type: KClass<T>): IdGenerator
 
@@ -33,17 +33,17 @@ interface Infrastructure {
 
     fun encryptor(cipherId: String, algorithm: String): Encryptor
 
-    fun eventStreamOf(eventSourced: AbstractEventSourced): EventStream = eventStreamOf(eventSourced, 0)
+    fun eventStreamOf(eventSourced: AbstractEventSourced<*>): EventStream = eventStreamOf(eventSourced, 0)
 
-    fun eventStreamOf(eventSourced: AbstractEventSourced, version: Int): EventStream
+    fun eventStreamOf(eventSourced: AbstractEventSourced<*>, version: Int): EventStream
 
     fun eventConverterOf(event: Event): EventConverter<Event>
 
     fun eventConverterOf(type: String, variant: Int): EventConverter<Event>
 
-    fun <T: Any> messageConverterOf(type: KClass<T>): MessageConverter<T>
+    fun <T : Any> messageConverterOf(type: KClass<T>): MessageConverter<T>
 
-    fun <T : Aggregate> snapshotStoreOf(type: KClass<T>): SnapshotStore<T>
+    fun <A : Aggregate<D>, D : State> snapshotStoreOf(type: KClass<A>): SnapshotStore<D>
 
     operator fun <T> invoke(block: InfrastructureContext.() -> T): T {
         return block.invoke(InfrastructureContext(this))

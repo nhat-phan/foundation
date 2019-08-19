@@ -21,11 +21,11 @@ open class InfrastructureWrapper(private val base: Infrastructure) : Infrastruct
         return this.base.setNext(next)
     }
 
-    override fun <A : Aggregate> factoryOf(type: KClass<A>): AggregateFactory<A> {
+    override fun <A : Aggregate<D>, D : State> factoryOf(type: KClass<A>): AggregateFactory<A, D> {
         return base.factoryOf(type)
     }
 
-    override fun <A : Aggregate> storeOf(type: KClass<A>): AggregateStore<A> {
+    override fun <A : Aggregate<D>, D : State> storeOf(type: KClass<A>): StateStore<D> {
         return base.storeOf(type)
     }
 
@@ -57,7 +57,7 @@ open class InfrastructureWrapper(private val base: Infrastructure) : Infrastruct
         return base.faker()
     }
 
-    override fun eventStreamOf(eventSourced: AbstractEventSourced, version: Int): EventStream {
+    override fun eventStreamOf(eventSourced: AbstractEventSourced<*>, version: Int): EventStream {
         return base.eventStreamOf(eventSourced, version)
     }
 
@@ -73,7 +73,7 @@ open class InfrastructureWrapper(private val base: Infrastructure) : Infrastruct
         return base.messageConverterOf(type)
     }
 
-    override fun <T : Aggregate> snapshotStoreOf(type: KClass<T>): SnapshotStore<T> {
+    override fun <A : Aggregate<D>, D : State> snapshotStoreOf(type: KClass<A>): SnapshotStore<D> {
         return base.snapshotStoreOf(type)
     }
 }

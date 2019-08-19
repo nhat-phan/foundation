@@ -1,5 +1,5 @@
 package net.ntworld.foundation.eventSourcing
 
-import net.ntworld.foundation.Aggregate
+import net.ntworld.foundation.State
 
-data class Snapshot<T : Aggregate>(val aggregate: T, val version: Int)
+data class Snapshot<T : State>(val data: T, val version: Int)

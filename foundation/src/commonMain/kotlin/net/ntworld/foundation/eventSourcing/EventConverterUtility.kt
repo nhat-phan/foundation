@@ -27,7 +27,7 @@ object EventConverterUtility {
         infrastructure: Infrastructure
     ): EventConverterUtility {
         val infoKey = encryptorInfoKey(name)
-        val encryptor = infrastructure.encryptor()
+        val encryptor = infrastructure.root.encryptor()
         this.write(eventData, name, encryptor.encrypt(value))
         this.writeMetadata(eventData, infoKey, EncryptorInfo(encryptor.cipherId, encryptor.algorithm))
 
@@ -49,7 +49,7 @@ object EventConverterUtility {
         }
 
         val info: EncryptorInfo = this.readMetadata(eventData, infoKey)
-        val encryptor = infrastructure.encryptor(info.cipherId, info.algorithm)
+        val encryptor = infrastructure.root.encryptor(info.cipherId, info.algorithm)
         return encryptor.decrypt(
             this.read(eventData, name)
         )
