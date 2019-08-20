@@ -1,5 +1,6 @@
 package net.ntworld.foundation.generator
 
+import net.ntworld.foundation.generator.setting.AggregateFactorySettings
 import net.ntworld.foundation.generator.setting.EventSettings
 import net.ntworld.foundation.generator.type.ClassInfo
 import java.lang.Math.min
@@ -23,6 +24,20 @@ internal object Utility {
         return ClassInfo(
             className = "${settings.event.className}Data",
             packageName = findTargetNamespace(settings.event.packageName)
+        )
+    }
+
+    fun findAggregateFactoryTarget(settings: AggregateFactorySettings): ClassInfo {
+        val name = "${settings.aggregate.className}Factory"
+        if (settings.isAbstract) {
+            return ClassInfo(
+                className = "Abstract$name",
+                packageName = findTargetNamespace(settings.aggregate.packageName)
+            )
+        }
+        return ClassInfo(
+            className = "$name",
+            packageName = findTargetNamespace(settings.aggregate.packageName)
         )
     }
 

@@ -18,8 +18,11 @@ internal object Framework {
     val Message = ClassName(namespace, "Message")
     val MessageConverter = ClassName(namespace, "MessageConverter")
 
+    val AggregateFactory = ClassName(namespace, "AggregateFactory")
+
     val EventData = ClassName("$namespace.eventSourcing", "EventData")
     val EventConverter = ClassName("$namespace.eventSourcing", "EventConverter")
+    val EventSourcedFactoryUtility = ClassName("$namespace.eventSourcing", "EventSourcedFactoryUtility")
 
     val EventMessageConverterUtility = ClassName("$namespace.eventSourcing", "EventMessageConverterUtility")
     val EventConverterUtility = ClassName("$namespace.eventSourcing", "EventConverterUtility")
