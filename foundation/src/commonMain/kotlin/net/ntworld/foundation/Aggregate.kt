@@ -1,9 +1,7 @@
 package net.ntworld.foundation
 
-interface Aggregate<T : State> : Entity {
-    val isGenerated: Boolean
-    val data: T
+interface Aggregate<T : State> {
+    val id: String
 
-    val isExists: Boolean
-        get() = !isGenerated
+    val state: T
 }

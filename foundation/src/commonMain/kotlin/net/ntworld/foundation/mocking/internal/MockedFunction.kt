@@ -1,6 +1,7 @@
 package net.ntworld.foundation.mocking.internal
 
 import net.ntworld.foundation.mocking.InvokeData
+import net.ntworld.foundation.mocking.MockingException
 import net.ntworld.foundation.mocking.ParameterList
 import kotlin.reflect.KFunction
 
@@ -33,19 +34,19 @@ internal class MockedFunction<R>(private val func: KFunction<R>) {
 
     fun verify() {
         if (calledCount != -1 && calledCount != calls.count()) {
-            throw Exception("Expect function ${getKeyedName(func)} called $calledCount time(s) but it actually called ${calls.count()} time(s).")
+            throw MockingException("Expect function ${getKeyedName(func)} called $calledCount time(s) but it actually called ${calls.count()} time(s).")
         }
 
         if (calledAtLeast != -1 && calledAtLeast < calls.count()) {
-            throw Exception("Expect function ${getKeyedName(func)} called at least $calledAtLeast time(s) but it actually called ${calls.count()} time(s).")
+            throw MockingException("Expect function ${getKeyedName(func)} called at least $calledAtLeast time(s) but it actually called ${calls.count()} time(s).")
         }
 
         if (null !== calledWith2 && !calls.verify(calledWith2!!)) {
-            throw Exception("Expect function ${getKeyedName(func)} called with params is failed.")
+            throw MockingException("Expect function ${getKeyedName(func)} called with params is failed.")
         }
 
         if (null !== calledWith1 && !calls.verify(calledWith1!!)) {
-            throw Exception("Expect function ${getKeyedName(func)} called with params is failed.")
+            throw MockingException("Expect function ${getKeyedName(func)} called with params is failed.")
         }
 
         this.reset()
@@ -65,7 +66,7 @@ internal class MockedFunction<R>(private val func: KFunction<R>) {
             return calls.returnResult(params, result as R)
         }
 
-        throw Exception("Could not invoke a mocking function, please use mock(...) to set a result or callFake first")
+        throw MockingException("Could not invoke a mocking function, please use mock(...) to set a result or callFake first")
     }
 
     fun setResult(result: R) {

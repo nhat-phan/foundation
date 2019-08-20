@@ -1,6 +1,6 @@
 package net.ntworld.foundation
 
-interface AggregateFactory<out A : Aggregate<S>, S: State> {
+interface AggregateFactory<out A : Aggregate<S>, S : State> {
     fun make(state: S): A
 
     fun generate(): A
@@ -18,7 +18,7 @@ interface AggregateFactory<out A : Aggregate<S>, S: State> {
     fun retrieveOrFail(id: String): A {
         val instance = this.retrieve(id)
         if (null === instance) {
-            throw Exception("Not found")
+            throw NotFoundException()
         }
         return instance
     }

@@ -6,7 +6,7 @@ import net.ntworld.foundation.eventSourcing.*
 import kotlin.reflect.KClass
 
 class MemorizedInfrastructure(base: Infrastructure) : InfrastructureWrapper(base) {
-    private val _factories = mutableMapOf<KClass<*>, AggregateFactory<*, *>>()
+    private val _aggregateFactories = mutableMapOf<KClass<*>, AggregateFactory<*, *>>()
     private val _stores = mutableMapOf<KClass<*>, StateStore<*>>()
     private val _idGenerators = mutableMapOf<KClass<*>, IdGenerator>()
     private var _queryBus: QueryBus? = null
@@ -21,11 +21,11 @@ class MemorizedInfrastructure(base: Infrastructure) : InfrastructureWrapper(base
     private var _messageConverters = mutableMapOf<KClass<*>, MessageConverter<*>>()
     private var _snapshotStores = mutableMapOf<KClass<*>, SnapshotStore<*>>()
 
-    override fun <A : Aggregate<D>, D : State> factoryOf(type: KClass<A>): AggregateFactory<A, D> {
-        if (!_factories.containsKey(type)) {
-            _factories[type] = super.factoryOf(type)
+    override fun <A : Aggregate<S>, S : State> factoryOf(type: KClass<A>): AggregateFactory<A, S> {
+        if (!_aggregateFactories.containsKey(type)) {
+            _aggregateFactories[type] = super.factoryOf(type)
         }
-        return _factories[type] as AggregateFactory<A, D>
+        return _aggregateFactories[type] as AggregateFactory<A, S>
     }
 
     override fun <A : Aggregate<D>, D : State> storeOf(type: KClass<A>): StateStore<D> {
@@ -116,10 +116,10 @@ class MemorizedInfrastructure(base: Infrastructure) : InfrastructureWrapper(base
         return _messageConverters[type] as MessageConverter<T>
     }
 
-    override fun <A: Aggregate<D>, D: State> snapshotStoreOf(type: KClass<A>): SnapshotStore<D> {
+    override fun <A : Aggregate<S>, S : State> snapshotStoreOf(type: KClass<A>): SnapshotStore<S> {
         if (!_snapshotStores.containsKey(type)) {
             _snapshotStores[type] = super.snapshotStoreOf(type)
         }
-        return _snapshotStores[type] as SnapshotStore<D>
+        return _snapshotStores[type] as SnapshotStore<S>
     }
 }

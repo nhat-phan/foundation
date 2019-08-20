@@ -1,3 +1,7 @@
 package net.ntworld.foundation
 
-interface State
+interface State {
+    val id: String
+
+    val isGenerated: Boolean
+}

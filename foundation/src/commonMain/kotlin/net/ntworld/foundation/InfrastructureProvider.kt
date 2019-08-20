@@ -13,7 +13,7 @@ open class InfrastructureProvider : InfrastructureResolver() {
     private val messageConverterResolver = MessageConverterResolver()
 
     // -----------------------------------------------------------------------------------
-    // Factory
+    // Aggregate Factory
     // -----------------------------------------------------------------------------------
 
     fun registerFactory(kClass: KClass<*>, fn: () -> AggregateFactory<*, *>) {

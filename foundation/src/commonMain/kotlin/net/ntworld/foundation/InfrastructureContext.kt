@@ -51,6 +51,6 @@ open class InfrastructureContext(open val self: Infrastructure) {
 
     @InfrastructureDsl
     inline fun <reified A : Aggregate<S>, S: State> save(instance: A) {
-        self.storeOf(A::class).save(instance.data)
+        self.storeOf(A::class).save(instance.state)
     }
 }

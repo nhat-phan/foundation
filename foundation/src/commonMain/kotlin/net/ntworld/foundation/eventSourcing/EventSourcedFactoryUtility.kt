@@ -16,7 +16,7 @@ object EventSourcedFactoryUtility {
         if (null !== snapshot) {
             return rehydrate(
                 infrastructure = infrastructure,
-                eventSourced = eventSourcedMaker.invoke(snapshot.data),
+                eventSourced = eventSourcedMaker.invoke(snapshot.state),
                 version = snapshot.version
             )
         }

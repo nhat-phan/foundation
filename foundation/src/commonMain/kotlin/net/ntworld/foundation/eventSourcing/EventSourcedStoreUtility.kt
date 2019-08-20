@@ -50,11 +50,11 @@ object EventSourcedStoreUtility {
 
         val snapshotStore = infrastructure.root.snapshotStoreOf(aggregateKlass)
         snapshotStore.saveSnapshot(
-            Snapshot(data = eventSourced.data, version = events.last().version)
+            Snapshot(state = eventSourced.state, version = events.last().version)
         )
 
         if (snapshotStore !== store) {
-            store.save(eventSourced.data)
+            store.save(eventSourced.state)
         }
         return true
     }
