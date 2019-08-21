@@ -110,7 +110,7 @@ class EventProcessor : AbstractProcessor() {
     private fun collectEventField(element: Element, block: (item: CollectedEventField) -> CollectedEventField) {
         if (element.kind !== ElementKind.FIELD || element.enclosingElement.kind !== ElementKind.CLASS) {
             throw FoundationProcessorException(
-                "@Encrypt only support field inside an Event class"
+                "@EventSourcing.Encrypt only support field inside an Event class"
             )
         }
 
@@ -126,7 +126,7 @@ class EventProcessor : AbstractProcessor() {
 
     private fun getPackageNameOfEvent(element: Element): String {
         val upperElement = element.enclosingElement as? PackageElement ?: throw FoundationProcessorException(
-            "@Event.Type do not support nested class."
+            "@EventSourcing do not support nested class."
         )
 
         return upperElement.qualifiedName.toString()
@@ -142,7 +142,6 @@ class EventProcessor : AbstractProcessor() {
                 faked = ""
             )
         }
-
     }
 
     private fun initEventSettingsIfNeeded(packageName: String, className: String) {
@@ -172,6 +171,7 @@ class EventProcessor : AbstractProcessor() {
         }
 
         return GeneratorSettings(
+            aggregateFactories = emptyList(),
             events = events.toList()
         )
     }

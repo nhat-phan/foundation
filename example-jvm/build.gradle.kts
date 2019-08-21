@@ -14,15 +14,21 @@ repositories {
     jcenter()
     mavenCentral()
     mavenLocal()
+    maven("https://jitpack.io")
 }
 
 dependencies {
+    // ------- Dependencies for development
+    implementation(kotlin("stdlib"))
     implementation(project(":foundation"))
-    implementation(project(":foundation-processor"))
 
     kapt(project(":foundation-processor"))
 
-    implementation(kotlin("stdlib"))
+    // ------- Dependencies for testing with published artifact
+    // implementation(kotlin("stdlib"))
+    // implementation("com.github.nhat-phan.foundation:foundation-jvm:0.1.0.beta-2")
+
+    // kapt("com.github.nhat-phan.foundation:foundation-processor:0.1.0.beta-2")
 }
 
 idea {

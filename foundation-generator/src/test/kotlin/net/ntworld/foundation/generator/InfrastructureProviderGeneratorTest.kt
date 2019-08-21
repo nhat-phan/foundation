@@ -8,6 +8,7 @@ class InfrastructureProviderGeneratorTest {
     @Test
     fun testGenerate() {
         val settings = GeneratorSettings(
+            aggregateFactories = listOf(),
             events = listOf(
                 EventSettings(
                     event = ClassInfo(

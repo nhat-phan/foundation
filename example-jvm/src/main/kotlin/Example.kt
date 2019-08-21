@@ -5,10 +5,10 @@ import com.example.event.generated.TodoCreatedEventConverter
 import net.ntworld.foundation.IdGenerator
 import net.ntworld.foundation.InfrastructureProvider
 import net.ntworld.foundation.util.UUIDGenerator
+import kotlin.reflect.KClass
 
 class InfrastructureManager: InfrastructureProvider() {
-
-    override fun idGeneratorOf(): IdGenerator {
+    override fun <T : Any> idGeneratorOf(type: KClass<T>): IdGenerator {
         return UUIDGenerator
     }
 }

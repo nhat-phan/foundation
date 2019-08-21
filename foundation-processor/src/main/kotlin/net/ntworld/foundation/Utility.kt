@@ -16,7 +16,7 @@ internal object Utility {
             FrameworkProcessor.SETTINGS_FILENAME
         ).toFile()
         if (!file.exists()) {
-            return GeneratorSettings(events = listOf())
+            return GeneratorSettings(events = listOf(), aggregateFactories = listOf())
         }
         val content = file.readText()
         return SettingsSerializer.parse(content)

@@ -32,12 +32,12 @@ internal object Utility {
         if (settings.isAbstract) {
             return ClassInfo(
                 className = "Abstract$name",
-                packageName = findTargetNamespace(settings.aggregate.packageName)
+                packageName = findTargetNamespace(settings.implementation.packageName)
             )
         }
         return ClassInfo(
             className = "$name",
-            packageName = findTargetNamespace(settings.aggregate.packageName)
+            packageName = findTargetNamespace(settings.implementation.packageName)
         )
     }
 
