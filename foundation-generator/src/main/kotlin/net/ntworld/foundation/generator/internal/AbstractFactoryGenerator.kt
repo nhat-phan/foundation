@@ -6,13 +6,13 @@ import net.ntworld.foundation.generator.setting.AggregateFactorySettings
 
 internal object AbstractFactoryGenerator {
     internal fun buildType(type: TypeSpec.Builder, settings: AggregateFactorySettings) {
-        addConstructor(type, settings)
+        addConstructor(type)
         addAbstractMethods(type, settings)
         addGenerateFunction(type, settings)
         addRetrieveFunction(type, settings)
     }
 
-    internal fun addConstructor(type: TypeSpec.Builder, settings: AggregateFactorySettings) {
+    internal fun addConstructor(type: TypeSpec.Builder) {
         type.primaryConstructor(
             FunSpec.constructorBuilder()
                 .addParameter("infrastructure", Framework.Infrastructure)

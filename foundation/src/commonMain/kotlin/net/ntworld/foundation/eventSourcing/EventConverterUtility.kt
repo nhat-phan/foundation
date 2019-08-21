@@ -34,10 +34,12 @@ object EventConverterUtility {
         return this
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun <T : Any> read(eventData: EventData, name: String): T {
         return eventData.data[name] as T
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun <T : Any> readMetadata(eventData: EventData, name: String): T {
         return eventData.metadata[name] as T
     }

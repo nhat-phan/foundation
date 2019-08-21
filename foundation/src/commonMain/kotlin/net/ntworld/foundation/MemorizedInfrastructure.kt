@@ -21,6 +21,7 @@ class MemorizedInfrastructure(base: Infrastructure) : InfrastructureWrapper(base
     private var _messageConverters = mutableMapOf<KClass<*>, MessageConverter<*>>()
     private var _snapshotStores = mutableMapOf<KClass<*>, SnapshotStore<*>>()
 
+    @Suppress("UNCHECKED_CAST")
     override fun <A : Aggregate<S>, S : State> factoryOf(type: KClass<A>): AggregateFactory<A, S> {
         if (!_aggregateFactories.containsKey(type)) {
             _aggregateFactories[type] = super.factoryOf(type)
@@ -28,6 +29,7 @@ class MemorizedInfrastructure(base: Infrastructure) : InfrastructureWrapper(base
         return _aggregateFactories[type] as AggregateFactory<A, S>
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun <A : Aggregate<D>, D : State> storeOf(type: KClass<A>): StateStore<D> {
         if (!_stores.containsKey(type)) {
             _stores[type] = super.storeOf(type)
@@ -93,6 +95,7 @@ class MemorizedInfrastructure(base: Infrastructure) : InfrastructureWrapper(base
         return _eventStreams[key] as EventStream
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun eventConverterOf(event: Event): EventConverter<Event> {
         val key = event::class
         if (!_eventConverterClasses.containsKey(key)) {
@@ -101,6 +104,7 @@ class MemorizedInfrastructure(base: Infrastructure) : InfrastructureWrapper(base
         return _eventConverterClasses[key] as EventConverter<Event>
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun eventConverterOf(type: String, variant: Int): EventConverter<Event> {
         val key = "$type:$variant"
         if (!_eventConverters.containsKey(key)) {
@@ -109,6 +113,7 @@ class MemorizedInfrastructure(base: Infrastructure) : InfrastructureWrapper(base
         return _eventConverters[key] as EventConverter<Event>
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun <T : Any> messageConverterOf(type: KClass<T>): MessageConverter<T> {
         if (!_messageConverters.containsKey(type)) {
             _messageConverters[type] = super.messageConverterOf(type)
@@ -116,6 +121,7 @@ class MemorizedInfrastructure(base: Infrastructure) : InfrastructureWrapper(base
         return _messageConverters[type] as MessageConverter<T>
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun <A : Aggregate<S>, S : State> snapshotStoreOf(type: KClass<A>): SnapshotStore<S> {
         if (!_snapshotStores.containsKey(type)) {
             _snapshotStores[type] = super.snapshotStoreOf(type)

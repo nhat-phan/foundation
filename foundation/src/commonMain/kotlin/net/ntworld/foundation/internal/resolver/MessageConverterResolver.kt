@@ -20,6 +20,7 @@ internal class MessageConverterResolver {
         return typeFnMap.containsKey(type) || typeMap.containsKey(type)
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun <T: Any> resolve(type: KClass<T>): MessageConverter<T> {
         if (typeFnMap.containsKey(type)) {
             return typeFnMap[type]!!.invoke() as MessageConverter<T>

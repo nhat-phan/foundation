@@ -4,6 +4,7 @@ val kotlinPoetVersion: String by project
 
 plugins {
     kotlin("jvm") version "1.3.31"
+    `maven-publish`
 }
 
 group = "$artifactGroup"
@@ -20,3 +21,21 @@ dependencies {
     implementation(project(":foundation-generator"))
 }
 
+val sourcesJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("source")
+    from(sourceSets.main.get().allSource)
+}
+
+publishing {
+    repositories {
+        maven {
+            url = uri("$buildDir/repo")
+        }
+    }
+    publications {
+        register("mavenJava", MavenPublication::class) {
+            from(components["java"])
+            artifact(sourcesJar.get())
+        }
+    }
+}

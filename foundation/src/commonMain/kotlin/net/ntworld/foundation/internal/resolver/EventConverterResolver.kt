@@ -23,6 +23,7 @@ internal class EventConverterResolver {
         return typeFnMap.containsKey(event::class) || typeMap.containsKey(event::class)
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun resolve(event: Event): EventConverter<Event> {
         if (typeFnMap.containsKey(event::class)) {
             return typeFnMap[event::class]!!.invoke() as EventConverter<Event>
@@ -47,6 +48,7 @@ internal class EventConverterResolver {
         return keyFnMap.containsKey(key) || keyMap.containsKey(key)
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun resolve(type: String, variant: Int): EventConverter<Event> {
         val key = buildKey(type, variant)
         if (keyFnMap.containsKey(key)) {

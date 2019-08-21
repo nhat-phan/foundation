@@ -92,6 +92,11 @@ object EventDataMessageConverterGenerator {
             .build()
         return FunSpec.builder("fromMessage")
             .addModifiers(KModifier.OVERRIDE)
+            .addAnnotation(
+                AnnotationSpec.builder(Suppress::class)
+                    .addMember("%S", "UNCHECKED_CAST")
+                    .build()
+            )
             .addParameter("message", Framework.Message)
             .addCode(codeBlock)
             .build()

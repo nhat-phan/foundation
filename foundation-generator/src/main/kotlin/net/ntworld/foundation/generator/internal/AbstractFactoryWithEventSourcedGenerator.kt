@@ -6,7 +6,7 @@ import net.ntworld.foundation.generator.setting.AggregateFactorySettings
 
 internal object AbstractFactoryWithEventSourcedGenerator {
     internal fun buildType(type: TypeSpec.Builder, settings: AggregateFactorySettings) {
-        AbstractFactoryGenerator.addConstructor(type, settings)
+        AbstractFactoryGenerator.addConstructor(type)
         AbstractFactoryGenerator.addAbstractMethods(type, settings)
         AbstractFactoryGenerator.addGenerateFunction(type, settings)
         addRetrieveFunction(type, settings)
