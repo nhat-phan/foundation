@@ -41,7 +41,6 @@ class EventProcessor : AbstractProcessor() {
     private val data: MutableMap<String, CollectedEvent> = mutableMapOf()
 
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment?): Boolean {
-        return true
         if (null === annotations || null === roundEnv) {
             return true
         }
@@ -77,7 +76,10 @@ class EventProcessor : AbstractProcessor() {
                 initEventSettingsIfNeeded(packageName, className)
 
                 val annotation = it.getAnnotation(EventSourcing::class.java)
-                it.enclosedElements.filter { it.kind == ElementKind.FIELD }
+                it.enclosedElements
+                    .filter {
+                        it.kind == ElementKind.FIELD && !BLACKLIST.contains(it.simpleName.toString())
+                    }
                     .forEach {
                         initEventFieldIfNeeded(packageName, className, it.simpleName.toString())
                     }
@@ -175,5 +177,9 @@ class EventProcessor : AbstractProcessor() {
             aggregateFactories = emptyList(),
             events = events.toList()
         )
+    }
+
+    companion object {
+        private val BLACKLIST = arrayOf("Companion")
     }
 }

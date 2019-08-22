@@ -2,28 +2,28 @@ package net.ntworld.foundation.util
 
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
+import net.ntworld.foundation.DecryptException
 import net.ntworld.foundation.eventSourcing.Encryptor
 import java.util.*
 import javax.crypto.spec.SecretKeySpec
 import javax.crypto.Cipher
 import javax.crypto.SecretKeyFactory
-import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.PBEKeySpec
 
 class AESEncryptor(
     override val cipherId: String,
-    private val secret: String
+    secret: String,
+    salt: String
 ) : Encryptor {
-    override val algorithm: String = "AES"
-    private val json = Json(JsonConfiguration.Stable)
+    override val algorithm: String = "$ALGORITHM/net.ntworld.foundation.util.AESEncryptor"
     private val encryptor = Cipher.getInstance("AES/ECB/PKCS5Padding")
     private val decryptor = Cipher.getInstance("AES/ECB/PKCS5Padding")
 
     init {
         val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
-        val spec = PBEKeySpec(secret.toCharArray(), byteArrayOf(), 65536, 256);
+        val spec = PBEKeySpec(secret.toCharArray(), salt.toByteArray(), 65536, 256);
         val secretKey = factory.generateSecret(spec)
-        val secretKeySpec = SecretKeySpec(secretKey.encoded, algorithm)
+        val secretKeySpec = SecretKeySpec(secretKey.encoded, ALGORITHM)
 
         encryptor.init(Cipher.ENCRYPT_MODE, secretKeySpec)
         decryptor.init(Cipher.DECRYPT_MODE, secretKeySpec)
@@ -41,8 +41,11 @@ class AESEncryptor(
 
             return String(bytes)
         } catch (exception: Exception) {
-            // TODO: here
-            throw exception
+            throw DecryptException(exception)
         }
+    }
+
+    companion object {
+        private const val ALGORITHM = "AES"
     }
 }

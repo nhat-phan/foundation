@@ -3,10 +3,10 @@ package net.ntworld.foundation.generator
 import com.squareup.kotlinpoet.*
 import net.ntworld.foundation.generator.type.ClassInfo
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import kotlinx.serialization.Serializable
 import net.ntworld.foundation.generator.setting.EventSettings
 
 object EventDataGenerator {
-    private val map = Map::class.parameterizedBy(String::class, Any::class)
 
     fun generate(settings: EventSettings): GeneratedFile {
         val target = Utility.findEventDataTarget(settings)
@@ -27,6 +27,10 @@ object EventDataGenerator {
 
     internal fun buildClass(settings: EventSettings, target: ClassInfo): TypeSpec {
         return TypeSpec.classBuilder(target.className)
+            .addAnnotation(
+                AnnotationSpec.builder(Serializable::class)
+                    .build()
+            )
             .addModifiers(KModifier.DATA)
             .primaryConstructor(buildPrimaryConstructor())
             .addProperties(buildProperties(settings.type, settings.variant))
@@ -40,8 +44,8 @@ object EventDataGenerator {
             PropertySpec.builder("streamId", String::class, KModifier.OVERRIDE).initializer("streamId").build(),
             PropertySpec.builder("streamType", String::class, KModifier.OVERRIDE).initializer("streamType").build(),
             PropertySpec.builder("version", Int::class, KModifier.OVERRIDE).initializer("version").build(),
-            PropertySpec.builder("data", map, KModifier.OVERRIDE).initializer("data").build(),
-            PropertySpec.builder("metadata", map, KModifier.OVERRIDE).initializer("metadata").build(),
+            PropertySpec.builder("data", String::class, KModifier.OVERRIDE).initializer("data").build(),
+            PropertySpec.builder("metadata", String::class, KModifier.OVERRIDE).initializer("metadata").build(),
 
             PropertySpec.builder("type", String::class, KModifier.OVERRIDE)
                 .initializer("%S", type)
@@ -59,8 +63,8 @@ object EventDataGenerator {
             .addParameter("streamId", String::class)
             .addParameter("streamType", String::class)
             .addParameter("version", Int::class)
-            .addParameter("data", map)
-            .addParameter("metadata", map)
+            .addParameter("data", String::class)
+            .addParameter("metadata", String::class)
             .build()
     }
 }

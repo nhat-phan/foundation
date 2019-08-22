@@ -1,5 +1,7 @@
 package net.ntworld.foundation
 
-import net.ntworld.foundation.eventSourcing.Event
-
-class DecryptException(event: Event, field: String) : Exception("Cannot decrypt $field in $event")
+class DecryptException(
+    val previous: Exception? = null
+) : Exception(
+    if (previous !== null) previous.message else null
+)

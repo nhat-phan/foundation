@@ -58,7 +58,7 @@ class AggregateFactoryProcessor : AbstractProcessor() {
         settings.aggregateFactories.forEach {
             Utility.writeGeneratedFile(processingEnv, AggregateFactoryGenerator.generate(it))
         }
-        Utility.writeGeneratedFile(processingEnv, InfrastructureProviderGenerator().generate(mergedSettings))
+        // Utility.writeGeneratedFile(processingEnv, InfrastructureProviderGenerator().generate(mergedSettings))
 
         return true
     }

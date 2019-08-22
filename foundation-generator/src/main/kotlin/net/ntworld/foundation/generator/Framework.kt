@@ -22,6 +22,8 @@ internal object Framework {
 
     val EventData = ClassName("$namespace.eventSourcing", "EventData")
     val EventConverter = ClassName("$namespace.eventSourcing", "EventConverter")
+    val EventDataConverter = ClassName("$namespace.eventSourcing", "EventDataConverter")
+    val EventDataConverterSetting = ClassName("$namespace.eventSourcing.EventDataConverter", "Setting")
     val EventSourcedFactoryUtility = ClassName("$namespace.eventSourcing", "EventSourcedFactoryUtility")
 
     val EventMessageConverterUtility = ClassName("$namespace.eventSourcing", "EventMessageConverterUtility")
@@ -31,6 +33,8 @@ internal object Framework {
     val FakerRelatedSource_JavaFakerWrapper_Jvm = "JavaFakerWrapper"
 
     val JavaFaker = ClassName("com.github.javafaker", "Faker")
+    val Json = ClassName("kotlinx.serialization.json", "Json")
+    val JsonConfiguration = ClassName("kotlinx.serialization.json", "JsonConfiguration")
 
     fun addGeneratedByToolHeader(file: FileSpec.Builder, generator: String?) {
         file.addComment("+-------------------------------------------------------------------------+\n")
