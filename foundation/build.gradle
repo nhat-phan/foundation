@@ -1,16 +1,21 @@
 buildscript {
     ext.artifactGroup = project.findProperty("artifactGroup").toString()
     ext.artifactVersion = project.findProperty("artifactVersion").toString()
+    ext.kotlinxSerializationRuntimeVersion = project.findProperty("kotlinxSerializationRuntimeVersion").toString()
+    ext.javaFakerVersion = project.findProperty("javaFakerVersion").toString()
+    ext.javaUUIDGeneratorVersion = project.findProperty("javaUUIDGeneratorVersion").toString()
 }
 
 plugins {
     id 'kotlin-multiplatform' version '1.3.31'
+    id 'kotlinx-serialization' version '1.3.31'
 }
 
 group "$artifactGroup"
 version "$artifactVersion"
 
 repositories {
+    jcenter()
     mavenCentral()
 }
 
@@ -28,6 +33,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
+                implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlinxSerializationRuntimeVersion"
             }
         }
         commonTest {
@@ -39,8 +45,10 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
-                implementation "com.fasterxml.uuid:java-uuid-generator:3.2.0"
-                implementation "com.github.javafaker:javafaker:1.0.0"
+                implementation kotlin('reflect')
+                implementation "com.fasterxml.uuid:java-uuid-generator:$javaUUIDGeneratorVersion"
+                implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinxSerializationRuntimeVersion"
+                implementation "com.github.javafaker:javafaker:$javaFakerVersion"
             }
         }
         jvmTest {
@@ -52,6 +60,7 @@ kotlin {
         jsMain {
             dependencies {
                 implementation kotlin('stdlib-js')
+                implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlinxSerializationRuntimeVersion"
             }
         }
         jsTest {

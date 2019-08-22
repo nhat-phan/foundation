@@ -1,8 +1,8 @@
-import org.jetbrains.kotlin.cli.jvm.main
-
 val artifactGroup: String by project
 val artifactVersion: String by project
 val kotlinPoetVersion: String by project
+val kotlinxSerializationRuntimeVersion: String by project
+val javaFakerVersion: String by project
 
 plugins {
     kotlin("jvm") version "1.3.31"
@@ -22,12 +22,12 @@ dependencies {
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
     implementation("com.squareup:kotlinpoet:$kotlinPoetVersion")
-    implementation("com.github.javafaker:javafaker:1.0.0")
-    compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.11.1")
+    implementation("com.github.javafaker:javafaker:$javaFakerVersion")
+    compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinxSerializationRuntimeVersion")
 
     testImplementation(kotlin("test"))
     testImplementation(kotlin("test-junit"))
-    testImplementation("com.github.javafaker:javafaker:1.0.0")
+    testImplementation("com.github.javafaker:javafaker:$javaFakerVersion")
 }
 
 val sourcesJar by tasks.registering(Jar::class) {

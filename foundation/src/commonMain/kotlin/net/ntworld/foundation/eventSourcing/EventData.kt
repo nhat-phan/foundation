@@ -7,8 +7,8 @@ interface EventData {
     val streamId: String
     val streamType: String
     val version: Int
-    val data: Map<String, Any>
-    val metadata: Map<String, Any>
+    val data: String
+    val metadata: String
 
     val stream: String
         get() = "$streamType:$streamId"

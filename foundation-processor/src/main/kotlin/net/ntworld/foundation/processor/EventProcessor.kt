@@ -41,6 +41,7 @@ class EventProcessor : AbstractProcessor() {
     private val data: MutableMap<String, CollectedEvent> = mutableMapOf()
 
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment?): Boolean {
+        return true
         if (null === annotations || null === roundEnv) {
             return true
         }

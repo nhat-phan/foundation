@@ -26,9 +26,9 @@ dependencies {
 
     // ------- Dependencies for testing with published artifact
     // implementation(kotlin("stdlib"))
-    // implementation("com.github.nhat-phan.foundation:foundation-jvm:0.1.0.beta-2")
+    // implementation("com.github.nhat-phan.foundation:foundation-jvm:$artifactVersion")
 
-    // kapt("com.github.nhat-phan.foundation:foundation-processor:0.1.0.beta-2")
+    // kapt("com.github.nhat-phan.foundation:foundation-processor:$artifactVersion")
 }
 
 idea {

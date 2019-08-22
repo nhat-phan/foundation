@@ -4,7 +4,7 @@ interface Encryptor {
     val cipherId: String
     val algorithm: String
 
-    fun <T : Any> encrypt(value: T): String
+    fun encrypt(input: String): String
 
-    fun <T : Any> decrypt(value: String): T
+    fun decrypt(input: String): String
 }
