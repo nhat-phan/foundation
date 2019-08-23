@@ -5,7 +5,7 @@ import net.ntworld.foundation.State
 import net.ntworld.foundation.Infrastructure
 import kotlin.reflect.KClass
 
-object EventSourcedFactoryUtility {
+object EventSourcedFactory {
     fun <T : AbstractEventSourced<*>, A : Aggregate<S>, S: State> retrieve(
         infrastructure: Infrastructure,
         aggregateKlass: KClass<A>,

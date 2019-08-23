@@ -8,6 +8,8 @@ import kotlin.reflect.KClass
 open class InfrastructureResolver(
     next: Infrastructure? = null
 ) : Infrastructure {
+
+
     private var included: List<Infrastructure> = listOf()
     private var next: Infrastructure? = null
     private var nextOrigin: Infrastructure? = next
@@ -56,6 +58,13 @@ open class InfrastructureResolver(
             return next
         }
         return included.last().setNext(next)
+    }
+
+    override fun environment(): Environment {
+        if (null !== next) {
+            return next!!.environment()
+        }
+        throw CannotResolveException("Infrastructure.environment() cannot be resolved")
     }
 
     override fun <A : Aggregate<D>, D : State> factoryOf(type: KClass<A>): AggregateFactory<A, D> {

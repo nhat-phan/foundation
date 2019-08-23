@@ -6,6 +6,7 @@ import net.ntworld.foundation.eventSourcing.*
 import kotlin.reflect.KClass
 
 class MemorizedInfrastructure(base: Infrastructure) : InfrastructureWrapper(base) {
+    private var _environment: Environment? = null
     private val _aggregateFactories = mutableMapOf<KClass<*>, AggregateFactory<*, *>>()
     private val _stores = mutableMapOf<KClass<*>, StateStore<*>>()
     private val _idGenerators = mutableMapOf<KClass<*>, IdGenerator>()
@@ -20,6 +21,14 @@ class MemorizedInfrastructure(base: Infrastructure) : InfrastructureWrapper(base
     private var _eventConverters = mutableMapOf<String, EventConverter<*>>()
     private var _messageConverters = mutableMapOf<KClass<*>, MessageConverter<*>>()
     private var _snapshotStores = mutableMapOf<KClass<*>, SnapshotStore<*>>()
+
+
+    override fun environment(): Environment {
+        if (null === _environment) {
+            _environment = super.environment()
+        }
+        return _environment!!
+    }
 
     @Suppress("UNCHECKED_CAST")
     override fun <A : Aggregate<S>, S : State> factoryOf(type: KClass<A>): AggregateFactory<A, S> {

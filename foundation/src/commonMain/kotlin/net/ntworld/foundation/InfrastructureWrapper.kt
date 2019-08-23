@@ -21,6 +21,10 @@ open class InfrastructureWrapper(private val base: Infrastructure) : Infrastruct
         return this.base.setNext(next)
     }
 
+    override fun environment(): Environment {
+        return base.environment()
+    }
+
     override fun <A : Aggregate<D>, D : State> factoryOf(type: KClass<A>): AggregateFactory<A, D> {
         return base.factoryOf(type)
     }

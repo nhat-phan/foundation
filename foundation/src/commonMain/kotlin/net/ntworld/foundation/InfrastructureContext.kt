@@ -7,10 +7,13 @@ import kotlin.reflect.KClass
 
 open class InfrastructureContext(open val self: Infrastructure) {
     @InfrastructureDsl
-    fun <A : Aggregate<S>, S: State> factoryOf(type: KClass<A>): AggregateFactory<A, S> = self.factoryOf(type)
+    fun environment(): Environment = self.environment()
 
     @InfrastructureDsl
-    fun <A : Aggregate<S>, S: State> storeOf(type: KClass<A>): StateStore<S> = self.storeOf(type)
+    fun <A : Aggregate<S>, S : State> factoryOf(type: KClass<A>): AggregateFactory<A, S> = self.factoryOf(type)
+
+    @InfrastructureDsl
+    fun <A : Aggregate<S>, S : State> storeOf(type: KClass<A>): StateStore<S> = self.storeOf(type)
 
     @InfrastructureDsl
     fun <T : Any> idGeneratorOf(type: KClass<T>): IdGenerator = self.idGeneratorOf(type)
@@ -47,10 +50,10 @@ open class InfrastructureContext(open val self: Infrastructure) {
     fun <T : Any> messageConverterOf(type: KClass<T>): MessageConverter<T> = self.messageConverterOf(type)
 
     @InfrastructureDsl
-    fun <A: Aggregate<S>, S : State> snapshotStoreOf(type: KClass<A>): SnapshotStore<S> = self.snapshotStoreOf(type)
+    fun <A : Aggregate<S>, S : State> snapshotStoreOf(type: KClass<A>): SnapshotStore<S> = self.snapshotStoreOf(type)
 
     @InfrastructureDsl
-    inline fun <reified A : Aggregate<S>, S: State> save(instance: A) {
+    inline fun <reified A : Aggregate<S>, S : State> save(instance: A) {
         self.storeOf(A::class).save(instance.state)
     }
 }

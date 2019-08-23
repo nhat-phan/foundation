@@ -1,6 +1,7 @@
 package net.ntworld.foundation.eventSourcing
 
 import kotlinx.serialization.json.*
+import net.ntworld.foundation.DecryptException
 import net.ntworld.foundation.Infrastructure
 
 class EventDataConverter(
@@ -104,8 +105,34 @@ class EventDataConverter(
             algorithm = algorithm!!.content
         )
 
-        val plain = encryptor.decrypt(encrypted!!.content)
-        val plainMap = json.parse(JsonObject.serializer(), plain)
-        plainMap.forEach { raw[it.key] = it.value }
+        try {
+            val plain = encryptor.decrypt(encrypted!!.content)
+            val plainMap = json.parse(JsonObject.serializer(), plain)
+            plainMap.forEach { raw[it.key] = it.value }
+        } catch (exception: DecryptException) {
+            val env = infrastructure.root.environment()
+            if (!env.allowAnonymization) {
+                throw exception
+            }
+
+            generateAnonymizedData().forEach { raw[it.key] = it.value }
+        }
+    }
+
+    internal fun generateAnonymizedData(): Map<String, JsonElement> {
+        val faker = infrastructure.root.faker()
+        val result = mutableMapOf<String, JsonElement>()
+        for (field in fields) {
+            if (!field.value.encrypted || field.value.faked.isEmpty()) {
+                continue
+            }
+            val data = faker.make(field.value.faked)
+            when (data) {
+                is String -> result[field.key] = JsonPrimitive(data)
+                is Number -> result[field.key] = JsonPrimitive(data)
+                is Boolean -> result[field.key] = JsonPrimitive(data)
+            }
+        }
+        return result
     }
 }

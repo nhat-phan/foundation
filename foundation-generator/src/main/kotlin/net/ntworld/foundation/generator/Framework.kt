@@ -24,7 +24,7 @@ internal object Framework {
     val EventConverter = ClassName("$namespace.eventSourcing", "EventConverter")
     val EventDataConverter = ClassName("$namespace.eventSourcing", "EventDataConverter")
     val EventDataConverterSetting = ClassName("$namespace.eventSourcing.EventDataConverter", "Setting")
-    val EventSourcedFactoryUtility = ClassName("$namespace.eventSourcing", "EventSourcedFactoryUtility")
+    val EventSourcedFactory = ClassName("$namespace.eventSourcing", "EventSourcedFactory")
 
     val EventMessageConverterUtility = ClassName("$namespace.eventSourcing", "EventMessageConverterUtility")
     val EventConverterUtility = ClassName("$namespace.eventSourcing", "EventConverterUtility")

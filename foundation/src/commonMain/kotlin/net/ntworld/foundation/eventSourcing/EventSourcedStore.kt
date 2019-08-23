@@ -6,7 +6,7 @@ import net.ntworld.foundation.State
 import net.ntworld.foundation.Infrastructure
 import kotlin.reflect.KClass
 
-object EventSourcedStoreUtility {
+object EventSourcedStore {
     /**
      * Save event sourced aggregated to store and publish events.
      *

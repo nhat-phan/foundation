@@ -13,6 +13,8 @@ interface Infrastructure {
 
     fun setNext(next: Infrastructure): Infrastructure
 
+    fun environment(): Environment
+
     fun <A : Aggregate<S>, S : State> factoryOf(type: KClass<A>): AggregateFactory<A, S>
 
     fun <A : Aggregate<S>, S : State> storeOf(type: KClass<A>): StateStore<S>

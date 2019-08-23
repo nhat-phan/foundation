@@ -19,7 +19,7 @@ data class TodoCreatedEvent(
     @Encrypted(faked = FakedData.GameOfThrones.character)
     val task: String,
 
-    @Encrypted
+    @Encrypted(faked = FakedData.Number.randomNumber)
     val money: Double
 
 ) : Event

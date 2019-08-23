@@ -1,6 +1,7 @@
 val artifactGroup: String by project
 val artifactVersion: String by project
 val kotlinxSerializationRuntimeVersion: String by project
+val javaFakerVersion: String by project
 
 plugins {
     kotlin("jvm") version "1.3.31"
@@ -24,6 +25,7 @@ dependencies {
     implementation(kotlin("stdlib"))
     implementation(project(":foundation"))
     compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinxSerializationRuntimeVersion")
+    compile("com.github.javafaker:javafaker:$javaFakerVersion")
 
     kapt(project(":foundation-processor"))
 

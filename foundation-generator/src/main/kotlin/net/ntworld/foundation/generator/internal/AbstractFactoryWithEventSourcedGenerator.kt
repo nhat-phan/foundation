@@ -14,7 +14,7 @@ internal object AbstractFactoryWithEventSourcedGenerator {
 
     internal fun addRetrieveFunction(type: TypeSpec.Builder, settings: AggregateFactorySettings) {
         val code = CodeBlock.builder()
-            .add("return %T.retrieve(\n", Framework.EventSourcedFactoryUtility)
+            .add("return %T.retrieve(\n", Framework.EventSourcedFactory)
             .indent()
             .add("infrastructure = infrastructure,\n")
             .add("aggregateKlass = %T::class,\n", settings.aggregate.toClassName())
