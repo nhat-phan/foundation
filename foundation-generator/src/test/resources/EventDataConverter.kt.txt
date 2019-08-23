@@ -2,7 +2,7 @@ package test.event.generated
 
 import net.ntworld.foundation.Message
 import net.ntworld.foundation.MessageConverter
-import net.ntworld.foundation.eventSourcing.EventMessageConverterUtility
+import net.ntworld.foundation.eventSourcing.EventDataMessageConverterUtility
 
 object CreatedEventDataMessageConverter : MessageConverter<CreatedEventData> {
   override fun fromMessage(message: Message) = CreatedEventData(

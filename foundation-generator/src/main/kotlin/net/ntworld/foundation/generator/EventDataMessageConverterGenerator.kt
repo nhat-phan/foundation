@@ -32,33 +32,38 @@ object EventDataMessageConverterGenerator {
                     ClassName(eventData.packageName, eventData.className)
                 )
             )
+            .addProperty(
+                PropertySpec.builder("json", Framework.Json)
+                    .addModifiers(KModifier.PRIVATE)
+                    .initializer("Json(%T.Stable)", Framework.JsonConfiguration)
+                    .build()
+            )
             .addFunction(buildFromMessageFunction(eventData))
             .addFunction(buildToMessageFunction(eventData))
             .addFunction(buildCanConvertFunction(settings))
             .build()
     }
 
-    internal fun buildMessageConverterOfFunction(target: ClassInfo): FunSpec {
-        return FunSpec.builder("messageConverterOf")
-            .addModifiers(KModifier.OVERRIDE)
-            .addParameter("type", KClass::class)
-            .returns(
-                Framework.MessageConverter.parameterizedBy(
-                    ClassName(target.packageName, target.className)
-                )
-            )
-            .build()
-    }
-
     internal fun buildToMessageFunction(target: ClassInfo): FunSpec {
+        val code = CodeBlock.builder()
+        code.add("return %T.toMessage(\n", Framework.EventDataMessageConverterUtility)
+        code.indent()
+        code.indent()
+        code.indent()
+        code.add("json.stringify(%T.serializer(), input),\n", target.toClassName())
+        code.add("input.type,\n")
+        code.add("input.variant\n")
+        code.unindent()
+        code.add(")")
+        code.unindent()
+        code.unindent()
+        code.add("\n")
+
         return FunSpec.builder("toMessage")
             .addModifiers(KModifier.OVERRIDE)
-            .addParameter("input", ClassName(target.packageName, target.className))
+            .addParameter("input", target.toClassName())
             .returns(Framework.Message)
-            .addStatement(
-                "return %T.toMessage(input)",
-                Framework.EventMessageConverterUtility
-            )
+            .addCode(code.build())
             .build()
     }
 
@@ -68,7 +73,7 @@ object EventDataMessageConverterGenerator {
             .addParameter("message", Framework.Message)
             .addStatement(
                 "return %T.canConvert(message, %S, %L)",
-                Framework.EventMessageConverterUtility,
+                Framework.EventDataMessageConverterUtility,
                 settings.type,
                 settings.variant
             )
@@ -78,25 +83,11 @@ object EventDataMessageConverterGenerator {
     internal fun buildFromMessageFunction(target: ClassInfo): FunSpec {
         val codeBlock = CodeBlock.builder()
             .add(
-                "return %T(\n", ClassName(target.packageName, target.className)
+                "return json.parse(%T.serializer(), message.body)\n", ClassName(target.packageName, target.className)
             )
-            .indent()
-            .addStatement("""id = message.attributes["id"] as String,""")
-            .addStatement("""streamId = message.attributes["streamId"] as String,""")
-            .addStatement("""streamType = message.attributes["streamType"] as String,""")
-            .addStatement("""version = message.attributes["version"] as Int,""")
-            .addStatement("""data = message.attributes["data"] as String,""")
-            .addStatement("""metadata = message.attributes["metadata"] as String""")
-            .unindent()
-            .add(")\n")
             .build()
         return FunSpec.builder("fromMessage")
             .addModifiers(KModifier.OVERRIDE)
-            .addAnnotation(
-                AnnotationSpec.builder(Suppress::class)
-                    .addMember("%S", "UNCHECKED_CAST")
-                    .build()
-            )
             .addParameter("message", Framework.Message)
             .addCode(codeBlock)
             .build()

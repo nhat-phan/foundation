@@ -4,17 +4,10 @@ import kotlinx.serialization.json.*
 import net.ntworld.foundation.DecryptException
 import net.ntworld.foundation.Infrastructure
 
-class EventDataConverter(
-    private val infrastructure: Infrastructure,
-    private val json: Json,
-    private val fields: Map<String, Setting>
-) {
-    companion object {
-        private const val ENCRYPTED_CIPHER_ID_KEY = "__encrypted@cipherId"
-        private const val ENCRYPTED_ALGORITHM_KEY = "__encrypted@algorithm"
-        private const val ENCRYPTED_DATA_KEY = "__encrypted@data"
-    }
-
+object EventConverterUtility {
+    private const val ENCRYPTED_CIPHER_ID_KEY = "__encrypted@cipherId"
+    private const val ENCRYPTED_ALGORITHM_KEY = "__encrypted@algorithm"
+    private const val ENCRYPTED_DATA_KEY = "__encrypted@data"
     data class ProcessResult(
         val data: String,
         val metadata: String
@@ -26,7 +19,12 @@ class EventDataConverter(
         val faked: String = ""
     )
 
-    fun processRawJson(raw: String): ProcessResult {
+    fun processRawJson(
+        infrastructure: Infrastructure,
+        json: Json,
+        fields: Map<String, Setting>,
+        raw: String
+    ): ProcessResult {
         val jsonObject = json.parse(JsonObject.serializer(), raw)
         val dataMap = mutableMapOf<String, JsonElement>()
         val encryptedMap = mutableMapOf<String, JsonElement>()
@@ -50,7 +48,7 @@ class EventDataConverter(
             dataMap[entry.key] = entry.value
         }
 
-        this.encrypt(encryptedMap, dataMap)
+        this.encrypt(infrastructure, json, encryptedMap, dataMap)
 
         return ProcessResult(
             data = json.stringify(JsonObject.serializer(), JsonObject(dataMap)),
@@ -58,7 +56,13 @@ class EventDataConverter(
         )
     }
 
-    fun rebuildRawJson(data: String, metadata: String): String {
+    fun rebuildRawJson(
+        infrastructure: Infrastructure,
+        json: Json,
+        fields: Map<String, Setting>,
+        data: String,
+        metadata: String
+    ): String {
         val dataObject = json.parse(JsonObject.serializer(), data)
         val metadataObject = json.parse(JsonObject.serializer(), metadata)
         val rawMap = mutableMapOf<String, JsonElement>()
@@ -78,13 +82,18 @@ class EventDataConverter(
         }
 
         if (hasEncryptedFields) {
-            decrypt(dataObject, rawMap)
+            decrypt(infrastructure, json, fields, dataObject, rawMap)
         }
 
         return json.stringify(JsonObject.serializer(), JsonObject(rawMap))
     }
 
-    internal fun encrypt(map: Map<String, JsonElement>, data: MutableMap<String, JsonElement>) {
+    internal fun encrypt(
+        infrastructure: Infrastructure,
+        json: Json,
+        map: Map<String, JsonElement>,
+        data: MutableMap<String, JsonElement>
+    ) {
         if (map.isNotEmpty()) {
             val encryptor = infrastructure.root.encryptor()
             val encrypted = encryptor.encrypt(
@@ -96,7 +105,13 @@ class EventDataConverter(
         }
     }
 
-    internal fun decrypt(data: Map<String, JsonElement>, raw: MutableMap<String, JsonElement>) {
+    internal fun decrypt(
+        infrastructure: Infrastructure,
+        json: Json,
+        fields: Map<String, Setting>,
+        data: Map<String, JsonElement>,
+        raw: MutableMap<String, JsonElement>
+    ) {
         val cipherId = data[ENCRYPTED_CIPHER_ID_KEY]
         val algorithm = data[ENCRYPTED_ALGORITHM_KEY]
         val encrypted = data[ENCRYPTED_DATA_KEY]
@@ -115,11 +130,14 @@ class EventDataConverter(
                 throw exception
             }
 
-            generateAnonymizedData().forEach { raw[it.key] = it.value }
+            generateAnonymizedData(infrastructure, fields).forEach { raw[it.key] = it.value }
         }
     }
 
-    internal fun generateAnonymizedData(): Map<String, JsonElement> {
+    internal fun generateAnonymizedData(
+        infrastructure: Infrastructure,
+        fields: Map<String, Setting>
+    ): Map<String, JsonElement> {
         val faker = infrastructure.root.faker()
         val result = mutableMapOf<String, JsonElement>()
         for (field in fields) {

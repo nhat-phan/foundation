@@ -48,12 +48,6 @@ object EventConverterGenerator {
                     .initializer("Json(%T.Stable)", Framework.JsonConfiguration)
                     .build()
             )
-            .addProperty(
-                PropertySpec.builder("converter", Framework.EventDataConverter)
-                    .addModifiers(KModifier.PRIVATE)
-                    .initializer("%T(infrastructure, json, fields)", Framework.EventDataConverter)
-                    .build()
-            )
             .addType(buildCompanionObject(settings))
             .addFunction(buildToEventDataFunction(settings))
             .addFunction(buildFromEventDataFunction(settings))
@@ -65,7 +59,10 @@ object EventConverterGenerator {
         val code = CodeBlock.builder()
 
         code.add("val raw = json.stringify(%T.serializer(), event)\n", settings.event.toClassName())
-        code.add("val processed = converter.processRawJson(raw)\n", settings.event.toClassName())
+        code.add(
+            "val processed = %T.processRawJson(infrastructure, json, fields, raw)\n",
+            Framework.EventConverterUtility
+        )
         code.add("return %T(\n", eventDataTarget.toClassName())
         code.indent()
         code.add("id = infrastructure.root.idGeneratorOf(%T::class).generate(),\n", settings.event.toClassName())
@@ -90,7 +87,10 @@ object EventConverterGenerator {
 
     internal fun buildFromEventDataFunction(settings: EventSettings): FunSpec {
         val code = CodeBlock.builder()
-        code.add("val raw = converter.rebuildRawJson(eventData.data, eventData.metadata)\n")
+        code.add(
+            "val raw = %T.rebuildRawJson(infrastructure, json, fields, eventData.data, eventData.metadata)\n",
+            Framework.EventConverterUtility
+        )
         code.add("return json.parse(%T.serializer(), raw)\n", settings.event.toClassName())
 
         return FunSpec.builder("fromEventData")
@@ -123,7 +123,7 @@ object EventConverterGenerator {
                     "fields",
                     ClassName("kotlin.collections", "Map").parameterizedBy(
                         ClassName("kotlin", "String"),
-                        Framework.EventDataConverterSetting
+                        Framework.EventConverterUtilitySetting
                     )
                 )
                     .initializer(code.build())
@@ -134,13 +134,13 @@ object EventConverterGenerator {
 
     internal fun buildFieldSetting(field: EventField): CodeBlock {
         if (field.metadata) {
-            return CodeBlock.of("%T(metadata = true)", Framework.EventDataConverterSetting)
+            return CodeBlock.of("%T(metadata = true)", Framework.EventConverterUtilitySetting)
         }
 
         if (field.encrypted) {
-            return CodeBlock.of("%T(encrypted = true, faked = %S)", Framework.EventDataConverterSetting, field.faked)
+            return CodeBlock.of("%T(encrypted = true, faked = %S)", Framework.EventConverterUtilitySetting, field.faked)
         }
 
-        return CodeBlock.of("%T()", Framework.EventDataConverterSetting)
+        return CodeBlock.of("%T()", Framework.EventConverterUtilitySetting)
     }
 }

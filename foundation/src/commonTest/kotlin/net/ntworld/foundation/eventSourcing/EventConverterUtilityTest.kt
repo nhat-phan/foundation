@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 import kotlin.test.Test
 
-class EventDataConverterTest {
+class EventConverterUtilityTest {
     internal object FakedEncryptor : Encryptor {
         override val cipherId: String = "secret-id"
         override val algorithm: String = "faked"
