@@ -8,21 +8,21 @@ import java.lang.Math.min
 internal object Utility {
     fun findEventConverterTarget(settings: EventSettings): ClassInfo {
         return ClassInfo(
-            className = "${settings.event.className}Converter",
+            className = "${settings.implementation.className}Converter",
             packageName = findTargetNamespace(settings.event.packageName)
         )
     }
 
     fun findEventDataMessageConverterTarget(settings: EventSettings): ClassInfo {
         return ClassInfo(
-            className = "${settings.event.className}DataMessageConverter",
+            className = "${settings.implementation.className}DataMessageConverter",
             packageName = findTargetNamespace(settings.event.packageName)
         )
     }
 
     fun findEventDataTarget(settings: EventSettings): ClassInfo {
         return ClassInfo(
-            className = "${settings.event.className}Data",
+            className = "${settings.implementation.className}Data",
             packageName = findTargetNamespace(settings.event.packageName)
         )
     }

@@ -30,7 +30,8 @@ class InfrastructureProviderGenerator {
 
         val init = CodeBlock.builder()
 
-        settings.events.forEach { buildRegisterCodeForEvent(builder, init, it) }
+        val events = settings.events.sortedWith(EventSettings.Companion.comparator)
+        events.forEach { buildRegisterCodeForEvent(builder, init, it) }
 
         builder.addInitializerBlock(init.build())
 

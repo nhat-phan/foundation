@@ -14,6 +14,10 @@ class EventConverterGeneratorTest {
                 packageName = "test.event",
                 className = "CreatedEvent"
             ),
+            implementation = ClassInfo(
+                packageName = "test.event",
+                className = "CreatedEventImpl"
+            ),
             fields = listOf(
                 EventField(name = "id", metadata = false, encrypted = false, faked = ""),
                 EventField(name = "companyId", metadata = true, encrypted = false, faked = ""),

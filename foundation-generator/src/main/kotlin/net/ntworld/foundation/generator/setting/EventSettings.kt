@@ -24,7 +24,25 @@ import net.ntworld.foundation.generator.type.EventField
 data class EventSettings(
     val name: String,
     val event: ClassInfo,
+    val implementation: ClassInfo,
     val fields: List<EventField>,
     val type: String,
     val variant: Int
-)
+) {
+    companion object {
+        object comparator: Comparator<EventSettings> {
+            override fun compare(o1: EventSettings?, o2: EventSettings?): Int {
+                if (null === o1 || null === o2 ) {
+                    return 0
+                }
+
+                val byType = o1.type.compareTo(o2.type)
+                if (byType == 0) {
+                    return o2.variant.compareTo(o1.variant)
+                }
+                return byType
+            }
+
+        }
+    }
+}

@@ -168,6 +168,7 @@ class EventProcessor : AbstractProcessor() {
             EventSettings(
                 name = "${it.packageName}.${it.className}",
                 event = ClassInfo(packageName = it.packageName, className = it.className),
+                implementation = ClassInfo(packageName = it.packageName, className = it.className),
                 fields = fields,
                 type = it.type,
                 variant = it.variant

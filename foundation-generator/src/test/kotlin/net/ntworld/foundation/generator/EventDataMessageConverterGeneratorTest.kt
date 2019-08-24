@@ -13,6 +13,10 @@ class EventDataMessageConverterGeneratorTest {
                 packageName = "test.event",
                 className = "CreatedEvent"
             ),
+            implementation = ClassInfo(
+                packageName = "test.event",
+                className = "CreatedEvent"
+            ),
             fields = emptyList(),
             type = "created",
             variant = 0

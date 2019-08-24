@@ -13,6 +13,10 @@ class EventDataGeneratorTest {
                 packageName = "test.event",
                 className = "CreatedEvent"
             ),
+            implementation = ClassInfo(
+                packageName = "test.event",
+                className = "CreatedEventImpl"
+            ),
             fields = emptyList(),
             type = "created",
             variant = 0

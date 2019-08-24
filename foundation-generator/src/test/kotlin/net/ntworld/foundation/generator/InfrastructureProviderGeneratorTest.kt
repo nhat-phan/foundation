@@ -16,13 +16,35 @@ class InfrastructureProviderGeneratorTest {
                         packageName = "com.company.event",
                         className = "CreatedEvent"
                     ),
+                    implementation = ClassInfo(
+                        packageName = "com.company.event",
+                        className = "CreatedEvent"
+                    ),
                     fields = emptyList(),
                     type = "created",
                     variant = 0
                 ),
                 EventSettings(
+                    name = "test.event.CreatedEventV1",
+                    event = ClassInfo(
+                        packageName = "com.company.event",
+                        className = "CreatedEventV1"
+                    ),
+                    implementation = ClassInfo(
+                        packageName = "com.company.event",
+                        className = "CreatedEventV1Impl"
+                    ),
+                    fields = emptyList(),
+                    type = "created",
+                    variant = 1
+                ),
+                EventSettings(
                     name = "test.event.UpdatedEvent",
                     event = ClassInfo(
+                        packageName = "com.company.event",
+                        className = "UpdatedEvent"
+                    ),
+                    implementation = ClassInfo(
                         packageName = "com.company.event",
                         className = "UpdatedEvent"
                     ),

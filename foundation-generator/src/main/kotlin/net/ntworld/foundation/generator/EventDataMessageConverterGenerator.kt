@@ -6,6 +6,7 @@ import net.ntworld.foundation.generator.setting.EventSettings
 import net.ntworld.foundation.generator.type.ClassInfo
 import kotlin.reflect.KClass
 
+// TODO: will be rewrite soon
 object EventDataMessageConverterGenerator {
     fun generate(settings: EventSettings): GeneratedFile {
         val target = Utility.findEventDataMessageConverterTarget(settings)

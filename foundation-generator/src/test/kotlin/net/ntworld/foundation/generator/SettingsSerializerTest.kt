@@ -15,6 +15,10 @@ class SettingsSerializerTest {
                 packageName = "test.event",
                 className = "AggregateCreatedEvent"
             ),
+            implementation = ClassInfo(
+                packageName = "test.event",
+                className = "AggregateCreatedEvent"
+            ),
             fields = emptyList(),
             type = "com.test.aggregate:created",
             variant = 0
@@ -22,6 +26,10 @@ class SettingsSerializerTest {
         val output = """{
     "name": "test.event.AggregateCreatedEvent",
     "event": {
+        "className": "AggregateCreatedEvent",
+        "packageName": "test.event"
+    },
+    "implementation": {
         "className": "AggregateCreatedEvent",
         "packageName": "test.event"
     },

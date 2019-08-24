@@ -58,7 +58,7 @@ object EventConverterGenerator {
         val eventDataTarget = Utility.findEventDataTarget(settings)
         val code = CodeBlock.builder()
 
-        code.add("val raw = json.stringify(%T.serializer(), event)\n", settings.event.toClassName())
+        code.add("val raw = json.stringify(%T.serializer(), event)\n", settings.implementation.toClassName())
         code.add(
             "val processed = %T.processRawJson(infrastructure, json, fields, raw)\n",
             Framework.EventConverterUtility
@@ -91,11 +91,11 @@ object EventConverterGenerator {
             "val raw = %T.rebuildRawJson(infrastructure, json, fields, eventData.data, eventData.metadata)\n",
             Framework.EventConverterUtility
         )
-        code.add("return json.parse(%T.serializer(), raw)\n", settings.event.toClassName())
+        code.add("return json.parse(%T.serializer(), raw)\n", settings.implementation.toClassName())
 
         return FunSpec.builder("fromEventData")
             .addModifiers(KModifier.OVERRIDE)
-            .returns(ClassName(settings.event.packageName, settings.event.className))
+            .returns(ClassName(settings.event.packageName, settings.implementation.className))
             .addParameter("eventData", Framework.EventData)
             .addCode(code.build())
             .build()
