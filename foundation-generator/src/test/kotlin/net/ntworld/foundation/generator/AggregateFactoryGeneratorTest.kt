@@ -8,6 +8,7 @@ class AggregateFactoryGeneratorTest {
     @Test
     fun testAbstractFactory() {
         val settings = AggregateFactorySettings(
+            name = "test.aggregate.TodoImpl",
             aggregate = ClassInfo(
                 packageName = "test.aggregate",
                 className = "Todo"
@@ -30,6 +31,7 @@ class AggregateFactoryGeneratorTest {
     @Test
     fun testWrapperFactoryWithEventSourced() {
         val settings = AggregateFactorySettings(
+            name = "test.aggregate.TodoImpl",
             aggregate = ClassInfo(
                 packageName = "test.aggregate",
                 className = "Todo"
@@ -52,6 +54,7 @@ class AggregateFactoryGeneratorTest {
     @Test
     fun testAbstractFactoryWithEventSourced() {
         val settings = AggregateFactorySettings(
+            name = "test.aggregate.TodoImpl",
             aggregate = ClassInfo(
                 packageName = "test.aggregate",
                 className = "Todo"

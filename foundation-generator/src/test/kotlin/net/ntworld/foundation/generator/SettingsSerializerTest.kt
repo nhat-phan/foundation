@@ -10,6 +10,7 @@ class SettingsSerializerTest {
     @Test
     fun testSerializeEventDataSettings() {
         val settings = EventSettings(
+            name = "test.event.AggregateCreatedEvent",
             event = ClassInfo(
                 packageName = "test.event",
                 className = "AggregateCreatedEvent"
@@ -19,6 +20,7 @@ class SettingsSerializerTest {
             variant = 0
         )
         val output = """{
+    "name": "test.event.AggregateCreatedEvent",
     "event": {
         "className": "AggregateCreatedEvent",
         "packageName": "test.event"

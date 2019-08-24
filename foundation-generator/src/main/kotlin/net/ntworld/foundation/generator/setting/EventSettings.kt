@@ -22,6 +22,7 @@ import net.ntworld.foundation.generator.type.EventField
 
 @Serializable
 data class EventSettings(
+    val name: String,
     val event: ClassInfo,
     val fields: List<EventField>,
     val type: String,

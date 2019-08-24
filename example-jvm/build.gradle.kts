@@ -24,6 +24,7 @@ dependencies {
     // ------- Dependencies for development
     implementation(kotlin("stdlib"))
     implementation(project(":foundation"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0")
     compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinxSerializationRuntimeVersion")
     compile("com.github.javafaker:javafaker:$javaFakerVersion")
 

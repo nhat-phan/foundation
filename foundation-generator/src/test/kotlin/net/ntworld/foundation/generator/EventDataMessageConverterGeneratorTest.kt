@@ -8,6 +8,7 @@ class EventDataMessageConverterGeneratorTest {
     @Test
     fun testGenerate() {
         val settings = EventSettings(
+            name = "test.event.CreatedEvent",
             event = ClassInfo(
                 packageName = "test.event",
                 className = "CreatedEvent"

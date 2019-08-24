@@ -1,7 +1,7 @@
 package net.ntworld.foundation.processor
 
 import net.ntworld.foundation.FrameworkProcessor
-import net.ntworld.foundation.Utility
+import net.ntworld.foundation.ProcessorOutput
 import net.ntworld.foundation.eventSourcing.EventSourcing
 import net.ntworld.foundation.generator.*
 import net.ntworld.foundation.generator.setting.EventSettings
@@ -49,19 +49,19 @@ class EventProcessor : AbstractProcessor() {
         this.processElementsAnnotatedByEncrypted(roundEnv.getElementsAnnotatedWith(EventSourcing.Encrypted::class.java))
         this.processElementsAnnotatedByMetadata(roundEnv.getElementsAnnotatedWith(EventSourcing.Metadata::class.java))
 
-        val settings = Utility.readSettingsFile(processingEnv)
+        val settings = ProcessorOutput.readSettingsFile(processingEnv)
         val collectedSettings = translateCollectedDataToGeneratorSettings()
         val mergedSettings = settings.copy(
             events = collectedSettings.events
         )
 
-        Utility.updateSettingsFile(processingEnv, mergedSettings)
+        ProcessorOutput.updateSettingsFile(processingEnv, mergedSettings)
         settings.events.forEach {
-            Utility.writeGeneratedFile(processingEnv, EventDataGenerator.generate(it))
-            Utility.writeGeneratedFile(processingEnv, EventConverterGenerator.generate(it))
-            Utility.writeGeneratedFile(processingEnv, EventDataMessageConverterGenerator.generate(it))
+            ProcessorOutput.writeGeneratedFile(processingEnv, EventDataGenerator.generate(it))
+            ProcessorOutput.writeGeneratedFile(processingEnv, EventConverterGenerator.generate(it))
+            ProcessorOutput.writeGeneratedFile(processingEnv, EventDataMessageConverterGenerator.generate(it))
         }
-        Utility.writeGeneratedFile(processingEnv, InfrastructureProviderGenerator().generate(mergedSettings))
+        ProcessorOutput.writeGeneratedFile(processingEnv, InfrastructureProviderGenerator().generate(mergedSettings))
 
         return true
     }
@@ -166,6 +166,7 @@ class EventProcessor : AbstractProcessor() {
                 EventField(name = it.name, metadata = it.metadata, encrypted = it.encrypted, faked = it.faked)
             }
             EventSettings(
+                name = "${it.packageName}.${it.className}",
                 event = ClassInfo(packageName = it.packageName, className = it.className),
                 fields = fields,
                 type = it.type,

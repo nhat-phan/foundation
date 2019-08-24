@@ -3,11 +3,10 @@ package net.ntworld.foundation.processor
 import net.ntworld.foundation.CodeUtility
 import net.ntworld.foundation.FrameworkProcessor
 import net.ntworld.foundation.Implementation
-import net.ntworld.foundation.Utility
+import net.ntworld.foundation.ProcessorOutput
 import net.ntworld.foundation.eventSourcing.EventSourced
 import net.ntworld.foundation.generator.AggregateFactoryGenerator
 import net.ntworld.foundation.generator.GeneratorSettings
-import net.ntworld.foundation.generator.InfrastructureProviderGenerator
 import net.ntworld.foundation.generator.setting.AggregateFactorySettings
 import net.ntworld.foundation.generator.type.ClassInfo
 import javax.annotation.processing.AbstractProcessor
@@ -18,7 +17,6 @@ import javax.lang.model.element.Element
 import javax.lang.model.element.PackageElement
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.DeclaredType
-import javax.lang.model.type.TypeMirror
 
 @SupportedAnnotationTypes(
     FrameworkProcessor.Implementation,
@@ -48,17 +46,17 @@ class AggregateFactoryProcessor : AbstractProcessor() {
         this.processElementsAnnotatedByImplementation(roundEnv.getElementsAnnotatedWith(Implementation::class.java))
         this.processElementsAnnotatedByEventSourced(roundEnv.getElementsAnnotatedWith(EventSourced::class.java))
 
-        val settings = Utility.readSettingsFile(processingEnv)
+        val settings = ProcessorOutput.readSettingsFile(processingEnv)
         val collectedSettings = translateCollectedDataToGeneratorSettings()
         val mergedSettings = settings.copy(
             aggregateFactories = collectedSettings.aggregateFactories
         )
 
-        Utility.updateSettingsFile(processingEnv, mergedSettings)
+        ProcessorOutput.updateSettingsFile(processingEnv, mergedSettings)
         settings.aggregateFactories.forEach {
-            Utility.writeGeneratedFile(processingEnv, AggregateFactoryGenerator.generate(it))
+            ProcessorOutput.writeGeneratedFile(processingEnv, AggregateFactoryGenerator.generate(it))
         }
-        // Utility.writeGeneratedFile(processingEnv, InfrastructureProviderGenerator().generate(mergedSettings))
+        // ProcessorOutput.writeGeneratedFile(processingEnv, InfrastructureProviderGenerator().generate(mergedSettings))
 
         return true
     }
@@ -177,6 +175,7 @@ class AggregateFactoryProcessor : AbstractProcessor() {
             }
             .map {
                 AggregateFactorySettings(
+                    name = "${it.implementationPackageName}.${it.implementationClassName}",
                     aggregate = ClassInfo(
                         packageName = it.aggregatePackageName,
                         className = it.aggregateClassName

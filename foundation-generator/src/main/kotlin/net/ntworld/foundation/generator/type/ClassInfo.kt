@@ -12,4 +12,8 @@ data class ClassInfo(val className: String, val packageName: String) {
     fun toClassNameNullable(): ClassName {
         return toClassName().copy(nullable = true)
     }
+
+    fun fullName(): String {
+        return "$packageName.$className"
+    }
 }

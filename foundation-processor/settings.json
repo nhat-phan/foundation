@@ -1,0 +1,23 @@
+{
+    "description": "",
+    "aggregateFactories": [
+        {
+            "aggregate": {
+                "className": "TodoOne",
+                "packageName": "com.test.aggregate"
+            },
+            "state": {
+                "className": "TodoState",
+                "packageName": "com.test.aggregate"
+            },
+            "implementation": {
+                "className": "TodoOneImpl",
+                "packageName": "com.test.aggregate"
+            },
+            "isAbstract": true,
+            "isEventSourced": false
+        }
+    ],
+    "events": [
+    ]
+}

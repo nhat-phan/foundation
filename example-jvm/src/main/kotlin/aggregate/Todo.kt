@@ -22,6 +22,10 @@ interface TodoC : Aggregate<TodoState> {
     fun create(task: String)
 }
 
+interface X : TodoC {
+
+}
+
 @Implementation
 class TodoAImpl(override val id: String, override val state: TodoState) : TodoA {
     override fun create(task: String) {
@@ -64,7 +68,7 @@ class TodoCImplEsInvalid(
 class TodoCImplEs(
     override val id: String,
     override val state: TodoState
-) : AbstractEventSourced<TodoState>(), TodoC {
+) : AbstractEventSourced<TodoState>(), X {
     override val streamType: String = ""
 
     override fun apply(event: Event) {

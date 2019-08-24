@@ -32,7 +32,7 @@ class InfrastructureManager: InfrastructureProvider() {
     }
 }
 
-fun main() {
+fun mainx() {
     val event = TodoCreatedEvent(
         id = "1",
         companyId = "1",

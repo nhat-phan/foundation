@@ -25,6 +25,12 @@ dependencies {
     // can work with any version of foundation therefore let include them
     // directly to dependency like this
     implementation("com.github.nhat-phan.foundation:foundation-jvm:+")
+
+    testImplementation(kotlin("test"))
+    testImplementation(kotlin("test-junit"))
+    testCompile("com.google.guava:guava:28.0-jre")
+    testCompile("com.google.truth:truth:1.0")
+    testCompile("com.google.testing.compile:compile-testing:0.18")
 }
 
 val sourcesJar by tasks.registering(Jar::class) {

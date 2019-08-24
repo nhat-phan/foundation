@@ -11,6 +11,7 @@ class InfrastructureProviderGeneratorTest {
             aggregateFactories = listOf(),
             events = listOf(
                 EventSettings(
+                    name = "test.event.CreatedEvent",
                     event = ClassInfo(
                         packageName = "com.company.event",
                         className = "CreatedEvent"
@@ -20,6 +21,7 @@ class InfrastructureProviderGeneratorTest {
                     variant = 0
                 ),
                 EventSettings(
+                    name = "test.event.UpdatedEvent",
                     event = ClassInfo(
                         packageName = "com.company.event",
                         className = "UpdatedEvent"

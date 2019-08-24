@@ -43,6 +43,7 @@ import net.ntworld.foundation.generator.type.ClassInfo
 
 @Serializable
 data class AggregateFactorySettings(
+    val name: String,
     val aggregate: ClassInfo,
     val state: ClassInfo,
     val implementation: ClassInfo,
