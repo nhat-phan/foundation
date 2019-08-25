@@ -2,7 +2,7 @@ package net.ntworld.foundation.internal.resolver
 
 import net.ntworld.foundation.Aggregate
 import net.ntworld.foundation.AggregateFactory
-import net.ntworld.foundation.CannotResolveException
+import net.ntworld.foundation.exception.CannotResolveException
 import net.ntworld.foundation.State
 import kotlin.reflect.KClass
 

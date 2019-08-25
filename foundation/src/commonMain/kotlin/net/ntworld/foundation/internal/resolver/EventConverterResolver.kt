@@ -1,6 +1,6 @@
 package net.ntworld.foundation.internal.resolver
 
-import net.ntworld.foundation.CannotResolveException
+import net.ntworld.foundation.exception.CannotResolveException
 import net.ntworld.foundation.Event
 import net.ntworld.foundation.eventSourcing.EventConverter
 import kotlin.reflect.KClass

@@ -1,5 +1,7 @@
 package net.ntworld.foundation
 
+import net.ntworld.foundation.exception.NotFoundException
+
 interface AggregateFactory<out A : Aggregate<S>, S : State> {
     fun make(state: S): A
 

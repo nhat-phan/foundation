@@ -1,4 +1,4 @@
-package net.ntworld.foundation
+package net.ntworld.foundation.exception
 
 class DecryptException(
     val previous: Exception? = null

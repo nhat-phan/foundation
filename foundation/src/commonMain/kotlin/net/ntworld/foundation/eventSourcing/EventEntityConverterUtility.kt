@@ -1,7 +1,7 @@
 package net.ntworld.foundation.eventSourcing
 
 import kotlinx.serialization.json.*
-import net.ntworld.foundation.DecryptException
+import net.ntworld.foundation.exception.DecryptException
 import net.ntworld.foundation.Infrastructure
 
 object EventEntityConverterUtility {

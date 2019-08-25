@@ -3,6 +3,7 @@ package net.ntworld.foundation
 import net.ntworld.foundation.cqrs.CommandBus
 import net.ntworld.foundation.cqrs.QueryBus
 import net.ntworld.foundation.eventSourcing.*
+import net.ntworld.foundation.exception.CannotResolveException
 import kotlin.reflect.KClass
 
 open class InfrastructureResolver(
