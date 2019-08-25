@@ -1,8 +1,8 @@
 package net.ntworld.foundation.processor
 
+import net.ntworld.foundation.*
 import net.ntworld.foundation.CodeUtility
 import net.ntworld.foundation.FrameworkProcessor
-import net.ntworld.foundation.Implementation
 import net.ntworld.foundation.ProcessorOutput
 import net.ntworld.foundation.eventSourcing.EventSourced
 import net.ntworld.foundation.generator.AggregateFactoryGenerator
@@ -63,7 +63,14 @@ class AggregateFactoryProcessor : AbstractProcessor() {
 
     private fun processElementsAnnotatedByImplementation(elements: Set<Element>) {
         elements
-            .filter { it.kind.isClass }
+            .filter {
+                it.kind.isClass && CodeUtility.isImplementInterface(
+                    processingEnv,
+                    it.asType(),
+                    Aggregate::class.java.canonicalName,
+                    true
+                )
+            }
             .forEach {
                 val key = processElement(it)
 

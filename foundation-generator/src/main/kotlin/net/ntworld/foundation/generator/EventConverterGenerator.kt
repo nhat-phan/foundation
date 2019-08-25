@@ -49,21 +49,21 @@ object EventConverterGenerator {
                     .build()
             )
             .addType(buildCompanionObject(settings))
-            .addFunction(buildToEventDataFunction(settings))
-            .addFunction(buildFromEventDataFunction(settings))
+            .addFunction(buildToEventEntityFunction(settings))
+            .addFunction(buildFromEventEntityFunction(settings))
             .build()
     }
 
-    internal fun buildToEventDataFunction(settings: EventSettings): FunSpec {
-        val eventDataTarget = Utility.findEventDataTarget(settings)
+    internal fun buildToEventEntityFunction(settings: EventSettings): FunSpec {
+        val eventEntityTarget = Utility.findEventEntityTarget(settings)
         val code = CodeBlock.builder()
 
         code.add("val raw = json.stringify(%T.serializer(), event)\n", settings.implementation.toClassName())
         code.add(
             "val processed = %T.processRawJson(infrastructure, json, fields, raw)\n",
-            Framework.EventConverterUtility
+            Framework.EventEntityConverterUtility
         )
-        code.add("return %T(\n", eventDataTarget.toClassName())
+        code.add("return %T(\n", eventEntityTarget.toClassName())
         code.indent()
         code.add("id = infrastructure.root.idGeneratorOf(%T::class).generate(),\n", settings.event.toClassName())
         code.add("streamId = streamId,\n")
@@ -74,9 +74,9 @@ object EventConverterGenerator {
         code.unindent()
         code.add(")\n")
 
-        return FunSpec.builder("toEventData")
+        return FunSpec.builder("toEventEntity")
             .addModifiers(KModifier.OVERRIDE)
-            .returns(eventDataTarget.toClassName())
+            .returns(eventEntityTarget.toClassName())
             .addParameter("streamId", String::class)
             .addParameter("streamType", String::class)
             .addParameter("version", Int::class)
@@ -85,18 +85,18 @@ object EventConverterGenerator {
             .build()
     }
 
-    internal fun buildFromEventDataFunction(settings: EventSettings): FunSpec {
+    internal fun buildFromEventEntityFunction(settings: EventSettings): FunSpec {
         val code = CodeBlock.builder()
         code.add(
-            "val raw = %T.rebuildRawJson(infrastructure, json, fields, eventData.data, eventData.metadata)\n",
-            Framework.EventConverterUtility
+            "val raw = %T.rebuildRawJson(infrastructure, json, fields, eventEntity.data, eventEntity.metadata)\n",
+            Framework.EventEntityConverterUtility
         )
         code.add("return json.parse(%T.serializer(), raw)\n", settings.implementation.toClassName())
 
-        return FunSpec.builder("fromEventData")
+        return FunSpec.builder("fromEventEntity")
             .addModifiers(KModifier.OVERRIDE)
             .returns(ClassName(settings.event.packageName, settings.implementation.className))
-            .addParameter("eventData", Framework.EventData)
+            .addParameter("eventEntity", Framework.EventEntity)
             .addCode(code.build())
             .build()
     }
@@ -123,7 +123,7 @@ object EventConverterGenerator {
                     "fields",
                     ClassName("kotlin.collections", "Map").parameterizedBy(
                         ClassName("kotlin", "String"),
-                        Framework.EventConverterUtilitySetting
+                        Framework.EventEntityConverterUtilitySetting
                     )
                 )
                     .initializer(code.build())
@@ -134,13 +134,13 @@ object EventConverterGenerator {
 
     internal fun buildFieldSetting(field: EventField): CodeBlock {
         if (field.metadata) {
-            return CodeBlock.of("%T(metadata = true)", Framework.EventConverterUtilitySetting)
+            return CodeBlock.of("%T(metadata = true)", Framework.EventEntityConverterUtilitySetting)
         }
 
         if (field.encrypted) {
-            return CodeBlock.of("%T(encrypted = true, faked = %S)", Framework.EventConverterUtilitySetting, field.faked)
+            return CodeBlock.of("%T(encrypted = true, faked = %S)", Framework.EventEntityConverterUtilitySetting, field.faked)
         }
 
-        return CodeBlock.of("%T()", Framework.EventConverterUtilitySetting)
+        return CodeBlock.of("%T()", Framework.EventEntityConverterUtilitySetting)
     }
 }

@@ -4,7 +4,7 @@ import net.ntworld.foundation.Aggregate
 import net.ntworld.foundation.Implementation
 import net.ntworld.foundation.State
 import net.ntworld.foundation.eventSourcing.AbstractEventSourced
-import net.ntworld.foundation.eventSourcing.Event
+import net.ntworld.foundation.Event
 import net.ntworld.foundation.eventSourcing.EventSourced
 
 interface TodoState : State {

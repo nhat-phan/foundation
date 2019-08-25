@@ -1,6 +1,5 @@
 package net.ntworld.foundation
 
-import net.ntworld.foundation.eventSourcing.Event
 import net.ntworld.foundation.eventSourcing.EventConverter
 import net.ntworld.foundation.internal.resolver.AggregateFactoryResolver
 import net.ntworld.foundation.internal.resolver.EventConverterResolver

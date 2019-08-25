@@ -41,8 +41,8 @@ object EventSourcedFactory {
 
         val events = stream.read().map {
             HydratedEvent(
-                __event = infrastructure.root.eventConverterOf(it.type, it.variant).fromEventData(it),
-                __eventData = it
+                __event = infrastructure.root.eventConverterOf(it.type, it.variant).fromEventEntity(it),
+                __eventEntity = it
             )
         }
 

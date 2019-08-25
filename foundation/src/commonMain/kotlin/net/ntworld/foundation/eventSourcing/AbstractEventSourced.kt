@@ -1,6 +1,7 @@
 package net.ntworld.foundation.eventSourcing
 
 import net.ntworld.foundation.Aggregate
+import net.ntworld.foundation.Event
 import net.ntworld.foundation.State
 
 abstract class AbstractEventSourced<T: State> : Aggregate<T> {
@@ -18,10 +19,10 @@ abstract class AbstractEventSourced<T: State> : Aggregate<T> {
     internal fun rehydrate(events: Iterable<HydratedEvent>) {
         rehydrating = true
         events.forEach {
-            if (version < it.eventData.version) {
+            if (version < it.eventEntity.version) {
                 apply(it)
 
-                version = it.eventData.version
+                version = it.eventEntity.version
             }
         }
         rehydrating = false

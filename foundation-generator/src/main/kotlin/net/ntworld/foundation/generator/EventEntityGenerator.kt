@@ -2,14 +2,13 @@ package net.ntworld.foundation.generator
 
 import com.squareup.kotlinpoet.*
 import net.ntworld.foundation.generator.type.ClassInfo
-import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import kotlinx.serialization.Serializable
 import net.ntworld.foundation.generator.setting.EventSettings
 
-object EventDataGenerator {
+object EventEntityGenerator {
 
     fun generate(settings: EventSettings): GeneratedFile {
-        val target = Utility.findEventDataTarget(settings)
+        val target = Utility.findEventEntityTarget(settings)
         val file = buildFile(settings, target)
         val stringBuffer = StringBuffer()
         file.writeTo(stringBuffer)
@@ -34,7 +33,7 @@ object EventDataGenerator {
             .addModifiers(KModifier.DATA)
             .primaryConstructor(buildPrimaryConstructor())
             .addProperties(buildProperties(settings.type, settings.variant))
-            .addSuperinterface(Framework.EventData)
+            .addSuperinterface(Framework.EventEntity)
             .build()
     }
 

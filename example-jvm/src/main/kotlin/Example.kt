@@ -40,10 +40,10 @@ fun mainx() {
         money = 1234.567
     )
     val infrastructure = InfrastructureManager()
-    val eventData = TodoCreatedEventConverter(infrastructure).toEventData("type", "id", 1, event)
-    println(eventData)
+    val eventEntity = TodoCreatedEventConverter(infrastructure).toEventEntity("type", "id", 1, event)
+    println(eventEntity)
 
-    val readEvent = TodoCreatedEventConverter(infrastructure).fromEventData(eventData)
+    val readEvent = TodoCreatedEventConverter(infrastructure).fromEventEntity(eventEntity)
     println(readEvent)
     println(event == readEvent)
     println(event === readEvent)

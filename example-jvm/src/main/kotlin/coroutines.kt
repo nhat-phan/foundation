@@ -27,7 +27,7 @@ interface Queue {
 }
 
 class FakeQueue : Queue {
-    private val messages = mutableMapOf<String, QueuedMessage>()
+    val messages = mutableMapOf<String, QueuedMessage>()
 
     override fun sendMessage(message: Message) {
         val id = UUIDGenerator.generate()
@@ -46,6 +46,7 @@ class FakeQueue : Queue {
     }
 
     override fun deleteMessage(message: Message) {
+        println("FakedQueue.deleteMessage $message")
         if (message is QueuedMessage) {
             val msg = messages[message.id]
             if (null !== msg) {
@@ -56,6 +57,8 @@ class FakeQueue : Queue {
                     deleted = true
                 )
                 messages[msg.id] = replace
+                println("FakedQueue.deleteMessage $message success ${msg.id}")
+                println("FakedQueue.deleteMessage $message success ${(messages[msg.id] as QueuedMessage).deleted}")
             }
         }
     }
@@ -93,8 +96,8 @@ abstract class QueueManager(private val queue: Queue) : CoroutineScope {
                 messages.forEach {
                     channel.send(it)
                 }
-                delay(100)
             }
+            delay(200)
         }
     }
 
@@ -149,6 +152,7 @@ class Worker(queue: Queue) : QueueManager(queue) {
         if (message.attributes.containsKey("relayId")) {
             println("  reply to ${message.attributes["relayId"]} in 1000ms")
             deleteMessage(message)
+            println(  "message count: ${Global.queue.messages.size}")
             delay(1000)
             Global.replyQueue.sendMessage(
                 Message(
@@ -199,7 +203,8 @@ fun main() {
     }
 
     try {
-        client(waiter)
+        val message = client(waiter)
+        println("Result: ${message.body}")
     } catch (exception: Exception) {
         println("ERROR: ${waiter.count()}")
         exception.printStackTrace()
@@ -223,7 +228,7 @@ fun main() {
     println("Done!")
 }
 
-fun client(waiter: ReplyWaiter) = runBlocking {
+fun client(waiter: ReplyWaiter): Message = runBlocking {
     println("start client code")
     val relayId = UUIDGenerator.generate()
     val message = Message(

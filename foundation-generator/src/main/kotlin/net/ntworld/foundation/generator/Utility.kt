@@ -13,16 +13,9 @@ internal object Utility {
         )
     }
 
-    fun findEventDataMessageConverterTarget(settings: EventSettings): ClassInfo {
+    fun findEventEntityTarget(settings: EventSettings): ClassInfo {
         return ClassInfo(
-            className = "${settings.implementation.className}DataMessageConverter",
-            packageName = findTargetNamespace(settings.event.packageName)
-        )
-    }
-
-    fun findEventDataTarget(settings: EventSettings): ClassInfo {
-        return ClassInfo(
-            className = "${settings.implementation.className}Data",
+            className = "${settings.implementation.className}Entity",
             packageName = findTargetNamespace(settings.event.packageName)
         )
     }

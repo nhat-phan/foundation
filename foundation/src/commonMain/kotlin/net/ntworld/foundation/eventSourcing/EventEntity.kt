@@ -1,6 +1,6 @@
 package net.ntworld.foundation.eventSourcing
 
-interface EventData {
+interface EventEntity {
     val id: String
     val type: String
     val variant: Int

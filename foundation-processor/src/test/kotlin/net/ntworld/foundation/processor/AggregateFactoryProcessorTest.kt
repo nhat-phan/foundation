@@ -7,6 +7,7 @@ import net.ntworld.foundation.ProcessorOutput
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 class AggregateFactoryProcessorTest: TestSuite() {
 
@@ -37,4 +38,26 @@ class AggregateFactoryProcessorTest: TestSuite() {
         assertEquals(true, settings.isAbstract)
         assertEquals(false, settings.isEventSourced)
     }
+
+//    @Test
+//    /**
+//     * Demo code of this test can be found at: /com/test/event/kotlin/UpdatedEvent.kt
+//     */
+//    fun `test @Implementation can be skipped if superinterface not from Aggregate`() {
+//        val definedInterface = JavaFileObjects.forResource("com/test/event/UpdatedEvent.java")
+//        val implementation = JavaFileObjects.forResource("com/test/event/UpdatedEventImpl.java")
+//
+//        Truth.assert_()
+//            .about(JavaSourcesSubjectFactory.javaSources())
+//            .that(
+//                listOf(
+//                    definedInterface, implementation
+//                )
+//            )
+//            .processedWith(AggregateFactoryProcessor())
+//            .compilesWithoutError()
+//
+//        assertNull(findAggregateFactorySettings("com.test.event.UpdatedEventImpl"))
+//        assertNull(findEventSettings("com.test.event.UpdatedEventImpl"))
+//    }
 }

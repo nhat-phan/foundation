@@ -2,9 +2,9 @@ package net.ntworld.foundation.generator
 
 import net.ntworld.foundation.generator.setting.EventSettings
 import net.ntworld.foundation.generator.type.ClassInfo
-import org.junit.Test
+import kotlin.test.Test
 
-class EventDataMessageConverterGeneratorTest {
+class EventEntityGeneratorTest {
     @Test
     fun testGenerate() {
         val settings = EventSettings(
@@ -15,14 +15,14 @@ class EventDataMessageConverterGeneratorTest {
             ),
             implementation = ClassInfo(
                 packageName = "test.event",
-                className = "CreatedEvent"
+                className = "CreatedEventImpl"
             ),
             fields = emptyList(),
             type = "created",
             variant = 0
         )
 
-        val result = EventDataMessageConverterGenerator.generate(settings)
+        val result = EventEntityGenerator.generate(settings)
         println(result.content)
     }
 }

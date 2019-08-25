@@ -57,9 +57,8 @@ class EventProcessor : AbstractProcessor() {
 
         ProcessorOutput.updateSettingsFile(processingEnv, mergedSettings)
         settings.events.forEach {
-            ProcessorOutput.writeGeneratedFile(processingEnv, EventDataGenerator.generate(it))
+            ProcessorOutput.writeGeneratedFile(processingEnv, EventEntityGenerator.generate(it))
             ProcessorOutput.writeGeneratedFile(processingEnv, EventConverterGenerator.generate(it))
-            ProcessorOutput.writeGeneratedFile(processingEnv, EventDataMessageConverterGenerator.generate(it))
         }
         ProcessorOutput.writeGeneratedFile(processingEnv, InfrastructureProviderGenerator().generate(mergedSettings))
 

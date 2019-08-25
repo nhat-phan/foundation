@@ -20,13 +20,12 @@ internal object Framework {
 
     val AggregateFactory = ClassName(namespace, "AggregateFactory")
 
-    val EventData = ClassName("$namespace.eventSourcing", "EventData")
+    val EventEntity = ClassName("$namespace.eventSourcing", "EventEntity")
     val EventConverter = ClassName("$namespace.eventSourcing", "EventConverter")
     val EventSourcedFactory = ClassName("$namespace.eventSourcing", "EventSourcedFactory")
 
-    val EventDataMessageConverterUtility = ClassName("$namespace.eventSourcing", "EventDataMessageConverterUtility")
-    val EventConverterUtility = ClassName("$namespace.eventSourcing", "EventConverterUtility")
-    val EventConverterUtilitySetting = ClassName("$namespace.eventSourcing.EventConverterUtility", "Setting")
+    val EventEntityConverterUtility = ClassName("$namespace.eventSourcing", "EventEntityConverterUtility")
+    val EventEntityConverterUtilitySetting = ClassName("$namespace.eventSourcing.EventEntityConverterUtility", "Setting")
 
     val FakerRelatedSource_FakedData = "FakedData"
     val FakerRelatedSource_JavaFakerWrapper_Jvm = "JavaFakerWrapper"

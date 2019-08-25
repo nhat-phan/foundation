@@ -2,7 +2,7 @@ package com.test.event;
 
 import kotlin.Metadata;
 import kotlin.jvm.internal.Intrinsics;
-import net.ntworld.foundation.eventSourcing.Event;
+import net.ntworld.foundation.Event;
 import net.ntworld.foundation.eventSourcing.EventSourcing;
 import net.ntworld.foundation.eventSourcing.EventSourcing.Encrypted;
 import org.jetbrains.annotations.NotNull;

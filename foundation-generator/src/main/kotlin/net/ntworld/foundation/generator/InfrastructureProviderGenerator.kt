@@ -43,12 +43,8 @@ class InfrastructureProviderGenerator {
         val eventConverterClass = ClassName(eventConverter.packageName, eventConverter.className)
         val eventClass = ClassName(settings.event.packageName, settings.event.className)
 
-        val eventData = Utility.findEventDataTarget(settings)
-        val eventDataClass = ClassName(eventData.packageName, eventData.className)
-        val eventDataMessageConverter = Utility.findEventDataMessageConverterTarget(settings)
-        val eventDataMessageConverterClass = ClassName(
-            eventDataMessageConverter.packageName, eventDataMessageConverter.className
-        )
+        val eventEntity = Utility.findEventEntityTarget(settings)
+        val eventEntityClass = ClassName(eventEntity.packageName, eventEntity.className)
 
         val eventConverterVariableName = findVariableNames(eventConverter.packageName, eventConverter.className)
         type.addProperty(
@@ -63,7 +59,6 @@ class InfrastructureProviderGenerator {
             "registerEventConverter(%T::class, this.%L)\n", eventClass, eventConverterVariableName
         )
         init.add("registerEventConverter(%S, %L, %L)\n", settings.type, settings.variant, eventConverterVariableName)
-        init.add("registerMessageConverter(%T::class, %T)\n", eventDataClass, eventDataMessageConverterClass)
         init.add("\n")
         init.unindent()
     }

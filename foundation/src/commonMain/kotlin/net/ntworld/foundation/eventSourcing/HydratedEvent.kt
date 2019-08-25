@@ -1,8 +1,10 @@
 package net.ntworld.foundation.eventSourcing
 
+import net.ntworld.foundation.Event
+
 data class HydratedEvent(
     private val __event: Event,
-    private val __eventData: EventData
+    private val __eventEntity: EventEntity
 ) : Event by __event {
-    val eventData: EventData = __eventData
+    val eventEntity: EventEntity = __eventEntity
 }
