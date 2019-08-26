@@ -20,7 +20,7 @@ object AggregateFactoryGenerator {
 
     internal fun buildFile(settings: AggregateFactorySettings, target: ClassInfo): FileSpec {
         val file = FileSpec.builder(target.packageName, target.className)
-        Framework.addFileHeader(file, this::class.qualifiedName)
+        GeneratorOutput.addHeader(file, this::class.qualifiedName)
         file.addType(buildClass(settings, target))
 
         return file.build()

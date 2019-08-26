@@ -195,7 +195,7 @@ class ReplyWaiter(queue: Queue) : QueueManager(queue) {
     }
 }
 
-fun main() {
+fun main_coroutines() {
     val waiter = ReplyWaiter(Global.replyQueue)
     val job = GlobalScope.run {
         Worker(Global.queue).start()

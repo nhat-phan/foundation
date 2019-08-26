@@ -3,6 +3,7 @@ package tool
 import com.github.javafaker.Faker
 import com.squareup.kotlinpoet.*
 import net.ntworld.foundation.generator.Framework
+import net.ntworld.foundation.generator.GeneratorOutput
 import org.junit.Test
 import kotlin.reflect.KClass
 import kotlin.reflect.KVisibility
@@ -66,7 +67,7 @@ class FakerRelatedSourceGenerator {
 
     private fun generateJavaFakerWrapperJvmClass(items: List<Item>): FileSpec {
         val file = FileSpec.builder(Framework.namespace + ".util", Framework.FakerRelatedSource_JavaFakerWrapper_Jvm)
-        Framework.addGeneratedByToolHeader(file, this::class.qualifiedName!! + "@runGeneratorOfJavaFakerWrapperJvmClass")
+        GeneratorOutput.addToolHeader(file, this::class.qualifiedName!! + "@runGeneratorOfJavaFakerWrapperJvmClass")
 
         val codeBlock = CodeBlock.builder()
         codeBlock.beginControlFlow("return when(data)")
@@ -108,7 +109,7 @@ class FakerRelatedSourceGenerator {
 
     private fun generateFakedDataFile(data: List<Group>): FileSpec {
         val file = FileSpec.builder(Framework.namespace, Framework.FakerRelatedSource_FakedData)
-        Framework.addGeneratedByToolHeader(file, this::class.qualifiedName!! + "@runGeneratorOfFakedData")
+        GeneratorOutput.addToolHeader(file, this::class.qualifiedName!! + "@runGeneratorOfFakedData")
 
         val fakedTypeObjectSpec = TypeSpec.objectBuilder(Framework.FakerRelatedSource_FakedData)
 

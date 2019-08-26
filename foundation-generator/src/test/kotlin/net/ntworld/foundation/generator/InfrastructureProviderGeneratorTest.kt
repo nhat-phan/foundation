@@ -22,7 +22,8 @@ class InfrastructureProviderGeneratorTest {
                     ),
                     fields = emptyList(),
                     type = "created",
-                    variant = 0
+                    variant = 0,
+                    hasSecondConstructor = false
                 ),
                 EventSettings(
                     name = "test.event.CreatedEventV1",
@@ -36,7 +37,8 @@ class InfrastructureProviderGeneratorTest {
                     ),
                     fields = emptyList(),
                     type = "created",
-                    variant = 1
+                    variant = 1,
+                    hasSecondConstructor = false
                 ),
                 EventSettings(
                     name = "test.event.UpdatedEvent",
@@ -50,7 +52,8 @@ class InfrastructureProviderGeneratorTest {
                     ),
                     fields = emptyList(),
                     type = "updated",
-                    variant = 0
+                    variant = 0,
+                    hasSecondConstructor = false
                 )
             )
         )

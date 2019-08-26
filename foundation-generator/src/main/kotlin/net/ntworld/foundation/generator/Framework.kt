@@ -6,8 +6,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 internal object Framework {
-    var shouldAddHeader: Boolean = true
-
     val namespace = "net.ntworld.foundation"
 
     val Infrastructure = ClassName(namespace, "Infrastructure")
@@ -33,34 +31,4 @@ internal object Framework {
     val JavaFaker = ClassName("com.github.javafaker", "Faker")
     val Json = ClassName("kotlinx.serialization.json", "Json")
     val JsonConfiguration = ClassName("kotlinx.serialization.json", "JsonConfiguration")
-
-    fun addGeneratedByToolHeader(file: FileSpec.Builder, generator: String?) {
-        file.addComment("+-------------------------------------------------------------------------+\n")
-        file.addComment("| This file was generated automatically by tools in foundation-generator. |\n")
-        file.addComment("|                                                                         |\n")
-        file.addComment("| Please do not edit!                                                     |\n")
-        file.addComment("+-------------------------------------------------------------------------+\n")
-        file.addComment("+- by  : $generator\n")
-        file.addComment("+- when: ${now()}")
-    }
-
-    fun addFileHeader(file: FileSpec.Builder, generator: String?) {
-        if (!shouldAddHeader) {
-            return
-        }
-
-        file.addComment("+--------------------------------------------------------+\n")
-        file.addComment("| This file was generated automatically in compile time. |\n")
-        file.addComment("|                                                        |\n")
-        file.addComment("| Please do not edit!                                    |\n")
-        file.addComment("+--------------------------------------------------------+\n")
-        file.addComment("+- by  : $generator\n")
-        file.addComment("+- when: ${now()}")
-    }
-
-    private fun now(): String {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-        dateFormat.timeZone = TimeZone.getTimeZone("UTC")
-        return dateFormat.format(Date())
-    }
 }

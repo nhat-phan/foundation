@@ -19,7 +19,8 @@ class EventEntityGeneratorTest {
             ),
             fields = emptyList(),
             type = "created",
-            variant = 0
+            variant = 0,
+            hasSecondConstructor = false
         )
 
         val result = EventEntityGenerator.generate(settings)

@@ -29,9 +29,7 @@ data class EventSettings(
     val fields: List<EventField>,
     val type: String,
     val variant: Int,
-
-    // TODO: this used for MessageConverter
-    val hasSecondConstructor: Boolean = false
+    val hasSecondConstructor: Boolean
 ) {
     companion object {
         object comparator: Comparator<EventSettings> {

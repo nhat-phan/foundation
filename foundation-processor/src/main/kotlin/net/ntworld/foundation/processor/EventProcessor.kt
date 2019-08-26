@@ -167,10 +167,13 @@ class EventProcessor : AbstractProcessor() {
             EventSettings(
                 name = "${it.packageName}.${it.className}",
                 event = ClassInfo(packageName = it.packageName, className = it.className),
+                // TODO: find implementation name
                 implementation = ClassInfo(packageName = it.packageName, className = it.className),
                 fields = fields,
                 type = it.type,
-                variant = it.variant
+                variant = it.variant,
+                // TODO: find hasSecondConstructor if implementation != event
+                hasSecondConstructor = false
             )
         }
 
