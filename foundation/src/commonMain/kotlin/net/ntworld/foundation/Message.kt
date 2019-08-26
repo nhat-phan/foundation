@@ -1,11 +1,6 @@
 package net.ntworld.foundation
 
-interface Message {
-    val id: String?
-    val type: String?
-    val body: String
-    val attributes: Map<String, String>
-}
+import kotlinx.io.ByteBuffer
 
 // CommandBus
 //   1. create a queue which receive response (if needed)
@@ -28,3 +23,12 @@ interface Message {
 //   2. convert event to message
 //   3. send message to a topic
 //   4. subscriber will consume the message
+
+
+
+interface Message {
+    val id: String?
+    val type: String?
+    val body: String
+    val attributes: Map<String, MessageAttribute>
+}

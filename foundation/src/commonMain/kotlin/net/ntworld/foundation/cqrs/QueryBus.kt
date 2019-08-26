@@ -1,7 +1,9 @@
 package net.ntworld.foundation.cqrs
 
-interface QueryBus {
-    fun <Q : Query<R>, R> process(query: Q): R
+import net.ntworld.foundation.Message
 
-    fun <Q : Query<R>, R> process(query: Q, block: (R) -> Unit)
+interface QueryBus {
+    fun <Q : Query<R>, R> process(query: Q): R = process(query, null)
+
+    fun <Q : Query<R>, R> process(query: Q, message: Message?): R
 }

@@ -1,6 +1,6 @@
 package com.test.event.kotlin
 
-import net.ntworld.foundation.eventSourcing.Event
+import net.ntworld.foundation.Event
 import net.ntworld.foundation.eventSourcing.EventSourcing
 
 // @Messaging

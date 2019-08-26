@@ -3,6 +3,7 @@ package net.ntworld.foundation.generator.setting
 import kotlinx.serialization.Serializable
 import net.ntworld.foundation.generator.type.ClassInfo
 import net.ntworld.foundation.generator.type.EventField
+import javax.swing.text.StyledEditorKit
 
 
 // ----------------------------------------------------------------------------------
@@ -27,7 +28,10 @@ data class EventSettings(
     val implementation: ClassInfo,
     val fields: List<EventField>,
     val type: String,
-    val variant: Int
+    val variant: Int,
+
+    // TODO: this used for MessageConverter
+    val hasSecondConstructor: Boolean = false
 ) {
     companion object {
         object comparator: Comparator<EventSettings> {
