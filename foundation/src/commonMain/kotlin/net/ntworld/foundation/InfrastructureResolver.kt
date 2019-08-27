@@ -152,11 +152,11 @@ open class InfrastructureResolver(
         throw CannotResolveException("Infrastructure.eventConverterOf() cannot resolve ($type, $variant)")
     }
 
-    override fun <T : Any> messageConverterOf(type: KClass<T>): MessageConverter<T> {
+    override fun <T : Any> messageTranslatorOf(type: KClass<T>): MessageTranslator<T> {
         if (null !== next) {
-            return next!!.messageConverterOf(type)
+            return next!!.messageTranslatorOf(type)
         }
-        throw CannotResolveException("Infrastructure.messageConverterOf() cannot resolve $type")
+        throw CannotResolveException("Infrastructure.messageTranslatorOf() cannot resolve $type")
     }
 
     override fun <A : Aggregate<D>, D : State> snapshotStoreOf(type: KClass<A>): SnapshotStore<D> {

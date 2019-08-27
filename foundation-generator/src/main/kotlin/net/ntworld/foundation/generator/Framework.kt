@@ -14,7 +14,7 @@ internal object Framework {
     val Faker = ClassName(namespace, "Faker")
 
     val Message = ClassName(namespace, "Message")
-    val MessageConverter = ClassName(namespace, "MessageConverter")
+    val MessageTranslator = ClassName(namespace, "MessageTranslator")
 
     val AggregateFactory = ClassName(namespace, "AggregateFactory")
 

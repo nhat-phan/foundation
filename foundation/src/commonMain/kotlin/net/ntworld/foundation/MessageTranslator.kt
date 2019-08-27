@@ -1,6 +1,6 @@
 package net.ntworld.foundation
 
-interface MessageConverter<T> {
+interface MessageTranslator<T> {
     fun toMessage(input: T): Message
 
     fun canConvert(message: Message): Boolean

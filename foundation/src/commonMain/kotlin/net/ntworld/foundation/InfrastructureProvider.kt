@@ -3,13 +3,13 @@ package net.ntworld.foundation
 import net.ntworld.foundation.eventSourcing.EventConverter
 import net.ntworld.foundation.internal.resolver.AggregateFactoryResolver
 import net.ntworld.foundation.internal.resolver.EventConverterResolver
-import net.ntworld.foundation.internal.resolver.MessageConverterResolver
+import net.ntworld.foundation.internal.resolver.MessageTranslatorResolver
 import kotlin.reflect.KClass
 
 open class InfrastructureProvider : InfrastructureResolver() {
     private val aggregateFactoryResolver = AggregateFactoryResolver()
     private val eventConverterResolver = EventConverterResolver()
-    private val messageConverterResolver = MessageConverterResolver()
+    private val messageTranslatorResolver = MessageTranslatorResolver()
 
     // -----------------------------------------------------------------------------------
     // Aggregate Factory
@@ -65,21 +65,21 @@ open class InfrastructureProvider : InfrastructureResolver() {
     }
 
     // -----------------------------------------------------------------------------------
-    // MessageConverter
+    // MessageTranslator
     // -----------------------------------------------------------------------------------
 
-    fun registerMessageConverter(kClass: KClass<*>, fn: () -> MessageConverter<*>) {
-        messageConverterResolver.register(kClass, fn)
+    fun registerMessageTranslator(kClass: KClass<*>, fn: () -> MessageTranslator<*>) {
+        messageTranslatorResolver.register(kClass, fn)
     }
 
-    fun registerMessageConverter(kClass: KClass<*>, converter: MessageConverter<*>) {
-        messageConverterResolver.register(kClass, converter)
+    fun registerMessageTranslator(kClass: KClass<*>, translator: MessageTranslator<*>) {
+        messageTranslatorResolver.register(kClass, translator)
     }
 
-    override fun <T : Any> messageConverterOf(type: KClass<T>): MessageConverter<T> {
-        if (messageConverterResolver.canResolve(type)) {
-            return messageConverterResolver.resolve(type)
+    override fun <T : Any> messageTranslatorOf(type: KClass<T>): MessageTranslator<T> {
+        if (messageTranslatorResolver.canResolve(type)) {
+            return messageTranslatorResolver.resolve(type)
         }
-        return super.messageConverterOf(type)
+        return super.messageTranslatorOf(type)
     }
 }

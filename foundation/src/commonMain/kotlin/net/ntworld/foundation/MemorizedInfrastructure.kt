@@ -19,7 +19,7 @@ class MemorizedInfrastructure(base: Infrastructure) : InfrastructureWrapper(base
     private var _eventStreams = mutableMapOf<String, EventStream>()
     private var _eventConverterClasses = mutableMapOf<KClass<*>, EventConverter<*>>()
     private var _eventConverters = mutableMapOf<String, EventConverter<*>>()
-    private var _messageConverters = mutableMapOf<KClass<*>, MessageConverter<*>>()
+    private var _messageTranslators = mutableMapOf<KClass<*>, MessageTranslator<*>>()
     private var _snapshotStores = mutableMapOf<KClass<*>, SnapshotStore<*>>()
 
 
@@ -123,11 +123,11 @@ class MemorizedInfrastructure(base: Infrastructure) : InfrastructureWrapper(base
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun <T : Any> messageConverterOf(type: KClass<T>): MessageConverter<T> {
-        if (!_messageConverters.containsKey(type)) {
-            _messageConverters[type] = super.messageConverterOf(type)
+    override fun <T : Any> messageTranslatorOf(type: KClass<T>): MessageTranslator<T> {
+        if (!_messageTranslators.containsKey(type)) {
+            _messageTranslators[type] = super.messageTranslatorOf(type)
         }
-        return _messageConverters[type] as MessageConverter<T>
+        return _messageTranslators[type] as MessageTranslator<T>
     }
 
     @Suppress("UNCHECKED_CAST")

@@ -43,7 +43,7 @@ interface Infrastructure {
 
     fun eventConverterOf(type: String, variant: Int): EventConverter<Event>
 
-    fun <T : Any> messageConverterOf(type: KClass<T>): MessageConverter<T>
+    fun <T : Any> messageTranslatorOf(type: KClass<T>): MessageTranslator<T>
 
     fun <A : Aggregate<D>, D : State> snapshotStoreOf(type: KClass<A>): SnapshotStore<D>
 

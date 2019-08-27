@@ -17,6 +17,7 @@ repositories {
 }
 
 dependencies {
+    // implementation(project(":foundation", "jvmDefault"))
     implementation(project(":foundation-generator"))
     implementation(kotlin("stdlib"))
 

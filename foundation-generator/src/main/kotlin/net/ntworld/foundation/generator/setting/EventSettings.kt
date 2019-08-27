@@ -10,7 +10,7 @@ import javax.swing.text.StyledEditorKit
 // Single event settings will generate 3 classes
 //   1. {$event}Data: contains data of Event
 //   2. {$event}Converter: converts Event to generated {$event}Data
-//   3. {$event}DataMessageConverter: converts {$event}Data to Message and vice versa
+//   3. {$event}MessageTranslator: converts {$event} to Message and vice versa
 // ----------------------------------------------------------------------------------
 // How to detect and create settings in processor?
 //   - determine Event by @EventSourcing

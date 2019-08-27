@@ -47,7 +47,7 @@ open class InfrastructureContext(open val self: Infrastructure) {
     fun eventConverter(type: String, variant: Int): EventConverter<Event> = self.eventConverterOf(type, variant)
 
     @InfrastructureDsl
-    fun <T : Any> messageConverterOf(type: KClass<T>): MessageConverter<T> = self.messageConverterOf(type)
+    fun <T : Any> messageTranslatorOf(type: KClass<T>): MessageTranslator<T> = self.messageTranslatorOf(type)
 
     @InfrastructureDsl
     fun <A : Aggregate<S>, S : State> snapshotStoreOf(type: KClass<A>): SnapshotStore<S> = self.snapshotStoreOf(type)

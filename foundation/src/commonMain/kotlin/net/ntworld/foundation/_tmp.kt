@@ -1,6 +1,7 @@
 package net.ntworld.foundation
 
 // because this class is so simple, so the whole class will be generated automatically by generator
+@Handler
 abstract class AbstractLocalEventBus : EventBus, LocalBusResolver<Event, List<EventHandler<Event>>> {
     override fun publish(event: Event) {
         this.process(event)
@@ -12,6 +13,34 @@ abstract class AbstractLocalEventBus : EventBus, LocalBusResolver<Event, List<Ev
             handlers.forEach { it.handle(event = event, message = message) }
         }
     }
+
+    // Actually versioning only applied for command/query not for event
+    /**
+    fun getVersioningStrategy(event: Event) = HandlerVersioningStrategy.useLatestVersion
+
+    override fun resolve(instance: Event): List<EventHandler<Event>>? {
+        val strategy = getVersioningStrategy(instance)
+        if (strategy.skip()) {
+            return null
+        }
+
+        return when (event) {
+            is TypeAOnlyOneVersion -> HandlerOfTypeA
+            is TypeBWithTwoVersion -> {
+                if (strategy.useLatestVersion()) {
+                    return LatestHandlerOfTypeB
+                }
+                return when (strategy.specificVersion) {
+                    0 ->  HandlerOfTypeBVersion0,
+                    1 ->  HandlerOfTypeBVersion1,
+                    2 ->  HandlerOfTypeBVersion2
+                    else -> null
+                }
+            }
+            else -> null
+        }
+    }
+    */
 }
 
 //class RemoteEventBus(private val bus: LocalBusResolver<Event, List<EventHandler<Event>>) : EventBus {

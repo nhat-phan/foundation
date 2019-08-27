@@ -73,8 +73,8 @@ open class InfrastructureWrapper(private val base: Infrastructure) : Infrastruct
         return base.eventConverterOf(type, variant)
     }
 
-    override fun <T : Any> messageConverterOf(type: KClass<T>): MessageConverter<T> {
-        return base.messageConverterOf(type)
+    override fun <T : Any> messageTranslatorOf(type: KClass<T>): MessageTranslator<T> {
+        return base.messageTranslatorOf(type)
     }
 
     override fun <A : Aggregate<D>, D : State> snapshotStoreOf(type: KClass<A>): SnapshotStore<D> {

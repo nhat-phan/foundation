@@ -36,6 +36,7 @@ class AggregateFactoryProcessor : AbstractProcessor() {
         var extendsAbstractEventSourced: Boolean
     )
 
+    private val debug = mutableListOf<String>()
     private val data: MutableMap<String, CollectedFactory> = mutableMapOf()
 
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment?): Boolean {
@@ -49,6 +50,7 @@ class AggregateFactoryProcessor : AbstractProcessor() {
         val settings = ProcessorOutput.readSettingsFile(processingEnv)
         val collectedSettings = translateCollectedDataToGeneratorSettings()
         val mergedSettings = settings.copy(
+            description = debug.joinToString("\n"),
             aggregateFactories = collectedSettings.aggregateFactories
         )
 
@@ -72,7 +74,7 @@ class AggregateFactoryProcessor : AbstractProcessor() {
                 )
             }
             .forEach {
-                val key = processElement(it)
+                val key = processElement(it, true)
 
                 data[key]!!.isAbstract = true
                 if (null !== it.getAnnotation(EventSourced::class.java)) {
@@ -85,7 +87,7 @@ class AggregateFactoryProcessor : AbstractProcessor() {
         elements
             .filter { it.kind.isClass }
             .forEach {
-                val key = processElement(it)
+                val key = processElement(it, false)
 
                 data[key]!!.isEventSourced = true
                 if (null !== it.getAnnotation(Implementation::class.java)) {
@@ -94,7 +96,7 @@ class AggregateFactoryProcessor : AbstractProcessor() {
             }
     }
 
-    private fun processElement(element: Element): String {
+    private fun processElement(element: Element, processingImplementation: Boolean): String {
         val packageName = this.getPackageNameOfClass(element)
         val className = element.simpleName.toString()
         val key = "$packageName.$className"
@@ -129,6 +131,20 @@ class AggregateFactoryProcessor : AbstractProcessor() {
         }
 
         // find aggregate by find the aggregate interface which implementation implement
+        /** Reserve for processing Implementation by type + contract later
+        if (processingImplementation) {
+            val mirrors = element.annotationMirrors
+            mirrors.forEach {
+                if (it.annotationType.toString() == FrameworkProcessor.Implementation) {
+                    it.elementValues.forEach {
+                        debug.add(it.key.toString())
+                        debug.add(it.value.value.toString())
+                    }
+                }
+
+            }
+        }
+        */
         val aggregate = (element as TypeElement).interfaces.firstOrNull {
             CodeUtility.isImplementInterface(processingEnv, it, FrameworkProcessor.Aggregate)
         }
