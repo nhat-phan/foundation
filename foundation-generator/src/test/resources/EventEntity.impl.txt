@@ -1,0 +1,20 @@
+package test.event.generated
+
+import kotlin.Int
+import kotlin.String
+import kotlinx.serialization.Serializable
+import net.ntworld.foundation.eventSourcing.EventEntity
+
+@Serializable
+data class CreatedEventImplEntity(
+  override val id: String,
+  override val streamId: String,
+  override val streamType: String,
+  override val version: Int,
+  override val data: String,
+  override val metadata: String
+) : EventEntity {
+  override val type: String = "created"
+
+  override val variant: Int = 0
+}

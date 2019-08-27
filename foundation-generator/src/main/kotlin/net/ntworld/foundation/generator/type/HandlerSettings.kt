@@ -5,5 +5,5 @@ interface HandlerSettings {
 
     val handler: ClassInfo
 
-    val isResolvable: Boolean
+    val makeByFactory: Boolean
 }

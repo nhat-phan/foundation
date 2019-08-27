@@ -28,7 +28,11 @@ internal object ProcessorOutput {
     fun readSettingsFileTest(): GeneratorSettings {
         val path = FrameworkProcessor.SETTINGS_PATH + "/" + FrameworkProcessor.SETTINGS_FILENAME
         if (!files.contains(path)) {
-            return GeneratorSettings(events = listOf(), aggregateFactories = listOf())
+            return GeneratorSettings(
+                provider = "",
+                events = listOf(),
+                aggregateFactories = listOf()
+            )
         }
         return SettingsSerializer.parse(files[path]!!)
     }
@@ -44,7 +48,11 @@ internal object ProcessorOutput {
             FrameworkProcessor.SETTINGS_FILENAME
         ).toFile()
         if (!file.exists()) {
-            return GeneratorSettings(events = listOf(), aggregateFactories = listOf())
+            return GeneratorSettings(
+                provider = "",
+                events = listOf(),
+                aggregateFactories = listOf()
+            )
         }
         val content = file.readText()
         return SettingsSerializer.parse(content)
@@ -57,6 +65,18 @@ internal object ProcessorOutput {
             FrameworkProcessor.SETTINGS_FILENAME,
             SettingsSerializer.serialize(settings)
         )
+    }
+
+    fun deleteFile(processingEnv: ProcessingEnvironment, path: String) {
+        if (isTest) {
+            return
+        }
+
+        val base = getKaptGeneratedDirectory(processingEnv)
+        val file = Paths.get(base, path).toFile()
+        if (file.exists()) {
+            file.delete()
+        }
     }
 
     fun writeText(processingEnv: ProcessingEnvironment, directory: String, fileName: String, content: String) {
@@ -76,6 +96,17 @@ internal object ProcessorOutput {
 
     fun writeGeneratedFile(processingEnv: ProcessingEnvironment, file: GeneratedFile) {
         writeText(processingEnv, file.directory, file.fileName, file.content)
+    }
+
+    fun writeProviderFile(processingEnv: ProcessingEnvironment, settings: GeneratorSettings, file: GeneratedFile) {
+        if (settings.provider.isNotEmpty()) {
+            deleteFile(processingEnv, settings.provider)
+        }
+        val mergedSettings = settings.copy(
+            provider = file.path
+        )
+        writeText(processingEnv, file.directory, file.fileName, file.content)
+        updateSettingsFile(processingEnv, mergedSettings)
     }
 
     private fun getKaptGeneratedDirectory(processingEnv: ProcessingEnvironment): String {

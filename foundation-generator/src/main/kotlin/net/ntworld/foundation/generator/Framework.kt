@@ -13,7 +13,27 @@ internal object Framework {
 
     val Faker = ClassName(namespace, "Faker")
 
+    val LocalBusResolver = ClassName(namespace, "LocalBusResolver")
+
+    val Event = ClassName(namespace, "Event")
+    val EventHandler = ClassName(namespace, "EventHandler")
+    val EventBus = ClassName(namespace, "EventBus")
+
+    val HandlerVersioningStrategy = ClassName(namespace, "HandlerVersioningStrategy")
+
+    val Command = ClassName("$namespace.cqrs", "Command")
+    val CommandHandler = ClassName("$namespace.cqrs", "CommandHandler")
+    val CommandBus = ClassName("$namespace.cqrs", "CommandBus")
+
+    val Query = ClassName("$namespace.cqrs", "Query")
+    val QueryHandler = ClassName("$namespace.cqrs", "QueryHandler")
+    val QueryBus = ClassName("$namespace.cqrs", "QueryBus")
+
+    val QueryHandlerNotFoundException = ClassName("$namespace.exception", "QueryHandlerNotFoundException")
+
     val Message = ClassName(namespace, "Message")
+    val MessageAttribute = ClassName(namespace, "MessageAttribute")
+    val MessageUtility = ClassName(namespace, "MessageUtility")
     val MessageTranslator = ClassName(namespace, "MessageTranslator")
 
     val AggregateFactory = ClassName(namespace, "AggregateFactory")

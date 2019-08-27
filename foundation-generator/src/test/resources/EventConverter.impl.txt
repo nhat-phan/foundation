@@ -1,0 +1,58 @@
+package test.event.generated
+
+import kotlin.Int
+import kotlin.String
+import kotlin.collections.Map
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
+import net.ntworld.foundation.Infrastructure
+import net.ntworld.foundation.eventSourcing.EventConverter
+import net.ntworld.foundation.eventSourcing.EventEntity
+import net.ntworld.foundation.eventSourcing.EventEntityConverterUtility
+import net.ntworld.foundation.eventSourcing.EventEntityConverterUtility.Setting
+import test.event.CreatedEvent
+import test.event.CreatedEventImpl
+
+class CreatedEventImplConverter(
+  private val infrastructure: Infrastructure
+) : EventConverter<CreatedEvent> {
+  private val json: Json = Json(JsonConfiguration.Stable.copy(strictMode = false))
+
+  override fun toEventEntity(
+    streamId: String,
+    streamType: String,
+    version: Int,
+    event: CreatedEvent
+  ): CreatedEventImplEntity {
+    val raw = json.stringify(CreatedEventImpl.serializer(), event)
+    val processed = EventEntityConverterUtility.processRawJson(infrastructure, json, fields, raw)
+    return CreatedEventImplEntity(
+      id = infrastructure.root.idGeneratorOf(CreatedEvent::class).generate(),
+      streamId = streamId,
+      streamType = streamType,
+      version = version,
+      data = processed.data,
+      metadata = processed.metadata
+    )
+  }
+
+  override fun fromEventEntity(eventEntity: EventEntity): CreatedEventImpl {
+    val raw = EventEntityConverterUtility.rebuildRawJson(infrastructure, json, fields,
+        eventEntity.data, eventEntity.metadata)
+    return json.parse(CreatedEventImpl.serializer(), raw)
+  }
+
+  companion object {
+    val fields: Map<String, Setting> = 
+        mapOf(
+          "id" to Setting(),
+          "companyId" to Setting(metadata = true),
+          "invalidEncrypt" to Setting(metadata = true),
+          "email" to Setting(encrypted = true, faked = "email"),
+          "firstName" to Setting(encrypted = true, faked = "firstName"),
+          "lastName" to Setting(encrypted = true, faked = "lastName"),
+          "createdAt" to Setting(encrypted = true, faked = "")
+        )
+
+  }
+}

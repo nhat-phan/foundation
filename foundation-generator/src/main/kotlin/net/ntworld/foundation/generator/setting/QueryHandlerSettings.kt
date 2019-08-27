@@ -5,7 +5,8 @@ import net.ntworld.foundation.generator.type.HandlerSettings
 
 data class QueryHandlerSettings(
     val query: ClassInfo,
+    val version: Int,
     override val bus: String,
     override val handler: ClassInfo,
-    override val isResolvable: Boolean
+    override val makeByFactory: Boolean
 ) : HandlerSettings

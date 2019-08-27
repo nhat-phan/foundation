@@ -7,6 +7,7 @@ import net.ntworld.foundation.ProcessorOutput
 import net.ntworld.foundation.eventSourcing.EventSourced
 import net.ntworld.foundation.generator.AggregateFactoryGenerator
 import net.ntworld.foundation.generator.GeneratorSettings
+import net.ntworld.foundation.generator.InfrastructureProviderGenerator
 import net.ntworld.foundation.generator.setting.AggregateFactorySettings
 import net.ntworld.foundation.generator.type.ClassInfo
 import javax.annotation.processing.AbstractProcessor
@@ -58,7 +59,7 @@ class AggregateFactoryProcessor : AbstractProcessor() {
         settings.aggregateFactories.forEach {
             ProcessorOutput.writeGeneratedFile(processingEnv, AggregateFactoryGenerator.generate(it))
         }
-        // ProcessorOutput.writeGeneratedFile(processingEnv, InfrastructureProviderGenerator().generate(mergedSettings))
+        ProcessorOutput.writeProviderFile(processingEnv, mergedSettings, InfrastructureProviderGenerator().generate(mergedSettings))
 
         return true
     }
@@ -217,6 +218,7 @@ class AggregateFactoryProcessor : AbstractProcessor() {
             }
 
         return GeneratorSettings(
+            provider = "",
             aggregateFactories = factories.toList(),
             events = emptyList()
         )

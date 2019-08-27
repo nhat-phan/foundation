@@ -59,8 +59,9 @@ class EventProcessor : AbstractProcessor() {
         settings.events.forEach {
             ProcessorOutput.writeGeneratedFile(processingEnv, EventEntityGenerator.generate(it))
             ProcessorOutput.writeGeneratedFile(processingEnv, EventConverterGenerator.generate(it))
+            ProcessorOutput.writeGeneratedFile(processingEnv, EventMessageTranslatorGenerator.generate(it))
         }
-        ProcessorOutput.writeGeneratedFile(processingEnv, InfrastructureProviderGenerator().generate(mergedSettings))
+        ProcessorOutput.writeProviderFile(processingEnv, mergedSettings, InfrastructureProviderGenerator().generate(mergedSettings))
 
         return true
     }
@@ -178,6 +179,7 @@ class EventProcessor : AbstractProcessor() {
         }
 
         return GeneratorSettings(
+            provider = "",
             aggregateFactories = emptyList(),
             events = events.toList()
         )

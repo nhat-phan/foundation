@@ -1,0 +1,54 @@
+package test.event.generated
+
+import kotlin.Boolean
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
+import net.ntworld.foundation.Message
+import net.ntworld.foundation.MessageAttribute
+import net.ntworld.foundation.MessageTranslator
+import net.ntworld.foundation.MessageUtility
+import test.event.CreatedEvent
+import test.event.CreatedEventImpl
+
+object CreatedEventImplMessageTranslator : MessageTranslator<CreatedEvent> {
+  private val json: Json = Json(JsonConfiguration.Stable.copy(strictMode = false))
+
+  private fun make(event: CreatedEventImpl): CreatedEventImpl {
+    if (event is CreatedEventImpl) {
+      return event
+    }
+    return CreatedEventImpl(
+      id = event.id,
+      companyId = event.companyId,
+      invalidEncrypt = event.invalidEncrypt,
+      email = event.email,
+      firstName = event.firstName,
+      lastName = event.lastName,
+      createdAt = event.createdAt
+    )
+  }
+
+  override fun canConvert(message: Message): Boolean {
+    val bodyType = message.attributes["bodyType"]
+    return null !== bodyType && bodyType.stringValue == "test.event.CreatedEvent"
+  }
+
+  override fun fromMessage(message: Message): CreatedEventImpl =
+      json.parse(CreatedEventImpl.serializer(), message.body)
+
+  override fun toMessage(input: CreatedEvent): Message {
+    val attributes = mapOf<String, MessageAttribute>(
+      "bodyType" to MessageUtility.createStringAttribute(
+        "test.event.CreatedEvent"
+      ),
+      "implementationType" to MessageUtility.createStringAttribute(
+        "test.event.CreatedEventImpl"
+      )
+    )
+
+    return MessageUtility.createMessage(
+      json.stringify(CreatedEventImpl.serializer(), make(input)),
+      attributes
+    )
+  }
+}

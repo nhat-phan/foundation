@@ -1,11 +1,43 @@
 package net.ntworld.foundation.generator
 
-import net.ntworld.foundation.generator.setting.AggregateFactorySettings
-import net.ntworld.foundation.generator.setting.EventSettings
+import net.ntworld.foundation.generator.setting.*
 import net.ntworld.foundation.generator.type.ClassInfo
 import java.lang.Math.min
 
 internal object Utility {
+    fun findLocalEventBusTarget(settings: List<EventHandlerSettings>): ClassInfo {
+        var packageName = ""
+        settings.forEach {
+            packageName = this.guessPackageName(packageName, it.handler.packageName)
+        }
+        return ClassInfo(
+            className = "LocalEventBus",
+            packageName = packageName
+        )
+    }
+
+    fun findLocalCommandBusTarget(settings: List<CommandHandlerSettings>): ClassInfo {
+        var packageName = ""
+        settings.forEach {
+            packageName = this.guessPackageName(packageName, it.handler.packageName)
+        }
+        return ClassInfo(
+            className = "LocalCommandBus",
+            packageName = packageName
+        )
+    }
+
+    fun findLocalQueryBusTarget(settings: List<QueryHandlerSettings>): ClassInfo {
+        var packageName = ""
+        settings.forEach {
+            packageName = this.guessPackageName(packageName, it.handler.packageName)
+        }
+        return ClassInfo(
+            className = "LocalQueryBus",
+            packageName = packageName
+        )
+    }
+
     fun findEventConverterTarget(settings: EventSettings): ClassInfo {
         return ClassInfo(
             className = "${settings.implementation.className}Converter",
@@ -16,6 +48,13 @@ internal object Utility {
     fun findEventEntityTarget(settings: EventSettings): ClassInfo {
         return ClassInfo(
             className = "${settings.implementation.className}Entity",
+            packageName = findTargetNamespace(settings.event.packageName)
+        )
+    }
+
+    fun findEventMessageTranslatorTarget(settings: EventSettings): ClassInfo {
+        return ClassInfo(
+            className = "${settings.implementation.className}MessageTranslator",
             packageName = findTargetNamespace(settings.event.packageName)
         )
     }
@@ -47,8 +86,11 @@ internal object Utility {
 
     fun findInfrastructureProviderTarget(settings: GeneratorSettings): ClassInfo {
         var packageName = ""
+        settings.aggregateFactories.forEach {
+            packageName = this.guessPackageName(packageName, it.implementation.packageName)
+        }
         settings.events.forEach {
-            packageName = this.guessPackageName(packageName, it.event.packageName)
+            packageName = this.guessPackageName(packageName, it.implementation.packageName)
         }
         return ClassInfo(
             packageName = packageName,

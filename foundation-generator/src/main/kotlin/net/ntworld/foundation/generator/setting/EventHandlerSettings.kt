@@ -7,5 +7,5 @@ data class EventHandlerSettings(
     val event: ClassInfo,
     override val bus: String,
     override val handler: ClassInfo,
-    override val isResolvable: Boolean
+    override val makeByFactory: Boolean
 ) : HandlerSettings

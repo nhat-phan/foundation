@@ -45,7 +45,7 @@ object EventConverterGenerator {
             .addProperty(
                 PropertySpec.builder("json", Framework.Json)
                     .addModifiers(KModifier.PRIVATE)
-                    .initializer("Json(%T.Stable)", Framework.JsonConfiguration)
+                    .initializer("Json(%T.Stable.copy(strictMode = false))", Framework.JsonConfiguration)
                     .build()
             )
             .addType(buildCompanionObject(settings))
