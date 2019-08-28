@@ -144,7 +144,7 @@ object EventEntityConverterUtility {
             if (!field.value.encrypted || field.value.faked.isEmpty()) {
                 continue
             }
-            val data = faker.make(field.value.faked)
+            val data = faker.makeFakeData(field.value.faked)
             when (data) {
                 is String -> result[field.key] = JsonPrimitive(data)
                 is Number -> result[field.key] = JsonPrimitive(data)

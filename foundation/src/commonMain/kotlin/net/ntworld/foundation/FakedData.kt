@@ -4,7 +4,7 @@
 // | Please do not edit!                                                     |
 // +-------------------------------------------------------------------------+
 // +- by  : tool.FakerRelatedSourceGenerator@runGeneratorOfFakedData
-// +- when: 2019-08-17T12:19:52Z
+// +- when: 2019-08-28T09:34:01Z
 package net.ntworld.foundation
 
 import kotlin.String
@@ -22,20 +22,20 @@ object FakedData {
         const val verb: String = "hacker.verb"
     }
 
-    object Finance {
-        const val bic: String = "finance.bic"
-
-        const val creditCard: String = "finance.creditCard"
-
-        const val iban: String = "finance.iban"
-    }
-
     object RickAndMorty {
         const val character: String = "rickAndMorty.character"
 
         const val quote: String = "rickAndMorty.quote"
 
         const val location: String = "rickAndMorty.location"
+    }
+
+    object Finance {
+        const val bic: String = "finance.bic"
+
+        const val creditCard: String = "finance.creditCard"
+
+        const val iban: String = "finance.iban"
     }
 
     object Matz {
@@ -103,9 +103,9 @@ object FakedData {
     object Weather {
         const val temperatureCelsius: String = "weather.temperatureCelsius"
 
-        const val temperatureFahrenheit: String = "weather.temperatureFahrenheit"
-
         const val description: String = "weather.description"
+
+        const val temperatureFahrenheit: String = "weather.temperatureFahrenheit"
     }
 
     object Superhero {
@@ -118,6 +118,22 @@ object FakedData {
         const val prefix: String = "superhero.prefix"
 
         const val suffix: String = "superhero.suffix"
+    }
+
+    object Friends {
+        const val character: String = "friends.character"
+
+        const val quote: String = "friends.quote"
+
+        const val location: String = "friends.location"
+    }
+
+    object BackToTheFuture {
+        const val character: String = "backToTheFuture.character"
+
+        const val quote: String = "backToTheFuture.quote"
+
+        const val date: String = "backToTheFuture.date"
     }
 
     object Internet {
@@ -158,22 +174,6 @@ object FakedData {
         const val emailAddress: String = "internet.emailAddress"
 
         const val domainSuffix: String = "internet.domainSuffix"
-    }
-
-    object Friends {
-        const val character: String = "friends.character"
-
-        const val quote: String = "friends.quote"
-
-        const val location: String = "friends.location"
-    }
-
-    object BackToTheFuture {
-        const val character: String = "backToTheFuture.character"
-
-        const val quote: String = "backToTheFuture.quote"
-
-        const val date: String = "backToTheFuture.date"
     }
 
     object LeagueOfLegends {
@@ -306,18 +306,18 @@ object FakedData {
         const val secondarySchool: String = "educator.secondarySchool"
     }
 
-    object PhoneNumber {
-        const val cellPhone: String = "phoneNumber.cellPhone"
-
-        const val phoneNumber: String = "phoneNumber.phoneNumber"
-    }
-
     object Overwatch {
         const val quote: String = "overwatch.quote"
 
         const val location: String = "overwatch.location"
 
         const val hero: String = "overwatch.hero"
+    }
+
+    object PhoneNumber {
+        const val cellPhone: String = "phoneNumber.cellPhone"
+
+        const val phoneNumber: String = "phoneNumber.phoneNumber"
     }
 
     object Pokemon {
@@ -430,16 +430,6 @@ object FakedData {
         const val location: String = "hobbit.location"
     }
 
-    object Shakespeare {
-        const val hamletQuote: String = "shakespeare.hamletQuote"
-
-        const val kingRichardIIIQuote: String = "shakespeare.kingRichardIIIQuote"
-
-        const val asYouLikeItQuote: String = "shakespeare.asYouLikeItQuote"
-
-        const val romeoAndJulietQuote: String = "shakespeare.romeoAndJulietQuote"
-    }
-
     object SlackEmoji {
         const val objectsAndSymbols: String = "slackEmoji.objectsAndSymbols"
 
@@ -458,6 +448,16 @@ object FakedData {
         const val emoji: String = "slackEmoji.emoji"
 
         const val celebration: String = "slackEmoji.celebration"
+    }
+
+    object Shakespeare {
+        const val hamletQuote: String = "shakespeare.hamletQuote"
+
+        const val kingRichardIIIQuote: String = "shakespeare.kingRichardIIIQuote"
+
+        const val asYouLikeItQuote: String = "shakespeare.asYouLikeItQuote"
+
+        const val romeoAndJulietQuote: String = "shakespeare.romeoAndJulietQuote"
     }
 
     object Bool {
@@ -684,6 +684,16 @@ object FakedData {
         const val suffix: String = "name.suffix"
     }
 
+    object Ancient {
+        const val god: String = "ancient.god"
+
+        const val titan: String = "ancient.titan"
+
+        const val primordial: String = "ancient.primordial"
+
+        const val hero: String = "ancient.hero"
+    }
+
     object GameOfThrones {
         const val city: String = "gameOfThrones.city"
 
@@ -694,16 +704,6 @@ object FakedData {
         const val character: String = "gameOfThrones.character"
 
         const val quote: String = "gameOfThrones.quote"
-    }
-
-    object Ancient {
-        const val god: String = "ancient.god"
-
-        const val titan: String = "ancient.titan"
-
-        const val primordial: String = "ancient.primordial"
-
-        const val hero: String = "ancient.hero"
     }
 
     object Esports {
@@ -755,9 +755,9 @@ object FakedData {
 
         const val school: String = "witcher.school"
 
-        const val character: String = "witcher.character"
-
         const val witcher: String = "witcher.witcher"
+
+        const val character: String = "witcher.character"
 
         const val quote: String = "witcher.quote"
 

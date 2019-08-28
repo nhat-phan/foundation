@@ -68,6 +68,11 @@ class LocalQueryBusGenerator {
             FunSpec.builder("process")
                 .addTypeVariable(typeR)
                 .returns(typeR)
+                .addAnnotation(
+                    AnnotationSpec.builder(Suppress::class)
+                        .addMember("%S", "UNCHECKED_CAST")
+                        .build()
+                )
                 .addModifiers(KModifier.OVERRIDE)
                 .addParameter("query", Framework.Query.parameterizedBy(typeR))
                 .addParameter("message", Framework.Message.copy(nullable = true))

@@ -1,4 +1,12 @@
 package net.ntworld.foundation
 
-@DslMarker
-annotation class InfrastructureDsl
+annotation class InfrastructureDsl {
+    @DslMarker
+    annotation class CommandHandlerDsl
+
+    @DslMarker
+    annotation class QueryHandlerDsl
+
+    @DslMarker
+    annotation class GenericDsl
+}

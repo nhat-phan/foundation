@@ -1,13 +1,16 @@
 package net.ntworld.foundation
 
 import net.ntworld.foundation.cqrs.CommandBus
+import net.ntworld.foundation.cqrs.Query
 import net.ntworld.foundation.cqrs.QueryBus
+import net.ntworld.foundation.cqrs.ReceivedData
 import net.ntworld.foundation.eventSourcing.*
 import kotlin.reflect.KClass
 
 class MemorizedInfrastructure(base: Infrastructure) : InfrastructureWrapper(base) {
     private var _environment: Environment? = null
     private val _aggregateFactories = mutableMapOf<KClass<*>, AggregateFactory<*, *>>()
+    private val _dataReceivers = mutableMapOf<KClass<*>, DataReceiver<*>>()
     private val _stores = mutableMapOf<KClass<*>, StateStore<*>>()
     private val _idGenerators = mutableMapOf<KClass<*>, IdGenerator>()
     private var _queryBus: QueryBus? = null
@@ -36,6 +39,14 @@ class MemorizedInfrastructure(base: Infrastructure) : InfrastructureWrapper(base
             _aggregateFactories[type] = super.factoryOf(type)
         }
         return _aggregateFactories[type] as AggregateFactory<A, S>
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ReceivedData<Q, R>, Q : Query<R>, R> receiverOf(type: KClass<T>): DataReceiver<T> {
+        if (!_dataReceivers.containsKey(type)) {
+            _dataReceivers[type] = super.receiverOf(type)
+        }
+        return _dataReceivers[type] as DataReceiver<T>
     }
 
     @Suppress("UNCHECKED_CAST")

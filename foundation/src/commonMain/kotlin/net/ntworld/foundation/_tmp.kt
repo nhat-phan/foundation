@@ -58,7 +58,7 @@ abstract class AbstractLocalEventBus : EventBus, LocalBusResolver<Event, List<Ev
 //    }
 //}
 //
-//abstract class AbstractLocalCommandBus: CommandBus, LocalBusResolver<Command, CommandHandler<Command>> {
+//abstract class AbstractLocalCommandBus: CommandBus, LocalBusResolver<Command, CommandHandlerDsl<Command>> {
 //    override fun process(command: Command, message: Message?) {
 //        val handler = this.resolve(command)
 //        if (null !== handler) {
@@ -67,7 +67,7 @@ abstract class AbstractLocalEventBus : EventBus, LocalBusResolver<Event, List<Ev
 //    }
 //}
 //
-//class RemoteCommandBus(private val bus: LocalBusResolver<Command, CommandHandler<Command>>): CommandBus {
+//class RemoteCommandBus(private val bus: LocalBusResolver<Command, CommandHandlerDsl<Command>>): CommandBus {
 //    override fun process(command: Command, message: Message?) {
 //        // do the same job if there is a handler in local
 //        val handler = this.bus.resolve(command)
@@ -79,7 +79,7 @@ abstract class AbstractLocalEventBus : EventBus, LocalBusResolver<Event, List<Ev
 //    }
 //}
 //
-//abstract class AbstractLocalQueryBus: QueryBus, LocalBusResolver<Query<*>, QueryHandler<Query<*>, *>> {
+//abstract class AbstractLocalQueryBus: QueryBus, LocalBusResolver<Query<*>, QueryHandlerDsl<Query<*>, *>> {
 //    override fun <R> process(query: Query<R>, message: Message?): R {
 //        val handler = this.resolve(query)
 //        if (null !== handler) {
@@ -89,7 +89,7 @@ abstract class AbstractLocalEventBus : EventBus, LocalBusResolver<Event, List<Ev
 //    }
 //}
 //
-//class RemoteQueryBus(private val bus: LocalBusResolver<Query<*>, QueryHandler<Query<*>, *>>): QueryBus {
+//class RemoteQueryBus(private val bus: LocalBusResolver<Query<*>, QueryHandlerDsl<Query<*>, *>>): QueryBus {
 //    override fun <R> process(query: Query<R>, message: Message?): R {
 //        // do the same job if there is a handler in local
 //        val handler = this.bus.resolve(query)

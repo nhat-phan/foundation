@@ -1,7 +1,9 @@
 package net.ntworld.foundation
 
 import net.ntworld.foundation.cqrs.CommandBus
+import net.ntworld.foundation.cqrs.Query
 import net.ntworld.foundation.cqrs.QueryBus
+import net.ntworld.foundation.cqrs.ReceivedData
 import net.ntworld.foundation.eventSourcing.*
 import kotlin.reflect.KClass
 
@@ -27,6 +29,10 @@ open class InfrastructureWrapper(private val base: Infrastructure) : Infrastruct
 
     override fun <A : Aggregate<D>, D : State> factoryOf(type: KClass<A>): AggregateFactory<A, D> {
         return base.factoryOf(type)
+    }
+
+    override fun <T : ReceivedData<Q, R>, Q : Query<R>, R> receiverOf(type: KClass<T>): DataReceiver<T> {
+        return base.receiverOf(type)
     }
 
     override fun <A : Aggregate<D>, D : State> storeOf(type: KClass<A>): StateStore<D> {

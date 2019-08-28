@@ -1,6 +1,7 @@
 buildscript {
     ext.artifactGroup = project.findProperty("artifactGroup").toString()
     ext.artifactVersion = project.findProperty("artifactVersion").toString()
+    ext.kotlinxCoroutinesVersion = project.findProperty("kotlinxCoroutinesVersion").toString()
     ext.kotlinxSerializationRuntimeVersion = project.findProperty("kotlinxSerializationRuntimeVersion").toString()
     ext.javaFakerVersion = project.findProperty("javaFakerVersion").toString()
     ext.javaUUIDGeneratorVersion = project.findProperty("javaUUIDGeneratorVersion").toString()
@@ -33,6 +34,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
+                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$kotlinxCoroutinesVersion"
                 implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlinxSerializationRuntimeVersion"
             }
         }
@@ -46,6 +48,7 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
                 implementation kotlin('reflect')
+                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion"
                 implementation "com.fasterxml.uuid:java-uuid-generator:$javaUUIDGeneratorVersion"
                 implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinxSerializationRuntimeVersion"
                 implementation "com.github.javafaker:javafaker:$javaFakerVersion"

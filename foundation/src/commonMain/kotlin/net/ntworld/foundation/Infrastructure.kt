@@ -17,6 +17,8 @@ interface Infrastructure {
 
     fun <A : Aggregate<S>, S : State> factoryOf(type: KClass<A>): AggregateFactory<A, S>
 
+    fun <T : ReceivedData<Q, R>, Q: Query<R>, R> receiverOf(type: KClass<T>): DataReceiver<T>
+
     fun <A : Aggregate<S>, S : State> storeOf(type: KClass<A>): StateStore<S>
 
     fun <T : Any> idGeneratorOf(type: KClass<T>): IdGenerator

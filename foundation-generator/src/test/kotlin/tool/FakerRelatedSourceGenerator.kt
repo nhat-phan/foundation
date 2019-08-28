@@ -94,7 +94,7 @@ class FakerRelatedSourceGenerator {
                 .build()
         )
         classSpec.addFunction(
-            FunSpec.builder("make")
+            FunSpec.builder("makeFakeData")
                 .returns(Any::class)
                 .addModifiers(KModifier.OVERRIDE)
                 .addParameter("data", String::class)

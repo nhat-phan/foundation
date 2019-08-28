@@ -1,5 +1,6 @@
 val artifactGroup: String by project
 val artifactVersion: String by project
+val kotlinxCoroutinesVersion: String by project
 val kotlinxSerializationRuntimeVersion: String by project
 val javaFakerVersion: String by project
 
@@ -24,7 +25,7 @@ dependencies {
     // ------- Dependencies for development
     implementation(kotlin("stdlib"))
     implementation(project(":foundation"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
     compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinxSerializationRuntimeVersion")
     compile("com.github.javafaker:javafaker:$javaFakerVersion")
 

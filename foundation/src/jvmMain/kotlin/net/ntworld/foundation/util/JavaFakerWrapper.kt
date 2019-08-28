@@ -4,7 +4,7 @@
 // | Please do not edit!                                                     |
 // +-------------------------------------------------------------------------+
 // +- by  : tool.FakerRelatedSourceGenerator@runGeneratorOfJavaFakerWrapperJvmClass
-// +- when: 2019-08-17T12:23:49Z
+// +- when: 2019-08-28T09:33:04Z
 package net.ntworld.foundation.util
 
 import com.github.javafaker.Faker
@@ -14,7 +14,7 @@ import kotlin.String
 class JavaFakerWrapper(
     private val faker: Faker
 ) : net.ntworld.foundation.Faker {
-    override fun make(data: String): Any = when(data) {
+    override fun makeFakeData(data: String): Any = when(data) {
         "hacker.adjective" -> faker.hacker().adjective()
         "hacker.noun" -> faker.hacker().noun()
         "hacker.ingverb" -> faker.hacker().ingverb()
@@ -51,8 +51,8 @@ class JavaFakerWrapper(
         "number.randomDigit" -> faker.number().randomDigit()
         "number.digit" -> faker.number().digit()
         "weather.temperatureCelsius" -> faker.weather().temperatureCelsius()
-        "weather.temperatureFahrenheit" -> faker.weather().temperatureFahrenheit()
         "weather.description" -> faker.weather().description()
+        "weather.temperatureFahrenheit" -> faker.weather().temperatureFahrenheit()
         "superhero.descriptor" -> faker.superhero().descriptor()
         "superhero.power" -> faker.superhero().power()
         "superhero.name" -> faker.superhero().name()
@@ -101,8 +101,8 @@ class JavaFakerWrapper(
         "book.publisher" -> faker.book().publisher()
         "book.genre" -> faker.book().genre()
         "space.nasaSpaceCraft" -> faker.space().nasaSpaceCraft()
-        "space.nebula" -> faker.space().nebula()
         "space.company" -> faker.space().company()
+        "space.nebula" -> faker.space().nebula()
         "space.star" -> faker.space().star()
         "space.starCluster" -> faker.space().starCluster()
         "space.planet" -> faker.space().planet()
@@ -159,8 +159,8 @@ class JavaFakerWrapper(
         "funnyName.name" -> faker.funnyName().name()
         "color.hex" -> faker.color().hex()
         "color.name" -> faker.color().name()
-        "beer.hop" -> faker.beer().hop()
         "beer.style" -> faker.beer().style()
+        "beer.hop" -> faker.beer().hop()
         "beer.malt" -> faker.beer().malt()
         "beer.yeast" -> faker.beer().yeast()
         "beer.name" -> faker.beer().name()
@@ -317,8 +317,8 @@ class JavaFakerWrapper(
         "country.name" -> faker.country().name()
         "witcher.monster" -> faker.witcher().monster()
         "witcher.school" -> faker.witcher().school()
-        "witcher.character" -> faker.witcher().character()
         "witcher.witcher" -> faker.witcher().witcher()
+        "witcher.character" -> faker.witcher().character()
         "witcher.quote" -> faker.witcher().quote()
         "witcher.location" -> faker.witcher().location()
         else -> throw Exception("Cannot resolve faked type = '$data'")

@@ -1,7 +1,9 @@
 package net.ntworld.foundation
 
 import net.ntworld.foundation.cqrs.CommandBus
+import net.ntworld.foundation.cqrs.Query
 import net.ntworld.foundation.cqrs.QueryBus
+import net.ntworld.foundation.cqrs.ReceivedData
 import net.ntworld.foundation.eventSourcing.*
 import net.ntworld.foundation.exception.CannotResolveException
 import kotlin.reflect.KClass
@@ -73,6 +75,13 @@ open class InfrastructureResolver(
             return next!!.factoryOf(type)
         }
         throw CannotResolveException("Infrastructure.factoryOf() cannot resolve $type")
+    }
+
+    override fun <T : ReceivedData<Q, R>, Q: Query<R>, R> receiverOf(type: KClass<T>): DataReceiver<T> {
+        if (null !== next) {
+            return next!!.receiverOf(type)
+        }
+        throw CannotResolveException("Infrastructure.receiverOf() cannot resolve $type")
     }
 
     override fun <A : Aggregate<D>, D : State> storeOf(type: KClass<A>): StateStore<D> {
