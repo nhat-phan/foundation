@@ -7,21 +7,24 @@ interface AggregateFactory<out A : Aggregate<S>, S : State> {
 
     fun generate(): A
 
-    fun retrieve(id: String): A?
+    fun retrieveOrNull(id: String): A?
+
+    fun retrieve(id: String): A {
+        val instance = this.retrieveOrNull(id)
+        if (null === instance) {
+            throw NotFoundException()
+        }
+        return instance
+    }
+
+    fun retrieveOrFail(id: String): A = retrieve(id)
 
     fun retrieveOrGenerate(id: String): A {
-        val instance = this.retrieve(id)
+        val instance = this.retrieveOrNull(id)
         if (null === instance) {
             return this.generate()
         }
         return instance
     }
 
-    fun retrieveOrFail(id: String): A {
-        val instance = this.retrieve(id)
-        if (null === instance) {
-            throw NotFoundException()
-        }
-        return instance
-    }
 }

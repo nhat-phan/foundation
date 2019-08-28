@@ -9,12 +9,12 @@ internal object AbstractFactoryWithEventSourcedGenerator {
         AbstractFactoryGenerator.addConstructor(type)
         AbstractFactoryGenerator.addAbstractMethods(type, settings)
         AbstractFactoryGenerator.addGenerateFunction(type, settings)
-        addRetrieveFunction(type, settings)
+        addRetrieveOrNullFunction(type, settings)
     }
 
-    internal fun addRetrieveFunction(type: TypeSpec.Builder, settings: AggregateFactorySettings) {
+    internal fun addRetrieveOrNullFunction(type: TypeSpec.Builder, settings: AggregateFactorySettings) {
         val code = CodeBlock.builder()
-            .add("return %T.retrieve(\n", Framework.EventSourcedFactory)
+            .add("return %T.retrieveOrNull(\n", Framework.EventSourcedFactory)
             .indent()
             .add("infrastructure = infrastructure,\n")
             .add("aggregateKlass = %T::class,\n", settings.aggregate.toClassName())
@@ -32,7 +32,7 @@ internal object AbstractFactoryWithEventSourcedGenerator {
             .add(")\n")
 
         type.addFunction(
-            FunSpec.builder("retrieve")
+            FunSpec.builder("retrieveOrNull")
                 .addModifiers(KModifier.OVERRIDE)
                 .addParameter("id", String::class)
                 .returns(settings.implementation.toClassNameNullable())

@@ -9,7 +9,7 @@ internal object AbstractFactoryGenerator {
         addConstructor(type)
         addAbstractMethods(type, settings)
         addGenerateFunction(type, settings)
-        addRetrieveFunction(type, settings)
+        addRetrieveOrNullFunction(type, settings)
     }
 
     internal fun addConstructor(type: TypeSpec.Builder) {
@@ -65,7 +65,7 @@ internal object AbstractFactoryGenerator {
         )
     }
 
-    internal fun addRetrieveFunction(type: TypeSpec.Builder, settings: AggregateFactorySettings) {
+    internal fun addRetrieveOrNullFunction(type: TypeSpec.Builder, settings: AggregateFactorySettings) {
         val code = CodeBlock.builder()
             .add("val store = this.infrastructure.root.storeOf(%T::class)\n", settings.aggregate.toClassName())
             .add("val data = store.findById(id)\n")
@@ -77,7 +77,7 @@ internal object AbstractFactoryGenerator {
             .add("return make(data)\n")
 
         type.addFunction(
-            FunSpec.builder("retrieve")
+            FunSpec.builder("retrieveOrNull")
                 .addModifiers(KModifier.OVERRIDE)
                 .addParameter("id", String::class)
                 .returns(settings.implementation.toClassNameNullable())
