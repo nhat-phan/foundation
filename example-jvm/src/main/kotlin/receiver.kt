@@ -171,17 +171,17 @@ class FindSettingByIdQueryHandler(
     private val infrastructure: Infrastructure
 ) : QueryHandler<FindSettingByIdQuery, SettingData> {
     override fun handle(query: FindSettingByIdQuery): SettingData {
-        return handle(query, null)
+        return execute(query, null)
     }
 
-    override fun handle(query: FindSettingByIdQuery, message: Message?): SettingData {
+    override fun execute(query: FindSettingByIdQuery, message: Message?): SettingData {
         // In command, there are - steps
         //   $1. Get all info you need from your domain
         //   $2. Get all info you need from other domain via queryBus().process(...)
         //   $3. Transform data to correct Result type
         return use(infrastructure) {
-            val result = eventBus()
-            // val result = queryBus()
+            // val result = eventBus()
+            val result = queryBus()
             // step 3a
             // step 3b
 

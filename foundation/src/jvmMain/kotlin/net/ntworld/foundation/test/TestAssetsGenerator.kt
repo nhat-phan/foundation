@@ -7,8 +7,9 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.findAnnotation
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import net.ntworld.foundation.Faker
 
-actual object TestEnvironmentGenerator {
+actual object TestAssetsGenerator {
     internal data class PropertyData(
         val property: KProperty<*>,
         val hasFaked: Boolean,
@@ -24,6 +25,19 @@ actual object TestEnvironmentGenerator {
     ): String {
         val file = FileSpec.builder(packageName, className)
         val type = TypeSpec.classBuilder(className)
+
+        type.primaryConstructor(
+            FunSpec.constructorBuilder()
+                .addParameter("faker", Faker::class)
+                .build()
+        )
+        type.addProperty(
+            PropertySpec.builder("faker", Faker::class)
+                .addModifiers(KModifier.PRIVATE)
+                .initializer("faker")
+                .build()
+        )
+
         buildReadMapFunction(type)
         buildCreateFakedDataFunction(type)
 
@@ -174,7 +188,7 @@ actual object TestEnvironmentGenerator {
         val implName = findImplementationName(contract.definition)
         if (!privateImplNames.contains(implName)) {
             val impl = TypeSpec.classBuilder(implName)
-                .addModifiers(KModifier.PRIVATE, KModifier.DATA)
+                .addModifiers(KModifier.PRIVATE)
                 .addSuperinterface(contract.definition)
             val ctor = FunSpec.constructorBuilder()
 

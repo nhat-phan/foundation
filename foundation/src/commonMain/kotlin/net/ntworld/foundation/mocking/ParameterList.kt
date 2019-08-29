@@ -1,6 +1,6 @@
 package net.ntworld.foundation.mocking
 
-class ParameterList(private val params: List<Any>) {
+class ParameterList(private val params: List<Any?>) {
     operator fun get(index: Int) = params[index]
 
     operator fun component1() = params[0]

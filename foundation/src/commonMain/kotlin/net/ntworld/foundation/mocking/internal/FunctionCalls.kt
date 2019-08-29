@@ -14,24 +14,24 @@ internal class FunctionCalls {
         return calledParams.size
     }
 
-    private fun add(params: List<Any>): ParameterList {
+    private fun add(params: List<Any?>): ParameterList {
         val list = ParameterList(params)
         calledParams += list
 
         return list
     }
 
-    fun <R> callFake(params: List<Any>, fake: (ParameterList) -> R): R {
+    fun <R> callFake(params: List<Any?>, fake: (ParameterList) -> R): R {
         return fake.invoke(this.add(params))
     }
 
-    fun <R> callFake(params: List<Any>, fake: (ParameterList, InvokeData) -> R): R {
+    fun <R> callFake(params: List<Any?>, fake: (ParameterList, InvokeData) -> R): R {
         val size = calledParams.size
         val list = this.add(params)
         return fake.invoke(list, InvokeData(size + 1))
     }
 
-    fun <R> returnResult(params: List<Any>, result: R): R {
+    fun <R> returnResult(params: List<Any?>, result: R): R {
         this.add(params)
         return result
     }

@@ -5,7 +5,7 @@ import net.ntworld.foundation.mocking.MockingException
 import net.ntworld.foundation.mocking.ParameterList
 import kotlin.reflect.KFunction
 
-internal class MockedFunction<R>(private val func: KFunction<R>) {
+internal class MockedFunction<R>(private val fnName: String) {
     private var hasResult: Boolean = false
     private var result: Any? = null
     private var callFake1: ((ParameterList) -> R)? = null
@@ -34,25 +34,25 @@ internal class MockedFunction<R>(private val func: KFunction<R>) {
 
     fun verify() {
         if (calledCount != -1 && calledCount != calls.count()) {
-            throw MockingException("Expect function ${getKeyedName(func)} called $calledCount time(s) but it actually called ${calls.count()} time(s).")
+            throw MockingException("Expect function $fnName called $calledCount time(s) but it actually called ${calls.count()} time(s).")
         }
 
         if (calledAtLeast != -1 && calledAtLeast < calls.count()) {
-            throw MockingException("Expect function ${getKeyedName(func)} called at least $calledAtLeast time(s) but it actually called ${calls.count()} time(s).")
+            throw MockingException("Expect function $fnName called at least $calledAtLeast time(s) but it actually called ${calls.count()} time(s).")
         }
 
         if (null !== calledWith2 && !calls.verify(calledWith2!!)) {
-            throw MockingException("Expect function ${getKeyedName(func)} called with params is failed.")
+            throw MockingException("Expect function $fnName called with params is failed.")
         }
 
         if (null !== calledWith1 && !calls.verify(calledWith1!!)) {
-            throw MockingException("Expect function ${getKeyedName(func)} called with params is failed.")
+            throw MockingException("Expect function $fnName called with params is failed.")
         }
 
         this.reset()
     }
 
-    fun invoke(params: List<Any>): R {
+    fun invoke(params: List<Any?>): R {
         if (null !== callFake2) {
             return calls.callFake(params, callFake2!!)
         }

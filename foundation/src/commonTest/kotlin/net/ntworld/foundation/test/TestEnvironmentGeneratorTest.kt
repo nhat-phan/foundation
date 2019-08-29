@@ -29,7 +29,7 @@ class TestEnvironmentGeneratorTest {
             )
         )
 
-        val output = TestEnvironmentGenerator.generateContractFactory(
+        val output = TestAssetsGenerator.generateContractFactory(
             "net.ntworld.foundation.test",
             "ContractFactory",
             list

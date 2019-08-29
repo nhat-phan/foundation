@@ -7,10 +7,10 @@ abstract class AbstractLocalEventBus : EventBus, LocalBusResolver<Event, List<Ev
         this.process(event)
     }
 
-    override fun process(event: Event, message: Message?) {
+    override fun process(event: Event) {
         val handlers = this.resolve(event)
         if (null !== handlers) {
-            handlers.forEach { it.handle(event = event, message = message) }
+            handlers.forEach { it.handle(event = event) }
         }
     }
 
