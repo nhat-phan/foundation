@@ -37,6 +37,9 @@ dependencies {
     // compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinxSerializationRuntimeVersion")
 
     // kapt("com.github.nhat-phan.foundation:foundation-processor:$artifactVersion")
+
+    testImplementation(kotlin("test"))
+    testImplementation(kotlin("test-junit"))
 }
 
 idea {

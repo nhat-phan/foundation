@@ -3,6 +3,7 @@ buildscript {
     ext.artifactVersion = project.findProperty("artifactVersion").toString()
     ext.kotlinxCoroutinesVersion = project.findProperty("kotlinxCoroutinesVersion").toString()
     ext.kotlinxSerializationRuntimeVersion = project.findProperty("kotlinxSerializationRuntimeVersion").toString()
+    ext.kotlinPoetVersion = project.findProperty("javaFakerVersion").toString()
     ext.javaFakerVersion = project.findProperty("javaFakerVersion").toString()
     ext.javaUUIDGeneratorVersion = project.findProperty("javaUUIDGeneratorVersion").toString()
 }
@@ -52,6 +53,7 @@ kotlin {
                 implementation "com.fasterxml.uuid:java-uuid-generator:$javaUUIDGeneratorVersion"
                 implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinxSerializationRuntimeVersion"
                 implementation "com.github.javafaker:javafaker:$javaFakerVersion"
+                implementation "com.squareup:kotlinpoet:$kotlinPoetVersion"
             }
         }
         jvmTest {

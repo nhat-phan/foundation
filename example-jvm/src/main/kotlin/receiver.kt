@@ -7,13 +7,95 @@ import net.ntworld.foundation.cqrs.*
 // contracts
 interface SettingData {
     val id: String
+
+    @Faked(type = FakedData.Name.fullName)
     val language: String
+
+    @Faked(type = FakedData.Name.fullName)
     val timezone: String
+
+    @Faked(type = FakedData.Name.fullName)
     val subscription: String
 }
 
 interface FindSettingByIdQuery : FindByIdQuery<SettingData> {
     override val id: String
+}
+
+// Kotlin test faked data => in run-time
+fun main() {
+    val type = SettingData::class
+    type.members.forEach {
+        val prop = it
+        println(prop.name)
+        prop.annotations.forEach {
+            println(it.toString())
+        }
+        println("-----")
+    }
+}
+
+class ContractFactory(private val faker: Faker) {
+    private data class SettingDataImpl(
+        override val id: String,
+        override val language: String,
+        override val timezone: String,
+        override val subscription: String
+    ) : SettingData
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <T> createFakedData(type: String): T {
+        return faker.makeFakeData(type) as T
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <T> readMap(data: Map<String, Any>, key: String, fakerType: String): T {
+        return if (data.containsKey(key)) {
+            data[key] as T
+        } else {
+            faker.makeFakeData(fakerType) as T
+        }
+    }
+
+    fun makeSettingData(id: String, data: Map<String, Any>): SettingData =
+        SettingDataImpl(
+            id = id,
+            language = readMap(data, "language", "language-type"),
+            timezone = readMap(data, "timezone", "timezone-type"),
+            subscription = readMap(data, "subscription", "timezone-type")
+        )
+
+    fun makeSettingData(id: String): SettingData =
+        SettingDataImpl(
+            id = id,
+            language = createFakedData("language-type"),
+            timezone = createFakedData("language-type"),
+            subscription = createFakedData("language-type")
+        )
+
+    fun makeSettingData(id: String, language: String): SettingData =
+        SettingDataImpl(
+            id = id,
+            language = language,
+            timezone = createFakedData("timezone-type"),
+            subscription = createFakedData("subscription-type")
+        )
+
+    fun makeSettingData(id: String, language: String, timezone: String): SettingData =
+        SettingDataImpl(
+            id = id,
+            language = language,
+            timezone = timezone,
+            subscription = createFakedData("subscription-type")
+        )
+
+    fun makeSettingData(id: String, language: String, timezone: String, subscription: String): SettingData =
+        SettingDataImpl(
+            id = id,
+            language = language,
+            timezone = timezone,
+            subscription = subscription
+        )
 }
 
 
@@ -53,7 +135,7 @@ class ChangeSomethingCommandHandler(
 ) : CommandHandler<ChangeSomethingCommand> {
     override fun handle(command: ChangeSomethingCommand) {
         // In command, there are 4 steps
-        //   $1. Get all affected aggregates via factoryOf(...).generate() or factoryOf(...).retrieve()
+        //   $1. Get all affected aggregates via factoryOf(...).generateContractFactory() or factoryOf(...).retrieve()
         //   x2. Get all info you need to perform business logic => HERE
         //   $3a. Perform aggregate business logic
         //   $3b. Controls your related business logic (saga job) via commandBus().process(...)
