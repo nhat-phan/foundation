@@ -1,7 +1,7 @@
 package net.ntworld.foundation.generator
 
 import com.squareup.kotlinpoet.*
-import net.ntworld.foundation.generator.setting.EventSourcedSetting
+import net.ntworld.foundation.generator.setting.EventSourcingSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 
 class InfrastructureProviderGenerator {
@@ -30,7 +30,7 @@ class InfrastructureProviderGenerator {
 
         val init = CodeBlock.builder()
 
-        val events = settings.events.sortedWith(EventSourcedSetting.Companion.comparator)
+        val events = settings.events.sortedWith(EventSourcingSetting.Companion.Comparision)
         events.forEach { buildRegisterCodeForEvent(builder, init, it) }
 
         builder.addInitializerBlock(init.build())
@@ -38,7 +38,7 @@ class InfrastructureProviderGenerator {
         return builder.build()
     }
 
-    internal fun buildRegisterCodeForEvent(type: TypeSpec.Builder, init: CodeBlock.Builder, setting: EventSourcedSetting) {
+    internal fun buildRegisterCodeForEvent(type: TypeSpec.Builder, init: CodeBlock.Builder, setting: EventSourcingSetting) {
         val eventConverter = Utility.findEventConverterTarget(setting)
         val eventConverterClass = ClassName(eventConverter.packageName, eventConverter.className)
         val eventClass = ClassName(setting.event.packageName, setting.event.className)

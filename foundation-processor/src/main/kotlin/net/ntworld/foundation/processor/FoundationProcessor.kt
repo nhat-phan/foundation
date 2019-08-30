@@ -18,7 +18,8 @@ import javax.lang.model.element.TypeElement
 @SupportedOptions(FrameworkProcessor.KAPT_KOTLIN_GENERATED_OPTION_NAME)
 class FoundationProcessor : AbstractProcessor() {
     private val processors: List<Processor> = listOf(
-        EventSourcedProcessor()
+        EventSourcingProcessor(),
+        AggregateFactoryProcessor()
     )
 
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment?): Boolean {
@@ -29,11 +30,21 @@ class FoundationProcessor : AbstractProcessor() {
         val settings = processors.fold(ProcessorOutput.readSettingsFile(processingEnv)) { input, processor ->
             this.runProcessor(roundEnv, input, processor)
         }
-        ProcessorOutput.updateSettingsFile(processingEnv, settings)
+
+        val final = settings.copy(
+            description = settings.description + " x "
+        )
+
+        ProcessorOutput.updateSettingsFile(processingEnv, final)
+
         settings.events.forEach {
             ProcessorOutput.writeGeneratedFile(processingEnv, EventEntityGenerator.generate(it))
             ProcessorOutput.writeGeneratedFile(processingEnv, EventConverterGenerator.generate(it))
             ProcessorOutput.writeGeneratedFile(processingEnv, EventMessageTranslatorGenerator.generate(it))
+        }
+
+        settings.aggregateFactories.forEach {
+            ProcessorOutput.writeGeneratedFile(processingEnv, AggregateFactoryGenerator.generate(it))
         }
         ProcessorOutput.writeGeneratedFile(processingEnv, InfrastructureProviderGenerator().generate(settings))
 
@@ -49,10 +60,10 @@ class FoundationProcessor : AbstractProcessor() {
         processor.annotations.forEach { annotation ->
             val annotatedElements = roundEnv.getElementsAnnotatedWith(annotation)
             val elements = annotatedElements.filter {
-                processor.shouldProcess(annotation, it)
+                processor.shouldProcess(annotation, it, processingEnv, roundEnv)
             }
             processor.process(annotation, elements, processingEnv, roundEnv)
         }
-        return processor.toGeneratorSettings()
+        return processor.applySettings(settings)
     }
 }

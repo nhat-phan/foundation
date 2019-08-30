@@ -1,12 +1,12 @@
 package net.ntworld.foundation.generator
 
 import com.squareup.kotlinpoet.*
-import net.ntworld.foundation.generator.setting.EventSourcedSetting
+import net.ntworld.foundation.generator.setting.EventSourcingSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 
 object EventMessageTranslatorGenerator {
-    fun generate(setting: EventSourcedSetting): GeneratedFile {
+    fun generate(setting: EventSourcingSetting): GeneratedFile {
         val target = Utility.findEventMessageTranslatorTarget(setting)
         val file = buildFile(setting, target)
         val stringBuffer = StringBuffer()
@@ -15,7 +15,7 @@ object EventMessageTranslatorGenerator {
         return Utility.buildGeneratedFile(target, stringBuffer.toString())
     }
 
-    internal fun buildFile(setting: EventSourcedSetting, target: ClassInfo): FileSpec {
+    internal fun buildFile(setting: EventSourcingSetting, target: ClassInfo): FileSpec {
         val file = FileSpec.builder(target.packageName, target.className)
         GeneratorOutput.addHeader(file, this::class.qualifiedName)
         file.addType(buildClass(setting, target))
@@ -23,7 +23,7 @@ object EventMessageTranslatorGenerator {
         return file.build()
     }
 
-    internal fun buildClass(setting: EventSourcedSetting, target: ClassInfo): TypeSpec {
+    internal fun buildClass(setting: EventSourcingSetting, target: ClassInfo): TypeSpec {
         val type = TypeSpec.objectBuilder(target.className)
             .addSuperinterface(
                 Framework.MessageTranslator.parameterizedBy(
@@ -44,7 +44,7 @@ object EventMessageTranslatorGenerator {
         return type.build()
     }
 
-    internal fun buildMakeFunctionIfNeeded(setting: EventSourcedSetting, type: TypeSpec.Builder) {
+    internal fun buildMakeFunctionIfNeeded(setting: EventSourcingSetting, type: TypeSpec.Builder) {
         if (setting.event == setting.implementation) {
             return
         }
@@ -87,7 +87,7 @@ object EventMessageTranslatorGenerator {
         )
     }
 
-    internal fun buildCanConvertFunction(setting: EventSourcedSetting, type: TypeSpec.Builder) {
+    internal fun buildCanConvertFunction(setting: EventSourcingSetting, type: TypeSpec.Builder) {
         val code = CodeBlock.builder()
         code.add("val bodyType = message.attributes[\"bodyType\"]\n")
         code.add(
@@ -105,7 +105,7 @@ object EventMessageTranslatorGenerator {
         )
     }
 
-    internal fun buildFromMessageFunction(setting: EventSourcedSetting, type: TypeSpec.Builder) {
+    internal fun buildFromMessageFunction(setting: EventSourcingSetting, type: TypeSpec.Builder) {
         type.addFunction(
             FunSpec.builder("fromMessage")
                 .addModifiers(KModifier.OVERRIDE)
@@ -116,7 +116,7 @@ object EventMessageTranslatorGenerator {
         )
     }
 
-    internal fun buildToMessageFunction(setting: EventSourcedSetting, type: TypeSpec.Builder) {
+    internal fun buildToMessageFunction(setting: EventSourcingSetting, type: TypeSpec.Builder) {
         val code = CodeBlock.builder()
         code.add("val attributes = mapOf<String, %T>(\n", Framework.MessageAttribute)
         code.indent()

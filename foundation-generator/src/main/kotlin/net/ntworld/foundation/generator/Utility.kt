@@ -38,21 +38,21 @@ internal object Utility {
         )
     }
 
-    fun findEventConverterTarget(setting: EventSourcedSetting): ClassInfo {
+    fun findEventConverterTarget(setting: EventSourcingSetting): ClassInfo {
         return ClassInfo(
             className = "${setting.implementation.className}Converter",
             packageName = findTargetNamespace(setting.event.packageName)
         )
     }
 
-    fun findEventEntityTarget(setting: EventSourcedSetting): ClassInfo {
+    fun findEventEntityTarget(setting: EventSourcingSetting): ClassInfo {
         return ClassInfo(
             className = "${setting.implementation.className}Entity",
             packageName = findTargetNamespace(setting.event.packageName)
         )
     }
 
-    fun findEventMessageTranslatorTarget(setting: EventSourcedSetting): ClassInfo {
+    fun findEventMessageTranslatorTarget(setting: EventSourcingSetting): ClassInfo {
         return ClassInfo(
             className = "${setting.implementation.className}MessageTranslator",
             packageName = findTargetNamespace(setting.event.packageName)

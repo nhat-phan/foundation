@@ -21,7 +21,7 @@ import net.ntworld.foundation.generator.type.EventField
 // ----------------------------------------------------------------------------------
 
 @Serializable
-data class EventSourcedSetting(
+data class EventSourcingSetting(
     val name: String,
     val event: ClassInfo,
     val implementation: ClassInfo,
@@ -31,8 +31,8 @@ data class EventSourcedSetting(
     val hasSecondConstructor: Boolean
 ) {
     companion object {
-        object comparator: Comparator<EventSourcedSetting> {
-            override fun compare(o1: EventSourcedSetting?, o2: EventSourcedSetting?): Int {
+        object Comparision: Comparator<EventSourcingSetting> {
+            override fun compare(o1: EventSourcingSetting?, o2: EventSourcingSetting?): Int {
                 if (null === o1 || null === o2 ) {
                     return 0
                 }

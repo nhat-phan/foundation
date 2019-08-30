@@ -2,12 +2,12 @@ package net.ntworld.foundation.generator
 
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import net.ntworld.foundation.generator.setting.EventSourcedSetting
+import net.ntworld.foundation.generator.setting.EventSourcingSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 import net.ntworld.foundation.generator.type.EventField
 
 object EventConverterGenerator {
-    fun generate(setting: EventSourcedSetting): GeneratedFile {
+    fun generate(setting: EventSourcingSetting): GeneratedFile {
         val target = Utility.findEventConverterTarget(setting)
         val file = buildFile(setting, target)
         val stringBuffer = StringBuffer()
@@ -16,7 +16,7 @@ object EventConverterGenerator {
         return Utility.buildGeneratedFile(target, stringBuffer.toString())
     }
 
-    internal fun buildFile(setting: EventSourcedSetting, target: ClassInfo): FileSpec {
+    internal fun buildFile(setting: EventSourcingSetting, target: ClassInfo): FileSpec {
         val file = FileSpec.builder(target.packageName, target.className)
         GeneratorOutput.addHeader(file, this::class.qualifiedName)
         file.addType(buildClass(setting, target))
@@ -24,7 +24,7 @@ object EventConverterGenerator {
         return file.build()
     }
 
-    internal fun buildClass(setting: EventSourcedSetting, target: ClassInfo): TypeSpec {
+    internal fun buildClass(setting: EventSourcingSetting, target: ClassInfo): TypeSpec {
         return TypeSpec.classBuilder(target.className)
             .addSuperinterface(
                 Framework.EventConverter.parameterizedBy(
@@ -54,7 +54,7 @@ object EventConverterGenerator {
             .build()
     }
 
-    internal fun buildToEventEntityFunction(setting: EventSourcedSetting): FunSpec {
+    internal fun buildToEventEntityFunction(setting: EventSourcingSetting): FunSpec {
         val eventEntityTarget = Utility.findEventEntityTarget(setting)
         val code = CodeBlock.builder()
 
@@ -85,7 +85,7 @@ object EventConverterGenerator {
             .build()
     }
 
-    internal fun buildFromEventEntityFunction(setting: EventSourcedSetting): FunSpec {
+    internal fun buildFromEventEntityFunction(setting: EventSourcingSetting): FunSpec {
         val code = CodeBlock.builder()
         code.add(
             "val raw = %T.rebuildRawJson(infrastructure, json, fields, eventEntity.data, eventEntity.metadata)\n",
@@ -101,7 +101,7 @@ object EventConverterGenerator {
             .build()
     }
 
-    internal fun buildCompanionObject(setting: EventSourcedSetting): TypeSpec {
+    internal fun buildCompanionObject(setting: EventSourcingSetting): TypeSpec {
         val code = CodeBlock.builder()
         code.add("\nmapOf(\n")
         code.indent()

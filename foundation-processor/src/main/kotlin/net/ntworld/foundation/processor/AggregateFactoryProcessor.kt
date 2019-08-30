@@ -2,28 +2,16 @@ package net.ntworld.foundation.processor
 
 import net.ntworld.foundation.*
 import net.ntworld.foundation.eventSourcing.EventSourced
-import net.ntworld.foundation.generator.AggregateFactoryGenerator
 import net.ntworld.foundation.generator.GeneratorSettings
-import net.ntworld.foundation.generator.InfrastructureProviderGenerator
 import net.ntworld.foundation.generator.setting.AggregateFactorySetting
 import net.ntworld.foundation.generator.type.ClassInfo
-import javax.annotation.processing.AbstractProcessor
-import javax.annotation.processing.RoundEnvironment
-import javax.annotation.processing.SupportedAnnotationTypes
-import javax.annotation.processing.SupportedOptions
+import javax.annotation.processing.*
 import javax.lang.model.element.Element
 import javax.lang.model.element.PackageElement
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.DeclaredType
 
-// TODO: This is old style, will be upgraded to use 1 single AbstractProcessor for all kinds
-@SupportedAnnotationTypes(
-    FrameworkProcessor.Implementation,
-    FrameworkProcessor.EventSourced
-)
-@SupportedOptions(FrameworkProcessor.KAPT_KOTLIN_GENERATED_OPTION_NAME)
-@Deprecated(message = "Will be rewrite soon", level = DeprecationLevel.WARNING)
-class AggregateFactoryProcessor : AbstractProcessor() {
+class AggregateFactoryProcessor : Processor {
     internal data class CollectedFactory(
         var aggregatePackageName: String,
         var aggregateClassName: String,
@@ -36,66 +24,140 @@ class AggregateFactoryProcessor : AbstractProcessor() {
         var extendsAbstractEventSourced: Boolean
     )
 
-    private val debug = mutableListOf<String>()
+    override val annotations: List<Class<out Annotation>> = listOf(
+        Implementation::class.java,
+        EventSourced::class.java
+    )
+
     private val data: MutableMap<String, CollectedFactory> = mutableMapOf()
 
-    override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment?): Boolean {
-        if (null === annotations || null === roundEnv) {
-            return true
+    override fun startProcess(settings: GeneratorSettings) {
+        data.clear()
+        settings.aggregateFactories.forEach { item ->
+            data[item.name] = CollectedFactory(
+                aggregatePackageName = item.aggregate.packageName,
+                aggregateClassName = item.aggregate.className,
+                implementationPackageName = item.implementation.packageName,
+                implementationClassName = item.implementation.className,
+                statePackageName = item.state.packageName,
+                stateClassName = item.state.className,
+                isAbstract = item.isAbstract,
+                isEventSourced = item.isEventSourced,
+                extendsAbstractEventSourced = false
+            )
         }
-
-        this.processElementsAnnotatedByImplementation(roundEnv.getElementsAnnotatedWith(Implementation::class.java))
-        this.processElementsAnnotatedByEventSourced(roundEnv.getElementsAnnotatedWith(EventSourced::class.java))
-
-        val settings = ProcessorOutput.readSettingsFile(processingEnv)
-        val collectedSettings = translateCollectedDataToGeneratorSettings()
-        val mergedSettings = settings.copy(
-            description = debug.joinToString("\n"),
-            aggregateFactories = collectedSettings.aggregateFactories
-        )
-
-        ProcessorOutput.updateSettingsFile(processingEnv, mergedSettings)
-        settings.aggregateFactories.forEach {
-            ProcessorOutput.writeGeneratedFile(processingEnv, AggregateFactoryGenerator.generate(it))
-        }
-
-        return true
     }
 
-    private fun processElementsAnnotatedByImplementation(elements: Set<Element>) {
-        elements
+    override fun applySettings(settings: GeneratorSettings): GeneratorSettings {
+        val factories = data.values
             .filter {
-                it.kind.isClass && CodeUtility.isImplementInterface(
+                if (it.isEventSourced && !it.extendsAbstractEventSourced) {
+                    return@filter false
+                }
+                (it.isAbstract || it.isEventSourced) &&
+                    it.aggregatePackageName.isNotEmpty() &&
+                    it.aggregateClassName.isNotEmpty() &&
+                    it.statePackageName.isNotEmpty() &&
+                    it.stateClassName.isNotEmpty() &&
+                    it.implementationPackageName.isNotEmpty() &&
+                    it.implementationClassName.isNotEmpty()
+            }
+            .map {
+                AggregateFactorySetting(
+                    name = "${it.implementationPackageName}.${it.implementationClassName}",
+                    aggregate = ClassInfo(
+                        packageName = it.aggregatePackageName,
+                        className = it.aggregateClassName
+                    ),
+                    state = ClassInfo(
+                        packageName = it.statePackageName,
+                        className = it.stateClassName
+                    ),
+                    implementation = ClassInfo(
+                        packageName = it.implementationPackageName,
+                        className = it.implementationClassName
+                    ),
+                    isAbstract = it.isAbstract,
+                    isEventSourced = it.isEventSourced
+                )
+            }
+
+        return settings.copy(
+            aggregateFactories = factories.toList()
+        )
+    }
+
+    override fun shouldProcess(
+        annotation: Class<out Annotation>,
+        element: Element,
+        processingEnv: ProcessingEnvironment,
+        roundEnv: RoundEnvironment
+    ): Boolean {
+        return when (annotation) {
+            EventSourced::class.java -> {
+                element.kind.isClass
+            }
+
+            Implementation::class.java -> {
+                element.kind.isClass && CodeUtility.isImplementInterface(
                     processingEnv,
-                    it.asType(),
+                    element.asType(),
                     Aggregate::class.java.canonicalName,
                     true
                 )
             }
-            .forEach {
-                val key = processElement(it, true)
 
-                data[key]!!.isAbstract = true
-                if (null !== it.getAnnotation(EventSourced::class.java)) {
-                    data[key]!!.isEventSourced = true
-                }
-            }
+            else -> false
+        }
     }
 
-    private fun processElementsAnnotatedByEventSourced(elements: Set<Element>) {
-        elements
-            .filter { it.kind.isClass }
-            .forEach {
-                val key = processElement(it, false)
+    override fun process(
+        annotation: Class<out Annotation>,
+        elements: List<Element>,
+        processingEnv: ProcessingEnvironment,
+        roundEnv: RoundEnvironment
+    ) {
+        when (annotation) {
+            EventSourced::class.java -> {
+                processElementsAnnotatedByEventSourced(elements, processingEnv)
+            }
 
+            Implementation::class.java -> {
+                processElementsAnnotatedByImplementation(elements, processingEnv)
+            }
+        }
+    }
+
+    private fun processElementsAnnotatedByImplementation(
+        elements: List<Element>,
+        processingEnv: ProcessingEnvironment
+    ) {
+        elements.forEach {
+            val key = processElement(it, processingEnv, true)
+
+            data[key]!!.isAbstract = true
+            if (null !== it.getAnnotation(EventSourced::class.java)) {
                 data[key]!!.isEventSourced = true
-                if (null !== it.getAnnotation(Implementation::class.java)) {
-                    data[key]!!.isAbstract = true
-                }
             }
+        }
     }
 
-    private fun processElement(element: Element, processingImplementation: Boolean): String {
+    private fun processElementsAnnotatedByEventSourced(elements: List<Element>, processingEnv: ProcessingEnvironment) {
+        elements.forEach {
+            val key = processElement(it, processingEnv, false)
+
+            data[key]!!.isEventSourced = true
+            if (null !== it.getAnnotation(Implementation::class.java)) {
+                data[key]!!.isAbstract = true
+            }
+        }
+    }
+
+    private fun processElement(
+        element: Element,
+        processingEnv: ProcessingEnvironment,
+        processingImplementation: Boolean
+    ): String {
         val packageName = this.getPackageNameOfClass(element)
         val className = element.simpleName.toString()
         val key = "$packageName.$className"
@@ -118,7 +180,8 @@ class AggregateFactoryProcessor : AbstractProcessor() {
             processingEnv, element, FrameworkProcessor.AbstractEventSourced, true
         )
         if (data[key]!!.extendsAbstractEventSourced) {
-            val superclass = CodeUtility.findSuperClassElement(processingEnv, element, FrameworkProcessor.AbstractEventSourced)
+            val superclass =
+                CodeUtility.findSuperClassElement(processingEnv, element, FrameworkProcessor.AbstractEventSourced)
             if (null !== superclass) {
                 if (superclass is DeclaredType) {
                     val stateType = superclass.typeArguments.first()
@@ -132,18 +195,18 @@ class AggregateFactoryProcessor : AbstractProcessor() {
         // find aggregate by find the aggregate interface which implementation implement
         /** Reserve for processing Implementation by type + contract later
         if (processingImplementation) {
-            val mirrors = element.annotationMirrors
-            mirrors.forEach {
-                if (it.annotationType.toString() == FrameworkProcessor.Implementation) {
-                    it.elementValues.forEach {
-                        debug.add(it.key.toString())
-                        debug.add(it.value.value.toString())
-                    }
-                }
-
-            }
+        val mirrors = element.annotationMirrors
+        mirrors.forEach {
+        if (it.annotationType.toString() == FrameworkProcessor.Implementation) {
+        it.elementValues.forEach {
+        debug.add(it.key.toString())
+        debug.add(it.value.value.toString())
         }
-        */
+        }
+
+        }
+        }
+         */
         val aggregate = (element as TypeElement).interfaces.firstOrNull {
             CodeUtility.isImplementInterface(processingEnv, it, FrameworkProcessor.Aggregate)
         }
@@ -179,46 +242,5 @@ class AggregateFactoryProcessor : AbstractProcessor() {
                 extendsAbstractEventSourced = false
             )
         }
-    }
-
-    private fun translateCollectedDataToGeneratorSettings(): GeneratorSettings {
-        val factories = data.values
-            .filter {
-                if (it.isEventSourced && !it.extendsAbstractEventSourced) {
-                    return@filter false
-                }
-                (it.isAbstract || it.isEventSourced) &&
-                    it.aggregatePackageName.isNotEmpty() &&
-                    it.aggregateClassName.isNotEmpty() &&
-                    it.statePackageName.isNotEmpty() &&
-                    it.stateClassName.isNotEmpty() &&
-                    it.implementationPackageName.isNotEmpty() &&
-                    it.implementationClassName.isNotEmpty()
-            }
-            .map {
-                AggregateFactorySetting(
-                    name = "${it.implementationPackageName}.${it.implementationClassName}",
-                    aggregate = ClassInfo(
-                        packageName = it.aggregatePackageName,
-                        className = it.aggregateClassName
-                    ),
-                    state = ClassInfo(
-                        packageName = it.statePackageName,
-                        className = it.stateClassName
-                    ),
-                    implementation = ClassInfo(
-                        packageName = it.implementationPackageName,
-                        className = it.implementationClassName
-                    ),
-                    isAbstract = it.isAbstract,
-                    isEventSourced = it.isEventSourced
-                )
-            }
-
-        return GeneratorSettings(
-            provider = "",
-            aggregateFactories = factories.toList(),
-            events = emptyList()
-        )
     }
 }

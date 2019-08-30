@@ -1,6 +1,6 @@
 package net.ntworld.foundation.generator
 
-import net.ntworld.foundation.generator.setting.EventSourcedSetting
+import net.ntworld.foundation.generator.setting.EventSourcingSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -20,7 +20,7 @@ class EventEntityGeneratorTest {
 
     @Test
     fun `test generate when the implementation and event are the same`() {
-        val settings = EventSourcedSetting(
+        val settings = EventSourcingSetting(
             name = "test.event.CreatedEvent",
             event = ClassInfo(
                 packageName = "test.event",
@@ -45,7 +45,7 @@ class EventEntityGeneratorTest {
 
     @Test
     fun `test generate when the implementation and event are NOT the same`() {
-        val settings = EventSourcedSetting(
+        val settings = EventSourcingSetting(
             name = "test.event.CreatedEvent",
             event = ClassInfo(
                 packageName = "test.event",

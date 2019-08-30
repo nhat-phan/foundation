@@ -1,7 +1,7 @@
 package net.ntworld.foundation.processor
 
 import net.ntworld.foundation.generator.setting.AggregateFactorySetting
-import net.ntworld.foundation.generator.setting.EventSourcedSetting
+import net.ntworld.foundation.generator.setting.EventSourcingSetting
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 
@@ -23,7 +23,7 @@ open class TestSuite {
         }
     }
 
-    fun findEventSettings(name: String): EventSourcedSetting? {
+    fun findEventSettings(name: String): EventSourcingSetting? {
         val settings = ProcessorOutput.readSettingsFileTest()
         return settings.events.firstOrNull {
             it.name == name

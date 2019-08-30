@@ -2,7 +2,7 @@ package net.ntworld.foundation.processor
 
 import net.ntworld.foundation.eventSourcing.EventSourcing
 import net.ntworld.foundation.generator.*
-import net.ntworld.foundation.generator.setting.EventSourcedSetting
+import net.ntworld.foundation.generator.setting.EventSourcingSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 import net.ntworld.foundation.generator.type.EventField
 import javax.annotation.processing.ProcessingEnvironment
@@ -11,7 +11,7 @@ import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.PackageElement
 
-class EventSourcedProcessor : Processor {
+class EventSourcingProcessor : Processor {
     override val annotations: List<Class<out Annotation>> = listOf(
         EventSourcing::class.java,
         EventSourcing.Encrypted::class.java,
@@ -38,7 +38,6 @@ class EventSourcedProcessor : Processor {
     override fun startProcess(settings: GeneratorSettings) {
         data.clear()
         settings.events.forEach { item ->
-            val itemKey = "${item.event.packageName}.${item.event.className}"
             val fields = mutableMapOf<String, CollectedEventField>()
 
             item.fields.forEach {
@@ -49,7 +48,7 @@ class EventSourcedProcessor : Processor {
                     faked = it.faked
                 )
             }
-            data[itemKey] = CollectedEvent(
+            data[item.name] = CollectedEvent(
                 packageName = item.event.packageName,
                 className = item.event.className,
                 type = item.type,
@@ -59,12 +58,12 @@ class EventSourcedProcessor : Processor {
         }
     }
 
-    override fun toGeneratorSettings(): GeneratorSettings {
+    override fun applySettings(settings: GeneratorSettings): GeneratorSettings {
         val events = data.values.map {
             val fields = it.fields.values.map {
                 EventField(name = it.name, metadata = it.metadata, encrypted = it.encrypted, faked = it.faked)
             }
-            EventSourcedSetting(
+            EventSourcingSetting(
                 name = "${it.packageName}.${it.className}",
                 event = ClassInfo(packageName = it.packageName, className = it.className),
                 // TODO: find implementation name
@@ -77,14 +76,15 @@ class EventSourcedProcessor : Processor {
             )
         }
 
-        return GeneratorSettings(
-            provider = "",
-            aggregateFactories = emptyList(),
-            events = events.toList()
-        )
+        return settings.copy(events = events.toList())
     }
 
-    override fun shouldProcess(annotation: Class<out Annotation>, element: Element): Boolean {
+    override fun shouldProcess(
+        annotation: Class<out Annotation>,
+        element: Element,
+        processingEnv: ProcessingEnvironment,
+        roundEnv: RoundEnvironment
+    ): Boolean {
         return when (annotation) {
             EventSourcing::class.java -> {
                 element.kind.isClass
@@ -102,7 +102,7 @@ class EventSourcedProcessor : Processor {
         annotation: Class<out Annotation>,
         elements: List<Element>,
         processingEnv: ProcessingEnvironment,
-        roundedEnv: RoundEnvironment
+        roundEnv: RoundEnvironment
     ) {
         when (annotation) {
             EventSourcing::class.java -> {

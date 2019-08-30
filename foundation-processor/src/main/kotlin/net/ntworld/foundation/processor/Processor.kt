@@ -9,16 +9,21 @@ interface Processor {
 
     val annotations: List<Class<out Annotation>>
 
-    fun shouldProcess(annotation: Class<out Annotation>, element: Element): Boolean
-
     fun startProcess(settings: GeneratorSettings)
+
+    fun applySettings(settings: GeneratorSettings): GeneratorSettings
+
+    fun shouldProcess(
+        annotation: Class<out Annotation>,
+        element: Element,
+        processingEnv: ProcessingEnvironment,
+        roundEnv: RoundEnvironment
+    ): Boolean
 
     fun process(
         annotation: Class<out Annotation>,
         elements: List<Element>,
         processingEnv: ProcessingEnvironment,
-        roundedEnv: RoundEnvironment
+        roundEnv: RoundEnvironment
     )
-
-    fun toGeneratorSettings(): GeneratorSettings
 }

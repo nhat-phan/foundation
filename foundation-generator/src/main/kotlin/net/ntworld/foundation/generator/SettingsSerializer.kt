@@ -3,7 +3,7 @@ package net.ntworld.foundation.generator
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import kotlinx.serialization.list
-import net.ntworld.foundation.generator.setting.EventSourcedSetting
+import net.ntworld.foundation.generator.setting.EventSourcingSetting
 
 object SettingsSerializer {
     private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
@@ -12,23 +12,23 @@ object SettingsSerializer {
         return json.stringify(GeneratorSettings.serializer(), data)
     }
 
-    fun serialize(data: EventSourcedSetting): String {
-        return json.stringify(EventSourcedSetting.serializer(), data)
+    fun serialize(data: EventSourcingSetting): String {
+        return json.stringify(EventSourcingSetting.serializer(), data)
     }
 
-    fun serialize(data: List<EventSourcedSetting>): String {
-        return json.stringify(EventSourcedSetting.serializer().list, data)
+    fun serialize(data: List<EventSourcingSetting>): String {
+        return json.stringify(EventSourcingSetting.serializer().list, data)
     }
 
-    fun parseEventSettings(input: String): EventSourcedSetting {
-        return json.parse(EventSourcedSetting.serializer(), input)
+    fun parseEventSettings(input: String): EventSourcingSetting {
+        return json.parse(EventSourcingSetting.serializer(), input)
     }
 
     fun parse(input: String): GeneratorSettings {
         return json.parse(GeneratorSettings.serializer(), input)
     }
 
-    fun parseEventSettingsCollection(input: String): List<EventSourcedSetting> {
-        return json.parse(EventSourcedSetting.serializer().list, input)
+    fun parseEventSettingsCollection(input: String): List<EventSourcingSetting> {
+        return json.parse(EventSourcingSetting.serializer().list, input)
     }
 }

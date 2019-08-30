@@ -3,11 +3,11 @@ package net.ntworld.foundation.generator
 import com.squareup.kotlinpoet.*
 import net.ntworld.foundation.generator.type.ClassInfo
 import kotlinx.serialization.Serializable
-import net.ntworld.foundation.generator.setting.EventSourcedSetting
+import net.ntworld.foundation.generator.setting.EventSourcingSetting
 
 object EventEntityGenerator {
 
-    fun generate(setting: EventSourcedSetting): GeneratedFile {
+    fun generate(setting: EventSourcingSetting): GeneratedFile {
         val target = Utility.findEventEntityTarget(setting)
         val file = buildFile(setting, target)
         val stringBuffer = StringBuffer()
@@ -16,7 +16,7 @@ object EventEntityGenerator {
         return Utility.buildGeneratedFile(target, stringBuffer.toString())
     }
 
-    internal fun buildFile(setting: EventSourcedSetting, target: ClassInfo): FileSpec {
+    internal fun buildFile(setting: EventSourcingSetting, target: ClassInfo): FileSpec {
         val file = FileSpec.builder(target.packageName, target.className)
         GeneratorOutput.addHeader(file, this::class.qualifiedName)
         file.addType(buildClass(setting, target))
@@ -24,7 +24,7 @@ object EventEntityGenerator {
         return file.build()
     }
 
-    internal fun buildClass(setting: EventSourcedSetting, target: ClassInfo): TypeSpec {
+    internal fun buildClass(setting: EventSourcingSetting, target: ClassInfo): TypeSpec {
         return TypeSpec.classBuilder(target.className)
             .addAnnotation(
                 AnnotationSpec.builder(Serializable::class)
