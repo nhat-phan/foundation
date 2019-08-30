@@ -1,7 +1,7 @@
 package net.ntworld.foundation.generator
 
 import com.squareup.kotlinpoet.*
-import net.ntworld.foundation.generator.setting.EventSettings
+import net.ntworld.foundation.generator.setting.EventSourcedSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 
 class InfrastructureProviderGenerator {
@@ -30,7 +30,7 @@ class InfrastructureProviderGenerator {
 
         val init = CodeBlock.builder()
 
-        val events = settings.events.sortedWith(EventSettings.Companion.comparator)
+        val events = settings.events.sortedWith(EventSourcedSetting.Companion.comparator)
         events.forEach { buildRegisterCodeForEvent(builder, init, it) }
 
         builder.addInitializerBlock(init.build())
@@ -38,10 +38,10 @@ class InfrastructureProviderGenerator {
         return builder.build()
     }
 
-    internal fun buildRegisterCodeForEvent(type: TypeSpec.Builder, init: CodeBlock.Builder, settings: EventSettings) {
-        val eventConverter = Utility.findEventConverterTarget(settings)
+    internal fun buildRegisterCodeForEvent(type: TypeSpec.Builder, init: CodeBlock.Builder, setting: EventSourcedSetting) {
+        val eventConverter = Utility.findEventConverterTarget(setting)
         val eventConverterClass = ClassName(eventConverter.packageName, eventConverter.className)
-        val eventClass = ClassName(settings.event.packageName, settings.event.className)
+        val eventClass = ClassName(setting.event.packageName, setting.event.className)
 
         val eventConverterVariableName = findVariableNames(eventConverter.packageName, eventConverter.className)
         type.addProperty(
@@ -51,7 +51,7 @@ class InfrastructureProviderGenerator {
                 .build()
         )
 
-        val eventMessageTranslator = Utility.findEventMessageTranslatorTarget(settings)
+        val eventMessageTranslator = Utility.findEventMessageTranslatorTarget(setting)
 
         init.indent()
         init.add(
@@ -61,13 +61,13 @@ class InfrastructureProviderGenerator {
         )
         init.add(
             "registerEventConverter(%S, %L, %L)\n",
-            settings.type,
-            settings.variant,
+            setting.type,
+            setting.variant,
             eventConverterVariableName
         )
         init.add(
             "registerMessageTranslator(%T::class, %L)\n",
-            settings.event.toClassName(),
+            setting.event.toClassName(),
             eventMessageTranslator.toClassName()
         )
         init.add("\n")

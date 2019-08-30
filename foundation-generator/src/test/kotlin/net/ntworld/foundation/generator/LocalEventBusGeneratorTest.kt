@@ -1,6 +1,6 @@
 package net.ntworld.foundation.generator
 
-import net.ntworld.foundation.generator.setting.EventHandlerSettings
+import net.ntworld.foundation.generator.setting.EventHandlerSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -20,37 +20,37 @@ class LocalEventBusGeneratorTest {
     @Test
     fun testGenerate() {
         val settings = listOf(
-            EventHandlerSettings(
+            EventHandlerSetting(
                 event = ClassInfo(className = "CreatedEvent", packageName = "com.example.contract"),
                 bus = "",
                 handler = ClassInfo(className = "CreatedEventHandler", packageName = "com.example.eventHandler"),
                 makeByFactory = false
             ),
-            EventHandlerSettings(
+            EventHandlerSetting(
                 event = ClassInfo(className = "UpdatedEvent", packageName = "com.example.contract"),
                 bus = "",
                 handler = ClassInfo(className = "UpdatedEventHandlerOne", packageName = "com.example.eventHandler"),
                 makeByFactory = true
             ),
-            EventHandlerSettings(
+            EventHandlerSetting(
                 event = ClassInfo(className = "UpdatedEvent", packageName = "com.example.contract"),
                 bus = "",
                 handler = ClassInfo(className = "UpdatedEventHandlerTwo", packageName = "com.example.eventHandler"),
                 makeByFactory = false
             ),
-            EventHandlerSettings(
+            EventHandlerSetting(
                 event = ClassInfo(className = "DeletedEvent", packageName = "com.example.contract"),
                 bus = "",
                 handler = ClassInfo(className = "DeletedEventHandler", packageName = "com.example.eventHandler"),
                 makeByFactory = true
             ),
-            EventHandlerSettings(
+            EventHandlerSetting(
                 event = ClassInfo(className = "DeletedEvent", packageName = "com.example.contract"),
                 bus = "",
                 handler = ClassInfo(className = "DeletedEventHandlerTwo", packageName = "com.example.eventHandler"),
                 makeByFactory = false
             ),
-            EventHandlerSettings(
+            EventHandlerSetting(
                 event = ClassInfo(className = "DeletedEvent", packageName = "com.example.contract"),
                 bus = "",
                 handler = ClassInfo(className = "DeletedEventHandler", packageName = "com.example.eventHandler.anotherDomain"),

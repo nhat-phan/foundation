@@ -3,20 +3,20 @@ package net.ntworld.foundation.generator.internal
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import net.ntworld.foundation.generator.Framework
-import net.ntworld.foundation.generator.setting.AggregateFactorySettings
+import net.ntworld.foundation.generator.setting.AggregateFactorySetting
 
 internal object WrapperFactoryWithEventSourcedGenerator {
-    internal fun buildType(type: TypeSpec.Builder, settings: AggregateFactorySettings) {
-        addConstructor(type, settings)
-        addMakeMethod(type, settings)
-        addGenerateFunction(type, settings)
-        addRetrieveOrNullFunction(type, settings)
+    internal fun buildType(type: TypeSpec.Builder, setting: AggregateFactorySetting) {
+        addConstructor(type, setting)
+        addMakeMethod(type, setting)
+        addGenerateFunction(type, setting)
+        addRetrieveOrNullFunction(type, setting)
     }
 
-    internal fun addConstructor(type: TypeSpec.Builder, settings: AggregateFactorySettings) {
+    internal fun addConstructor(type: TypeSpec.Builder, setting: AggregateFactorySetting) {
         val wrappee = Framework.AggregateFactory.parameterizedBy(
-            settings.aggregate.toClassName(),
-            settings.state.toClassName()
+            setting.aggregate.toClassName(),
+            setting.state.toClassName()
         )
         type.primaryConstructor(
             FunSpec.constructorBuilder()
@@ -38,45 +38,45 @@ internal object WrapperFactoryWithEventSourcedGenerator {
         )
     }
 
-    internal fun addMakeMethod(type: TypeSpec.Builder, settings: AggregateFactorySettings) {
+    internal fun addMakeMethod(type: TypeSpec.Builder, setting: AggregateFactorySetting) {
         type.addFunction(
             FunSpec.builder("make")
                 .addModifiers(KModifier.OVERRIDE)
-                .returns(settings.implementation.toClassName())
-                .addParameter("state", settings.state.toClassName())
+                .returns(setting.implementation.toClassName())
+                .addParameter("state", setting.state.toClassName())
                 .addCode(
-                    CodeBlock.of("return %T(base.make(state))\n", settings.implementation.toClassName())
+                    CodeBlock.of("return %T(base.make(state))\n", setting.implementation.toClassName())
                 )
                 .build()
         )
     }
 
-    internal fun addGenerateFunction(type: TypeSpec.Builder, settings: AggregateFactorySettings) {
+    internal fun addGenerateFunction(type: TypeSpec.Builder, setting: AggregateFactorySetting) {
         type.addFunction(
             FunSpec.builder("generate")
                 .addModifiers(KModifier.OVERRIDE)
-                .returns(settings.implementation.toClassName())
+                .returns(setting.implementation.toClassName())
                 .addCode(
-                    CodeBlock.of("return %T(base.generate())\n", settings.implementation.toClassName())
+                    CodeBlock.of("return %T(base.generate())\n", setting.implementation.toClassName())
                 )
                 .build()
         )
     }
 
-    internal fun addRetrieveOrNullFunction(type: TypeSpec.Builder, settings: AggregateFactorySettings) {
+    internal fun addRetrieveOrNullFunction(type: TypeSpec.Builder, setting: AggregateFactorySetting) {
         val code = CodeBlock.builder()
             .add("return %T.retrieveOrNull(\n", Framework.EventSourcedFactory)
             .indent()
             .add("infrastructure = infrastructure,\n")
-            .add("aggregateKlass = %T::class,\n", settings.aggregate.toClassName())
+            .add("aggregateKlass = %T::class,\n", setting.aggregate.toClassName())
             .add("aggregateId = id,\n")
             .add("eventSourcedMaker = {\n")
 
             .indent()
             .add(
                 "if (null === it) %T(base.generate()) else %T(base.make(it))\n",
-                settings.implementation.toClassName(),
-                settings.implementation.toClassName()
+                setting.implementation.toClassName(),
+                setting.implementation.toClassName()
             )
             .unindent()
 
@@ -88,7 +88,7 @@ internal object WrapperFactoryWithEventSourcedGenerator {
             FunSpec.builder("retrieveOrNull")
                 .addModifiers(KModifier.OVERRIDE)
                 .addParameter("id", String::class)
-                .returns(settings.implementation.toClassNameNullable())
+                .returns(setting.implementation.toClassNameNullable())
                 .addCode(code.build())
                 .build()
         )

@@ -2,14 +2,14 @@ package net.ntworld.foundation.generator.internal
 
 import com.squareup.kotlinpoet.*
 import net.ntworld.foundation.generator.Framework
-import net.ntworld.foundation.generator.setting.AggregateFactorySettings
+import net.ntworld.foundation.generator.setting.AggregateFactorySetting
 
 internal object AbstractFactoryGenerator {
-    internal fun buildType(type: TypeSpec.Builder, settings: AggregateFactorySettings) {
+    internal fun buildType(type: TypeSpec.Builder, setting: AggregateFactorySetting) {
         addConstructor(type)
-        addAbstractMethods(type, settings)
-        addGenerateFunction(type, settings)
-        addRetrieveOrNullFunction(type, settings)
+        addAbstractMethods(type, setting)
+        addGenerateFunction(type, setting)
+        addRetrieveOrNullFunction(type, setting)
     }
 
     internal fun addConstructor(type: TypeSpec.Builder) {
@@ -26,12 +26,12 @@ internal object AbstractFactoryGenerator {
         )
     }
 
-    internal fun addAbstractMethods(type: TypeSpec.Builder, settings: AggregateFactorySettings) {
+    internal fun addAbstractMethods(type: TypeSpec.Builder, setting: AggregateFactorySetting) {
         type.addModifiers(KModifier.ABSTRACT)
         type.addFunction(
             FunSpec.builder("make")
                 .addModifiers(KModifier.ABSTRACT)
-                .returns(settings.implementation.toClassName())
+                .returns(setting.implementation.toClassName())
                 .addParameter("id", String::class)
                 .addParameter("isGenerated", Boolean::class)
                 .build()
@@ -41,22 +41,22 @@ internal object AbstractFactoryGenerator {
             FunSpec.builder("make")
                 .addModifiers(KModifier.ABSTRACT)
                 .addModifiers(KModifier.OVERRIDE)
-                .returns(settings.implementation.toClassName())
-                .addParameter("state", settings.state.toClassName())
+                .returns(setting.implementation.toClassName())
+                .addParameter("state", setting.state.toClassName())
                 .build()
         )
     }
 
-    internal fun addGenerateFunction(type: TypeSpec.Builder, settings: AggregateFactorySettings) {
+    internal fun addGenerateFunction(type: TypeSpec.Builder, setting: AggregateFactorySetting) {
         type.addFunction(
             FunSpec.builder("generate")
                 .addModifiers(KModifier.OVERRIDE)
-                .returns(settings.implementation.toClassName())
+                .returns(setting.implementation.toClassName())
                 .addCode(
                     CodeBlock.builder()
                         .add(
                             "val generator = this.infrastructure.root.idGeneratorOf(%T::class)\n",
-                            settings.aggregate.toClassName()
+                            setting.aggregate.toClassName()
                         )
                         .add("return make(generator.generate(), true)\n")
                         .build()
@@ -65,9 +65,9 @@ internal object AbstractFactoryGenerator {
         )
     }
 
-    internal fun addRetrieveOrNullFunction(type: TypeSpec.Builder, settings: AggregateFactorySettings) {
+    internal fun addRetrieveOrNullFunction(type: TypeSpec.Builder, setting: AggregateFactorySetting) {
         val code = CodeBlock.builder()
-            .add("val store = this.infrastructure.root.storeOf(%T::class)\n", settings.aggregate.toClassName())
+            .add("val store = this.infrastructure.root.storeOf(%T::class)\n", setting.aggregate.toClassName())
             .add("val data = store.findById(id)\n")
             .add("if (null === data) {\n")
             .indent()
@@ -80,7 +80,7 @@ internal object AbstractFactoryGenerator {
             FunSpec.builder("retrieveOrNull")
                 .addModifiers(KModifier.OVERRIDE)
                 .addParameter("id", String::class)
-                .returns(settings.implementation.toClassNameNullable())
+                .returns(setting.implementation.toClassNameNullable())
                 .addCode(code.build())
                 .build()
         )

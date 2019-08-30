@@ -5,7 +5,7 @@ import net.ntworld.foundation.generator.type.ClassInfo
 import java.lang.Math.min
 
 internal object Utility {
-    fun findLocalEventBusTarget(settings: List<EventHandlerSettings>): ClassInfo {
+    fun findLocalEventBusTarget(settings: List<EventHandlerSetting>): ClassInfo {
         var packageName = ""
         settings.forEach {
             packageName = this.guessPackageName(packageName, it.handler.packageName)
@@ -16,7 +16,7 @@ internal object Utility {
         )
     }
 
-    fun findLocalCommandBusTarget(settings: List<CommandHandlerSettings>): ClassInfo {
+    fun findLocalCommandBusTarget(settings: List<CommandHandlerSetting>): ClassInfo {
         var packageName = ""
         settings.forEach {
             packageName = this.guessPackageName(packageName, it.handler.packageName)
@@ -27,7 +27,7 @@ internal object Utility {
         )
     }
 
-    fun findLocalQueryBusTarget(settings: List<QueryHandlerSettings>): ClassInfo {
+    fun findLocalQueryBusTarget(settings: List<QueryHandlerSetting>): ClassInfo {
         var packageName = ""
         settings.forEach {
             packageName = this.guessPackageName(packageName, it.handler.packageName)
@@ -38,38 +38,38 @@ internal object Utility {
         )
     }
 
-    fun findEventConverterTarget(settings: EventSettings): ClassInfo {
+    fun findEventConverterTarget(setting: EventSourcedSetting): ClassInfo {
         return ClassInfo(
-            className = "${settings.implementation.className}Converter",
-            packageName = findTargetNamespace(settings.event.packageName)
+            className = "${setting.implementation.className}Converter",
+            packageName = findTargetNamespace(setting.event.packageName)
         )
     }
 
-    fun findEventEntityTarget(settings: EventSettings): ClassInfo {
+    fun findEventEntityTarget(setting: EventSourcedSetting): ClassInfo {
         return ClassInfo(
-            className = "${settings.implementation.className}Entity",
-            packageName = findTargetNamespace(settings.event.packageName)
+            className = "${setting.implementation.className}Entity",
+            packageName = findTargetNamespace(setting.event.packageName)
         )
     }
 
-    fun findEventMessageTranslatorTarget(settings: EventSettings): ClassInfo {
+    fun findEventMessageTranslatorTarget(setting: EventSourcedSetting): ClassInfo {
         return ClassInfo(
-            className = "${settings.implementation.className}MessageTranslator",
-            packageName = findTargetNamespace(settings.event.packageName)
+            className = "${setting.implementation.className}MessageTranslator",
+            packageName = findTargetNamespace(setting.event.packageName)
         )
     }
 
-    fun findAggregateFactoryTarget(settings: AggregateFactorySettings): ClassInfo {
-        val name = "${settings.aggregate.className}Factory"
-        if (settings.isAbstract) {
+    fun findAggregateFactoryTarget(setting: AggregateFactorySetting): ClassInfo {
+        val name = "${setting.aggregate.className}Factory"
+        if (setting.isAbstract) {
             return ClassInfo(
                 className = "Abstract$name",
-                packageName = findTargetNamespace(settings.implementation.packageName)
+                packageName = findTargetNamespace(setting.implementation.packageName)
             )
         }
         return ClassInfo(
             className = "$name",
-            packageName = findTargetNamespace(settings.implementation.packageName)
+            packageName = findTargetNamespace(setting.implementation.packageName)
         )
     }
 

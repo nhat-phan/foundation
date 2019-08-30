@@ -1,14 +1,11 @@
 package net.ntworld.foundation.processor
 
 import net.ntworld.foundation.*
-import net.ntworld.foundation.CodeUtility
-import net.ntworld.foundation.FrameworkProcessor
-import net.ntworld.foundation.ProcessorOutput
 import net.ntworld.foundation.eventSourcing.EventSourced
 import net.ntworld.foundation.generator.AggregateFactoryGenerator
 import net.ntworld.foundation.generator.GeneratorSettings
 import net.ntworld.foundation.generator.InfrastructureProviderGenerator
-import net.ntworld.foundation.generator.setting.AggregateFactorySettings
+import net.ntworld.foundation.generator.setting.AggregateFactorySetting
 import net.ntworld.foundation.generator.type.ClassInfo
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.RoundEnvironment
@@ -19,11 +16,13 @@ import javax.lang.model.element.PackageElement
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.DeclaredType
 
+// TODO: This is old style, will be upgraded to use 1 single AbstractProcessor for all kinds
 @SupportedAnnotationTypes(
     FrameworkProcessor.Implementation,
     FrameworkProcessor.EventSourced
 )
 @SupportedOptions(FrameworkProcessor.KAPT_KOTLIN_GENERATED_OPTION_NAME)
+@Deprecated(message = "Will be rewrite soon", level = DeprecationLevel.WARNING)
 class AggregateFactoryProcessor : AbstractProcessor() {
     internal data class CollectedFactory(
         var aggregatePackageName: String,
@@ -59,7 +58,6 @@ class AggregateFactoryProcessor : AbstractProcessor() {
         settings.aggregateFactories.forEach {
             ProcessorOutput.writeGeneratedFile(processingEnv, AggregateFactoryGenerator.generate(it))
         }
-        ProcessorOutput.writeProviderFile(processingEnv, mergedSettings, InfrastructureProviderGenerator().generate(mergedSettings))
 
         return true
     }
@@ -198,7 +196,7 @@ class AggregateFactoryProcessor : AbstractProcessor() {
                     it.implementationClassName.isNotEmpty()
             }
             .map {
-                AggregateFactorySettings(
+                AggregateFactorySetting(
                     name = "${it.implementationPackageName}.${it.implementationClassName}",
                     aggregate = ClassInfo(
                         packageName = it.aggregatePackageName,

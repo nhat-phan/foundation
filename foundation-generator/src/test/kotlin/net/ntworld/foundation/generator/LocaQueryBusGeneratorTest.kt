@@ -1,6 +1,6 @@
 package net.ntworld.foundation.generator
 
-import net.ntworld.foundation.generator.setting.QueryHandlerSettings
+import net.ntworld.foundation.generator.setting.QueryHandlerSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -20,28 +20,28 @@ class LocaQueryBusGeneratorTest {
     @Test
     fun testGenerate() {
         val settings = listOf(
-            QueryHandlerSettings(
+            QueryHandlerSetting(
                 query = ClassInfo(className = "CreateQuery", packageName = "com.example.contract"),
                 bus = "",
                 handler = ClassInfo(className = "CreateQueryHandler", packageName = "com.example.queryHandler"),
                 makeByFactory = false,
                 version = 0
             ),
-            QueryHandlerSettings(
+            QueryHandlerSetting(
                 query = ClassInfo(className = "UpdateQuery", packageName = "com.example.contract"),
                 bus = "",
                 handler = ClassInfo(className = "UpdateQueryHandler", packageName = "com.example.queryHandler"),
                 makeByFactory = true,
                 version = 0
             ),
-            QueryHandlerSettings(
+            QueryHandlerSetting(
                 query = ClassInfo(className = "DeleteQuery", packageName = "com.example.contract"),
                 bus = "",
                 handler = ClassInfo(className = "DeleteQueryHandler", packageName = "com.example.queryHandler"),
                 makeByFactory = true,
                 version = 0
             ),
-            QueryHandlerSettings(
+            QueryHandlerSetting(
                 query = ClassInfo(className = "DeleteQuery", packageName = "com.example.contract"),
                 bus = "",
                 handler = ClassInfo(className = "DeleteQueryHandler", packageName = "com.example.queryHandler.v1"),

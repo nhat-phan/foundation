@@ -1,6 +1,6 @@
 package net.ntworld.foundation.generator
 
-import net.ntworld.foundation.generator.setting.CommandHandlerSettings
+import net.ntworld.foundation.generator.setting.CommandHandlerSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -20,28 +20,28 @@ class LocalCommandBusGeneratorTest {
     @Test
     fun testGenerate() {
         val settings = listOf(
-            CommandHandlerSettings(
+            CommandHandlerSetting(
                 command = ClassInfo(className = "CreateCommand", packageName = "com.example.contract"),
                 bus = "",
                 handler = ClassInfo(className = "CreateCommandHandler", packageName = "com.example.commandHandler"),
                 makeByFactory = false,
                 version = 0
             ),
-            CommandHandlerSettings(
+            CommandHandlerSetting(
                 command = ClassInfo(className = "UpdateCommand", packageName = "com.example.contract"),
                 bus = "",
                 handler = ClassInfo(className = "UpdateCommandHandler", packageName = "com.example.commandHandler"),
                 makeByFactory = true,
                 version = 0
             ),
-            CommandHandlerSettings(
+            CommandHandlerSetting(
                 command = ClassInfo(className = "DeleteCommand", packageName = "com.example.contract"),
                 bus = "",
                 handler = ClassInfo(className = "DeleteCommandHandler", packageName = "com.example.commandHandler"),
                 makeByFactory = true,
                 version = 0
             ),
-            CommandHandlerSettings(
+            CommandHandlerSetting(
                 command = ClassInfo(className = "DeleteCommand", packageName = "com.example.contract"),
                 bus = "",
                 handler = ClassInfo(className = "DeleteCommandHandler", packageName = "com.example.commandHandler.v1"),

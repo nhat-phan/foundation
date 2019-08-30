@@ -3,7 +3,6 @@ package net.ntworld.foundation.generator.setting
 import kotlinx.serialization.Serializable
 import net.ntworld.foundation.generator.type.ClassInfo
 import net.ntworld.foundation.generator.type.EventField
-import javax.swing.text.StyledEditorKit
 
 
 // ----------------------------------------------------------------------------------
@@ -22,7 +21,7 @@ import javax.swing.text.StyledEditorKit
 // ----------------------------------------------------------------------------------
 
 @Serializable
-data class EventSettings(
+data class EventSourcedSetting(
     val name: String,
     val event: ClassInfo,
     val implementation: ClassInfo,
@@ -32,8 +31,8 @@ data class EventSettings(
     val hasSecondConstructor: Boolean
 ) {
     companion object {
-        object comparator: Comparator<EventSettings> {
-            override fun compare(o1: EventSettings?, o2: EventSettings?): Int {
+        object comparator: Comparator<EventSourcedSetting> {
+            override fun compare(o1: EventSourcedSetting?, o2: EventSourcedSetting?): Int {
                 if (null === o1 || null === o2 ) {
                     return 0
                 }

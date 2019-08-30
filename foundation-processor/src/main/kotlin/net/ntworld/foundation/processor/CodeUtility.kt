@@ -1,6 +1,5 @@
-package net.ntworld.foundation
+package net.ntworld.foundation.processor
 
-import net.ntworld.foundation.generator.type.ClassInfo
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
@@ -20,7 +19,13 @@ internal object CodeUtility {
                 return true
             }
 
-            if (recursive && isImplementInterface(processingEnv, base, interfaceNameQualifiedName, recursive)) {
+            if (recursive && isImplementInterface(
+                    processingEnv,
+                    base,
+                    interfaceNameQualifiedName,
+                    recursive
+                )
+            ) {
                 return true
             }
         }
@@ -40,7 +45,13 @@ internal object CodeUtility {
             return true
         }
 
-        if (recursive && isInheritClass(processingEnv, baseElement, classNameQualifiedName, recursive)) {
+        if (recursive && isInheritClass(
+                processingEnv,
+                baseElement,
+                classNameQualifiedName,
+                recursive
+            )
+        ) {
             return true
         }
 
@@ -58,7 +69,11 @@ internal object CodeUtility {
         if (baseElement.qualifiedName.toString() == classNameQualifiedName) {
             return base
         }
-        return findSuperClassElement(processingEnv, baseElement, classNameQualifiedName)
+        return findSuperClassElement(
+            processingEnv,
+            baseElement,
+            classNameQualifiedName
+        )
     }
 
 }

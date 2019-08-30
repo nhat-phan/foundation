@@ -1,6 +1,6 @@
 package net.ntworld.foundation.generator
 
-import net.ntworld.foundation.generator.setting.EventSettings
+import net.ntworld.foundation.generator.setting.EventSourcedSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 import kotlin.test.Test
 
@@ -11,7 +11,7 @@ class InfrastructureProviderGeneratorTest {
             provider = "",
             aggregateFactories = listOf(),
             events = listOf(
-                EventSettings(
+                EventSourcedSetting(
                     name = "test.event.CreatedEvent",
                     event = ClassInfo(
                         packageName = "com.company.event",
@@ -26,7 +26,7 @@ class InfrastructureProviderGeneratorTest {
                     variant = 0,
                     hasSecondConstructor = false
                 ),
-                EventSettings(
+                EventSourcedSetting(
                     name = "test.event.CreatedEventV1",
                     event = ClassInfo(
                         packageName = "com.company.event",
@@ -41,7 +41,7 @@ class InfrastructureProviderGeneratorTest {
                     variant = 1,
                     hasSecondConstructor = false
                 ),
-                EventSettings(
+                EventSourcedSetting(
                     name = "test.event.UpdatedEvent",
                     event = ClassInfo(
                         packageName = "com.company.event",

@@ -2,14 +2,14 @@ package net.ntworld.foundation.generator
 
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import net.ntworld.foundation.generator.setting.QueryHandlerSettings
+import net.ntworld.foundation.generator.setting.QueryHandlerSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 
 class LocalQueryBusGenerator {
-    private val factoryFnMap = mutableMapOf<QueryHandlerSettings, String>()
+    private val factoryFnMap = mutableMapOf<QueryHandlerSetting, String>()
     private val factoryFnNames = mutableListOf<String>()
 
-    fun generate(settings: List<QueryHandlerSettings>): GeneratedFile {
+    fun generate(settings: List<QueryHandlerSetting>): GeneratedFile {
         val target = Utility.findLocalQueryBusTarget(settings)
         val file = buildFile(settings, target)
         val stringBuffer = StringBuffer()
@@ -18,7 +18,7 @@ class LocalQueryBusGenerator {
         return Utility.buildGeneratedFile(target, stringBuffer.toString())
     }
 
-    internal fun buildFile(settings: List<QueryHandlerSettings>, target: ClassInfo): FileSpec {
+    internal fun buildFile(settings: List<QueryHandlerSetting>, target: ClassInfo): FileSpec {
         val file = FileSpec.builder(target.packageName, target.className)
         GeneratorOutput.addHeader(file, this::class.qualifiedName)
         file.addType(buildClass(settings, target))
@@ -26,7 +26,7 @@ class LocalQueryBusGenerator {
         return file.build()
     }
 
-    internal fun buildClass(settings: List<QueryHandlerSettings>, target: ClassInfo): TypeSpec {
+    internal fun buildClass(settings: List<QueryHandlerSetting>, target: ClassInfo): TypeSpec {
         val type = TypeSpec.classBuilder(target.className)
             .addSuperinterface(Framework.QueryBus)
             .addSuperinterface(
@@ -100,8 +100,8 @@ class LocalQueryBusGenerator {
         )
     }
 
-    internal fun groupHandlers(settings: List<QueryHandlerSettings>): Map<String, List<QueryHandlerSettings>> {
-        val grouped = mutableMapOf<String, MutableList<QueryHandlerSettings>>()
+    internal fun groupHandlers(settings: List<QueryHandlerSetting>): Map<String, List<QueryHandlerSetting>> {
+        val grouped = mutableMapOf<String, MutableList<QueryHandlerSetting>>()
         settings.forEach {
             val key = it.query.fullName()
             if (!grouped.containsKey(key)) {
@@ -112,7 +112,7 @@ class LocalQueryBusGenerator {
         return grouped
     }
 
-    internal fun buildResolveFunction(settings: List<QueryHandlerSettings>, type: TypeSpec.Builder) {
+    internal fun buildResolveFunction(settings: List<QueryHandlerSetting>, type: TypeSpec.Builder) {
         val grouped = groupHandlers(settings)
 
         val code = CodeBlock.builder()
@@ -158,7 +158,7 @@ class LocalQueryBusGenerator {
     }
 
     internal fun buildCodeToResolveHandler(
-        item: QueryHandlerSettings,
+        item: QueryHandlerSetting,
         code: CodeBlock.Builder,
         type: TypeSpec.Builder
     ) {
@@ -181,11 +181,11 @@ class LocalQueryBusGenerator {
     }
 
     internal fun buildCodeToResolveVersioningHandler(
-        settings: List<QueryHandlerSettings>,
+        settings: List<QueryHandlerSetting>,
         code: CodeBlock.Builder,
         type: TypeSpec.Builder
     ) {
-        val map = mutableMapOf<Int, QueryHandlerSettings>()
+        val map = mutableMapOf<Int, QueryHandlerSetting>()
         var latestVersion: Int = Int.MIN_VALUE
         for (item in settings) {
             map[item.version] = item
@@ -212,18 +212,18 @@ class LocalQueryBusGenerator {
         code.endControlFlow()
     }
 
-    internal fun findFactoryFunctionName(settings: QueryHandlerSettings): Pair<Boolean, String> {
-        if (factoryFnMap.contains(settings)) {
-            return Pair(true, factoryFnMap[settings]!!)
+    internal fun findFactoryFunctionName(setting: QueryHandlerSetting): Pair<Boolean, String> {
+        if (factoryFnMap.contains(setting)) {
+            return Pair(true, factoryFnMap[setting]!!)
         }
 
-        val simpleName = settings.handler.className
+        val simpleName = setting.handler.className
         if (!factoryFnNames.contains(simpleName)) {
-            factoryFnMap[settings] = simpleName
+            factoryFnMap[setting] = simpleName
             factoryFnNames.add(simpleName)
             return Pair(false, simpleName)
         }
-        factoryFnMap[settings] = "_${settings.handler.packageName.replace(".", "_")}_$simpleName"
-        return Pair(false, factoryFnMap[settings]!!)
+        factoryFnMap[setting] = "_${setting.handler.packageName.replace(".", "_")}_$simpleName"
+        return Pair(false, factoryFnMap[setting]!!)
     }
 }

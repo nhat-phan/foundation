@@ -1,2 +1,1 @@
-net.ntworld.foundation.processor.EventProcessor
-net.ntworld.foundation.processor.AggregateFactoryProcessor
+net.ntworld.foundation.processor.FoundationProcessor

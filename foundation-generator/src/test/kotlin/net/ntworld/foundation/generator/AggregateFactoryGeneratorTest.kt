@@ -1,13 +1,13 @@
 package net.ntworld.foundation.generator
 
-import net.ntworld.foundation.generator.setting.AggregateFactorySettings
+import net.ntworld.foundation.generator.setting.AggregateFactorySetting
 import net.ntworld.foundation.generator.type.ClassInfo
 import kotlin.test.Test
 
 class AggregateFactoryGeneratorTest {
     @Test
     fun testAbstractFactory() {
-        val settings = AggregateFactorySettings(
+        val settings = AggregateFactorySetting(
             name = "test.aggregate.TodoImpl",
             aggregate = ClassInfo(
                 packageName = "test.aggregate",
@@ -30,7 +30,7 @@ class AggregateFactoryGeneratorTest {
 
     @Test
     fun testWrapperFactoryWithEventSourced() {
-        val settings = AggregateFactorySettings(
+        val settings = AggregateFactorySetting(
             name = "test.aggregate.TodoImpl",
             aggregate = ClassInfo(
                 packageName = "test.aggregate",
@@ -53,7 +53,7 @@ class AggregateFactoryGeneratorTest {
 
     @Test
     fun testAbstractFactoryWithEventSourced() {
-        val settings = AggregateFactorySettings(
+        val settings = AggregateFactorySetting(
             name = "test.aggregate.TodoImpl",
             aggregate = ClassInfo(
                 packageName = "test.aggregate",

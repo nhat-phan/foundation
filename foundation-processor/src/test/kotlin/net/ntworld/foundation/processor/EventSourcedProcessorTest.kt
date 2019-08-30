@@ -8,7 +8,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-class EventProcessorTest : TestSuite() {
+class EventSourcedProcessorTest : TestSuite() {
     @Test
     fun `test @EventSourcing with data class`() {
         val createdEvent = JavaFileObjects.forResource("com/test/event/CreatedEvent.java")
@@ -16,7 +16,7 @@ class EventProcessorTest : TestSuite() {
         Truth.assert_()
             .about(JavaSourcesSubjectFactory.javaSources())
             .that(listOf(createdEvent))
-            .processedWith(EventProcessor())
+            .processedWith(FoundationProcessor())
             .compilesWithoutError()
 
         val settings = findEventSettings("com.test.event.CreatedEvent")

@@ -2,33 +2,33 @@ package net.ntworld.foundation.generator
 
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import net.ntworld.foundation.generator.setting.EventSettings
+import net.ntworld.foundation.generator.setting.EventSourcedSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 import net.ntworld.foundation.generator.type.EventField
 
 object EventConverterGenerator {
-    fun generate(settings: EventSettings): GeneratedFile {
-        val target = Utility.findEventConverterTarget(settings)
-        val file = buildFile(settings, target)
+    fun generate(setting: EventSourcedSetting): GeneratedFile {
+        val target = Utility.findEventConverterTarget(setting)
+        val file = buildFile(setting, target)
         val stringBuffer = StringBuffer()
         file.writeTo(stringBuffer)
 
         return Utility.buildGeneratedFile(target, stringBuffer.toString())
     }
 
-    internal fun buildFile(settings: EventSettings, target: ClassInfo): FileSpec {
+    internal fun buildFile(setting: EventSourcedSetting, target: ClassInfo): FileSpec {
         val file = FileSpec.builder(target.packageName, target.className)
         GeneratorOutput.addHeader(file, this::class.qualifiedName)
-        file.addType(buildClass(settings, target))
+        file.addType(buildClass(setting, target))
 
         return file.build()
     }
 
-    internal fun buildClass(settings: EventSettings, target: ClassInfo): TypeSpec {
+    internal fun buildClass(setting: EventSourcedSetting, target: ClassInfo): TypeSpec {
         return TypeSpec.classBuilder(target.className)
             .addSuperinterface(
                 Framework.EventConverter.parameterizedBy(
-                    settings.event.toClassName()
+                    setting.event.toClassName()
                 )
             )
             .primaryConstructor(
@@ -48,24 +48,24 @@ object EventConverterGenerator {
                     .initializer("Json(%T.Stable.copy(strictMode = false))", Framework.JsonConfiguration)
                     .build()
             )
-            .addType(buildCompanionObject(settings))
-            .addFunction(buildToEventEntityFunction(settings))
-            .addFunction(buildFromEventEntityFunction(settings))
+            .addType(buildCompanionObject(setting))
+            .addFunction(buildToEventEntityFunction(setting))
+            .addFunction(buildFromEventEntityFunction(setting))
             .build()
     }
 
-    internal fun buildToEventEntityFunction(settings: EventSettings): FunSpec {
-        val eventEntityTarget = Utility.findEventEntityTarget(settings)
+    internal fun buildToEventEntityFunction(setting: EventSourcedSetting): FunSpec {
+        val eventEntityTarget = Utility.findEventEntityTarget(setting)
         val code = CodeBlock.builder()
 
-        code.add("val raw = json.stringify(%T.serializer(), event)\n", settings.implementation.toClassName())
+        code.add("val raw = json.stringify(%T.serializer(), event)\n", setting.implementation.toClassName())
         code.add(
             "val processed = %T.processRawJson(infrastructure, json, fields, raw)\n",
             Framework.EventEntityConverterUtility
         )
         code.add("return %T(\n", eventEntityTarget.toClassName())
         code.indent()
-        code.add("id = infrastructure.root.idGeneratorOf(%T::class).generate(),\n", settings.event.toClassName())
+        code.add("id = infrastructure.root.idGeneratorOf(%T::class).generate(),\n", setting.event.toClassName())
         code.add("streamId = streamId,\n")
         code.add("streamType = streamType,\n")
         code.add("version = version,\n")
@@ -80,36 +80,36 @@ object EventConverterGenerator {
             .addParameter("streamId", String::class)
             .addParameter("streamType", String::class)
             .addParameter("version", Int::class)
-            .addParameter("event", settings.event.toClassName())
+            .addParameter("event", setting.event.toClassName())
             .addCode(code.build())
             .build()
     }
 
-    internal fun buildFromEventEntityFunction(settings: EventSettings): FunSpec {
+    internal fun buildFromEventEntityFunction(setting: EventSourcedSetting): FunSpec {
         val code = CodeBlock.builder()
         code.add(
             "val raw = %T.rebuildRawJson(infrastructure, json, fields, eventEntity.data, eventEntity.metadata)\n",
             Framework.EventEntityConverterUtility
         )
-        code.add("return json.parse(%T.serializer(), raw)\n", settings.implementation.toClassName())
+        code.add("return json.parse(%T.serializer(), raw)\n", setting.implementation.toClassName())
 
         return FunSpec.builder("fromEventEntity")
             .addModifiers(KModifier.OVERRIDE)
-            .returns(ClassName(settings.event.packageName, settings.implementation.className))
+            .returns(ClassName(setting.event.packageName, setting.implementation.className))
             .addParameter("eventEntity", Framework.EventEntity)
             .addCode(code.build())
             .build()
     }
 
-    internal fun buildCompanionObject(settings: EventSettings): TypeSpec {
+    internal fun buildCompanionObject(setting: EventSourcedSetting): TypeSpec {
         val code = CodeBlock.builder()
         code.add("\nmapOf(\n")
         code.indent()
-        settings.fields.forEachIndexed { index, it ->
+        setting.fields.forEachIndexed { index, it ->
             code.add("%S to ", it.name)
             code.add(buildFieldSetting(it))
 
-            if (index != settings.fields.lastIndex) {
+            if (index != setting.fields.lastIndex) {
                 code.add(",")
             }
             code.add("\n")

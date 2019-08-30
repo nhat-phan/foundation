@@ -1,6 +1,6 @@
 package net.ntworld.foundation.generator
 
-import net.ntworld.foundation.generator.setting.EventSettings
+import net.ntworld.foundation.generator.setting.EventSourcedSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 import net.ntworld.foundation.generator.type.EventField
 import kotlin.test.AfterTest
@@ -21,7 +21,7 @@ class EventMessageTranslatorGeneratorTest {
 
     @Test
     fun `test generate when the implementation and event are the same`() {
-        val settings = EventSettings(
+        val settings = EventSourcedSetting(
             name = "test.event.CreatedEvent",
             event = ClassInfo(
                 packageName = "test.event",
@@ -54,7 +54,7 @@ class EventMessageTranslatorGeneratorTest {
 
     @Test
     fun `test generate when the implementation and event are NOT the same, no 2nd constructor`() {
-        val settings = EventSettings(
+        val settings = EventSourcedSetting(
             name = "test.event.CreatedEvent",
             event = ClassInfo(
                 packageName = "test.event",
@@ -87,7 +87,7 @@ class EventMessageTranslatorGeneratorTest {
 
     @Test
     fun `test generate when the implementation and event are NOT the same, with 2nd constructor`() {
-        val settings = EventSettings(
+        val settings = EventSourcedSetting(
             name = "test.event.CreatedEvent",
             event = ClassInfo(
                 packageName = "test.event",

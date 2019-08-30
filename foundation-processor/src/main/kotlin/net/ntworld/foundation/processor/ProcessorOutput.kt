@@ -1,9 +1,8 @@
-package net.ntworld.foundation
+package net.ntworld.foundation.processor
 
 import net.ntworld.foundation.generator.GeneratedFile
 import net.ntworld.foundation.generator.GeneratorSettings
 import net.ntworld.foundation.generator.SettingsSerializer
-import net.ntworld.foundation.processor.FoundationProcessorException
 import java.nio.file.Paths
 import javax.annotation.processing.ProcessingEnvironment
 import javax.tools.Diagnostic
@@ -67,18 +66,6 @@ internal object ProcessorOutput {
         )
     }
 
-    fun deleteFile(processingEnv: ProcessingEnvironment, path: String) {
-        if (isTest) {
-            return
-        }
-
-        val base = getKaptGeneratedDirectory(processingEnv)
-        val file = Paths.get(base, path).toFile()
-        if (file.exists()) {
-            file.delete()
-        }
-    }
-
     fun writeText(processingEnv: ProcessingEnvironment, directory: String, fileName: String, content: String) {
         if (isTest) {
             files["$directory/$fileName"] = content
@@ -95,18 +82,12 @@ internal object ProcessorOutput {
     }
 
     fun writeGeneratedFile(processingEnv: ProcessingEnvironment, file: GeneratedFile) {
-        writeText(processingEnv, file.directory, file.fileName, file.content)
-    }
-
-    fun writeProviderFile(processingEnv: ProcessingEnvironment, settings: GeneratorSettings, file: GeneratedFile) {
-        if (settings.provider.isNotEmpty()) {
-            deleteFile(processingEnv, settings.provider)
-        }
-        val mergedSettings = settings.copy(
-            provider = file.path
+        writeText(
+            processingEnv,
+            file.directory,
+            file.fileName,
+            file.content
         )
-        writeText(processingEnv, file.directory, file.fileName, file.content)
-        updateSettingsFile(processingEnv, mergedSettings)
     }
 
     private fun getKaptGeneratedDirectory(processingEnv: ProcessingEnvironment): String {

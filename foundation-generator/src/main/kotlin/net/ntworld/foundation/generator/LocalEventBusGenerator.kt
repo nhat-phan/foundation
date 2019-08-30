@@ -2,13 +2,13 @@ package net.ntworld.foundation.generator
 
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import net.ntworld.foundation.generator.setting.EventHandlerSettings
+import net.ntworld.foundation.generator.setting.EventHandlerSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 
 class LocalEventBusGenerator {
     private val factoryFnNames = mutableListOf<String>()
 
-    fun generate(settings: List<EventHandlerSettings>): GeneratedFile {
+    fun generate(settings: List<EventHandlerSetting>): GeneratedFile {
         val target = Utility.findLocalEventBusTarget(settings)
         val file = buildFile(settings, target)
         val stringBuffer = StringBuffer()
@@ -17,7 +17,7 @@ class LocalEventBusGenerator {
         return Utility.buildGeneratedFile(target, stringBuffer.toString())
     }
 
-    internal fun buildFile(settings: List<EventHandlerSettings>, target: ClassInfo): FileSpec {
+    internal fun buildFile(settings: List<EventHandlerSetting>, target: ClassInfo): FileSpec {
         val file = FileSpec.builder(target.packageName, target.className)
         GeneratorOutput.addHeader(file, this::class.qualifiedName)
         file.addType(buildClass(settings, target))
@@ -25,7 +25,7 @@ class LocalEventBusGenerator {
         return file.build()
     }
 
-    internal fun buildClass(settings: List<EventHandlerSettings>, target: ClassInfo): TypeSpec {
+    internal fun buildClass(settings: List<EventHandlerSetting>, target: ClassInfo): TypeSpec {
         val type = TypeSpec.classBuilder(target.className)
             .addSuperinterface(Framework.EventBus)
             .addSuperinterface(
@@ -95,8 +95,8 @@ class LocalEventBusGenerator {
         )
     }
 
-    internal fun groupHandlers(settings: List<EventHandlerSettings>): Map<String, List<EventHandlerSettings>> {
-        val grouped = mutableMapOf<String, MutableList<EventHandlerSettings>>()
+    internal fun groupHandlers(settings: List<EventHandlerSetting>): Map<String, List<EventHandlerSetting>> {
+        val grouped = mutableMapOf<String, MutableList<EventHandlerSetting>>()
         settings.forEach {
             val key = it.event.fullName()
             if (!grouped.containsKey(key)) {
@@ -107,7 +107,7 @@ class LocalEventBusGenerator {
         return grouped
     }
 
-    internal fun buildResolveFunction(settings: List<EventHandlerSettings>, type: TypeSpec.Builder) {
+    internal fun buildResolveFunction(settings: List<EventHandlerSetting>, type: TypeSpec.Builder) {
         val grouped = groupHandlers(settings)
 
         val code = CodeBlock.builder()
@@ -136,7 +136,7 @@ class LocalEventBusGenerator {
     }
 
     internal fun buildCodeToResolveHandlers(
-        settings: List<EventHandlerSettings>,
+        settings: List<EventHandlerSetting>,
         code: CodeBlock.Builder,
         type: TypeSpec.Builder
     ) {
@@ -162,12 +162,12 @@ class LocalEventBusGenerator {
         }
     }
 
-    internal fun findFactoryFunctionName(settings: EventHandlerSettings): String {
-        val simpleName = settings.handler.className
+    internal fun findFactoryFunctionName(setting: EventHandlerSetting): String {
+        val simpleName = setting.handler.className
         if (!factoryFnNames.contains(simpleName)) {
             factoryFnNames.add(simpleName)
             return simpleName
         }
-        return "_${settings.handler.packageName.replace(".", "_")}_$simpleName"
+        return "_${setting.handler.packageName.replace(".", "_")}_$simpleName"
     }
 }

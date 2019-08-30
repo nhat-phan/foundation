@@ -3,28 +3,28 @@ package net.ntworld.foundation.generator
 import com.squareup.kotlinpoet.*
 import net.ntworld.foundation.generator.type.ClassInfo
 import kotlinx.serialization.Serializable
-import net.ntworld.foundation.generator.setting.EventSettings
+import net.ntworld.foundation.generator.setting.EventSourcedSetting
 
 object EventEntityGenerator {
 
-    fun generate(settings: EventSettings): GeneratedFile {
-        val target = Utility.findEventEntityTarget(settings)
-        val file = buildFile(settings, target)
+    fun generate(setting: EventSourcedSetting): GeneratedFile {
+        val target = Utility.findEventEntityTarget(setting)
+        val file = buildFile(setting, target)
         val stringBuffer = StringBuffer()
         file.writeTo(stringBuffer)
 
         return Utility.buildGeneratedFile(target, stringBuffer.toString())
     }
 
-    internal fun buildFile(settings: EventSettings, target: ClassInfo): FileSpec {
+    internal fun buildFile(setting: EventSourcedSetting, target: ClassInfo): FileSpec {
         val file = FileSpec.builder(target.packageName, target.className)
         GeneratorOutput.addHeader(file, this::class.qualifiedName)
-        file.addType(buildClass(settings, target))
+        file.addType(buildClass(setting, target))
 
         return file.build()
     }
 
-    internal fun buildClass(settings: EventSettings, target: ClassInfo): TypeSpec {
+    internal fun buildClass(setting: EventSourcedSetting, target: ClassInfo): TypeSpec {
         return TypeSpec.classBuilder(target.className)
             .addAnnotation(
                 AnnotationSpec.builder(Serializable::class)
@@ -32,7 +32,7 @@ object EventEntityGenerator {
             )
             .addModifiers(KModifier.DATA)
             .primaryConstructor(buildPrimaryConstructor())
-            .addProperties(buildProperties(settings.type, settings.variant))
+            .addProperties(buildProperties(setting.type, setting.variant))
             .addSuperinterface(Framework.EventEntity)
             .build()
     }

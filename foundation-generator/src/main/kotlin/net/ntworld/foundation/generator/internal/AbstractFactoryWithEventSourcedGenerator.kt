@@ -2,22 +2,22 @@ package net.ntworld.foundation.generator.internal
 
 import com.squareup.kotlinpoet.*
 import net.ntworld.foundation.generator.Framework
-import net.ntworld.foundation.generator.setting.AggregateFactorySettings
+import net.ntworld.foundation.generator.setting.AggregateFactorySetting
 
 internal object AbstractFactoryWithEventSourcedGenerator {
-    internal fun buildType(type: TypeSpec.Builder, settings: AggregateFactorySettings) {
+    internal fun buildType(type: TypeSpec.Builder, setting: AggregateFactorySetting) {
         AbstractFactoryGenerator.addConstructor(type)
-        AbstractFactoryGenerator.addAbstractMethods(type, settings)
-        AbstractFactoryGenerator.addGenerateFunction(type, settings)
-        addRetrieveOrNullFunction(type, settings)
+        AbstractFactoryGenerator.addAbstractMethods(type, setting)
+        AbstractFactoryGenerator.addGenerateFunction(type, setting)
+        addRetrieveOrNullFunction(type, setting)
     }
 
-    internal fun addRetrieveOrNullFunction(type: TypeSpec.Builder, settings: AggregateFactorySettings) {
+    internal fun addRetrieveOrNullFunction(type: TypeSpec.Builder, setting: AggregateFactorySetting) {
         val code = CodeBlock.builder()
             .add("return %T.retrieveOrNull(\n", Framework.EventSourcedFactory)
             .indent()
             .add("infrastructure = infrastructure,\n")
-            .add("aggregateKlass = %T::class,\n", settings.aggregate.toClassName())
+            .add("aggregateKlass = %T::class,\n", setting.aggregate.toClassName())
             .add("aggregateId = id,\n")
             .add("eventSourcedMaker = {\n")
 
@@ -35,7 +35,7 @@ internal object AbstractFactoryWithEventSourcedGenerator {
             FunSpec.builder("retrieveOrNull")
                 .addModifiers(KModifier.OVERRIDE)
                 .addParameter("id", String::class)
-                .returns(settings.implementation.toClassNameNullable())
+                .returns(setting.implementation.toClassNameNullable())
                 .addCode(code.build())
                 .build()
         )
