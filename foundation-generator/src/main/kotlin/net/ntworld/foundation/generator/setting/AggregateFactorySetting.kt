@@ -43,13 +43,14 @@ import net.ntworld.foundation.generator.type.ClassInfo
 
 @Serializable
 data class AggregateFactorySetting(
-    val name: String,
     val aggregate: ClassInfo,
     val state: ClassInfo,
     val implementation: ClassInfo,
     val isAbstract: Boolean,
     val isEventSourced: Boolean
-) {
+): Setting {
+    override val name: String = "${implementation.packageName}.${implementation.className}"
+
     enum class Type {
         ABSTRACT_FACTORY,
         WRAPPER_FACTORY_WITH_EVENT_SOURCED,

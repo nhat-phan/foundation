@@ -12,7 +12,6 @@ class InfrastructureProviderGeneratorTest {
             aggregateFactories = listOf(),
             events = listOf(
                 EventSourcingSetting(
-                    name = "test.event.CreatedEvent",
                     event = ClassInfo(
                         packageName = "com.company.event",
                         className = "CreatedEvent"
@@ -27,7 +26,6 @@ class InfrastructureProviderGeneratorTest {
                     hasSecondConstructor = false
                 ),
                 EventSourcingSetting(
-                    name = "test.event.CreatedEventV1",
                     event = ClassInfo(
                         packageName = "com.company.event",
                         className = "CreatedEventV1"
@@ -42,7 +40,6 @@ class InfrastructureProviderGeneratorTest {
                     hasSecondConstructor = false
                 ),
                 EventSourcingSetting(
-                    name = "test.event.UpdatedEvent",
                     event = ClassInfo(
                         packageName = "com.company.event",
                         className = "UpdatedEvent"
@@ -56,7 +53,8 @@ class InfrastructureProviderGeneratorTest {
                     variant = 0,
                     hasSecondConstructor = false
                 )
-            )
+            ),
+            eventHandlers = listOf()
         )
 
         val result = InfrastructureProviderGenerator().generate(settings)

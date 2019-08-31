@@ -18,8 +18,10 @@ import javax.lang.model.element.TypeElement
 @SupportedOptions(FrameworkProcessor.KAPT_KOTLIN_GENERATED_OPTION_NAME)
 class FoundationProcessor : AbstractProcessor() {
     private val processors: List<Processor> = listOf(
-        EventSourcingProcessor(),
-        AggregateFactoryProcessor()
+        EventHandlerProcessor()
+        // EventHandlerProcessor(),
+        // EventSourcingProcessor(),
+        // AggregateFactoryProcessor()
     )
 
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment?): Boolean {

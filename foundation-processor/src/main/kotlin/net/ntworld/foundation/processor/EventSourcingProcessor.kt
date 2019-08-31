@@ -64,7 +64,6 @@ class EventSourcingProcessor : Processor {
                 EventField(name = it.name, metadata = it.metadata, encrypted = it.encrypted, faked = it.faked)
             }
             EventSourcingSetting(
-                name = "${it.packageName}.${it.className}",
                 event = ClassInfo(packageName = it.packageName, className = it.className),
                 // TODO: find implementation name
                 implementation = ClassInfo(packageName = it.packageName, className = it.className),

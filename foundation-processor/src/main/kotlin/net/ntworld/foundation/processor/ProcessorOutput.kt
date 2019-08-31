@@ -30,7 +30,8 @@ internal object ProcessorOutput {
             return GeneratorSettings(
                 provider = "",
                 events = listOf(),
-                aggregateFactories = listOf()
+                aggregateFactories = listOf(),
+                eventHandlers = listOf()
             )
         }
         return SettingsSerializer.parse(files[path]!!)
@@ -50,7 +51,8 @@ internal object ProcessorOutput {
             return GeneratorSettings(
                 provider = "",
                 events = listOf(),
-                aggregateFactories = listOf()
+                aggregateFactories = listOf(),
+                eventHandlers = listOf()
             )
         }
         val content = file.readText()

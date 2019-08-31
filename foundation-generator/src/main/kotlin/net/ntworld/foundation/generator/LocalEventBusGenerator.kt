@@ -6,6 +6,7 @@ import net.ntworld.foundation.generator.setting.EventHandlerSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 
 class LocalEventBusGenerator {
+    private val factoryFnMap = mutableMapOf<EventHandlerSetting, String>()
     private val factoryFnNames = mutableListOf<String>()
 
     fun generate(settings: List<EventHandlerSetting>): GeneratedFile {
@@ -95,14 +96,21 @@ class LocalEventBusGenerator {
         )
     }
 
-    internal fun groupHandlers(settings: List<EventHandlerSetting>): Map<String, List<EventHandlerSetting>> {
-        val grouped = mutableMapOf<String, MutableList<EventHandlerSetting>>()
-        settings.forEach {
-            val key = it.event.fullName()
-            if (!grouped.containsKey(key)) {
-                grouped[key] = mutableListOf()
+    internal fun groupHandlers(settings: List<EventHandlerSetting>): Map<ClassInfo, List<EventHandlerSetting>> {
+        val grouped = mutableMapOf<ClassInfo, MutableList<EventHandlerSetting>>()
+        val classInfoMap = mutableMapOf<String, ClassInfo>()
+        settings.forEach { setting ->
+            setting.events.forEach {
+                val key = it.fullName()
+                if (!classInfoMap.containsKey(key)) {
+                    classInfoMap[key] = it.copy()
+                }
+
+                if (!grouped.containsKey(classInfoMap[key]!!)) {
+                    grouped[classInfoMap[key]!!] = mutableListOf()
+                }
+                grouped[classInfoMap[key]!!]!!.add(setting)
             }
-            grouped[key]!!.add(it)
         }
         return grouped
     }
@@ -114,7 +122,7 @@ class LocalEventBusGenerator {
         code.beginControlFlow("return when (instance)")
 
         grouped.forEach {
-            code.add("is %T -> arrayOf(\n", it.value.first().event.toClassName())
+            code.add("is %T -> arrayOf(\n", it.key.toClassName())
             code.indent()
             buildCodeToResolveHandlers(it.value, code, type)
             code.unindent()
@@ -141,19 +149,7 @@ class LocalEventBusGenerator {
         type: TypeSpec.Builder
     ) {
         settings.forEachIndexed { index, item ->
-            if (!item.makeByFactory) {
-                code.add("%T(infrastructure)", item.handler.toClassName())
-            } else {
-                val factoryFnName = this.findFactoryFunctionName(item)
-                val fnName = "make$factoryFnName"
-                code.add("%L()", fnName)
-                type.addFunction(
-                    FunSpec.builder(fnName)
-                        .addModifiers(KModifier.PROTECTED, KModifier.ABSTRACT)
-                        .returns(item.handler.toClassName())
-                        .build()
-                )
-            }
+            buildCodeToResolveHandler(item, code, type)
 
             if (index != settings.lastIndex) {
                 code.add(",")
@@ -162,12 +158,41 @@ class LocalEventBusGenerator {
         }
     }
 
-    internal fun findFactoryFunctionName(setting: EventHandlerSetting): String {
+    internal fun buildCodeToResolveHandler(
+        item: EventHandlerSetting,
+        code: CodeBlock.Builder,
+        type: TypeSpec.Builder
+    ) {
+        if (!item.makeByFactory) {
+            code.add("%T(infrastructure)", item.handler.toClassName())
+            return
+        }
+
+        val (exist, factoryFnName) = this.findFactoryFunctionName(item)
+        val fnName = "make$factoryFnName"
+        if (!exist) {
+            type.addFunction(
+                FunSpec.builder(fnName)
+                    .addModifiers(KModifier.PROTECTED, KModifier.ABSTRACT)
+                    .returns(item.handler.toClassName())
+                    .build()
+            )
+        }
+        code.add("%L()", fnName)
+    }
+
+    internal fun findFactoryFunctionName(setting: EventHandlerSetting): Pair<Boolean, String> {
+        if (factoryFnMap.contains(setting)) {
+            return Pair(true, factoryFnMap[setting]!!)
+        }
+
         val simpleName = setting.handler.className
         if (!factoryFnNames.contains(simpleName)) {
+            factoryFnMap[setting] = simpleName
             factoryFnNames.add(simpleName)
-            return simpleName
+            return Pair(false, simpleName)
         }
-        return "_${setting.handler.packageName.replace(".", "_")}_$simpleName"
+        factoryFnMap[setting] = "_${setting.handler.packageName.replace(".", "_")}_$simpleName"
+        return Pair(false, factoryFnMap[setting]!!)
     }
 }

@@ -64,7 +64,6 @@ class AggregateFactoryProcessor : Processor {
             }
             .map {
                 AggregateFactorySetting(
-                    name = "${it.implementationPackageName}.${it.implementationClassName}",
                     aggregate = ClassInfo(
                         packageName = it.aggregatePackageName,
                         className = it.aggregateClassName

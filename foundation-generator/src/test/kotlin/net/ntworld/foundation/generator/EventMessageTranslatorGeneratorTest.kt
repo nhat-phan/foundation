@@ -22,7 +22,6 @@ class EventMessageTranslatorGeneratorTest {
     @Test
     fun `test generate when the implementation and event are the same`() {
         val settings = EventSourcingSetting(
-            name = "test.event.CreatedEvent",
             event = ClassInfo(
                 packageName = "test.event",
                 className = "CreatedEvent"
@@ -55,7 +54,6 @@ class EventMessageTranslatorGeneratorTest {
     @Test
     fun `test generate when the implementation and event are NOT the same, no 2nd constructor`() {
         val settings = EventSourcingSetting(
-            name = "test.event.CreatedEvent",
             event = ClassInfo(
                 packageName = "test.event",
                 className = "CreatedEvent"
@@ -88,7 +86,6 @@ class EventMessageTranslatorGeneratorTest {
     @Test
     fun `test generate when the implementation and event are NOT the same, with 2nd constructor`() {
         val settings = EventSourcingSetting(
-            name = "test.event.CreatedEvent",
             event = ClassInfo(
                 packageName = "test.event",
                 className = "CreatedEvent"
