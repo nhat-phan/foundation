@@ -9,8 +9,8 @@ class LocalQueryBusGenerator {
     private val factoryFnMap = mutableMapOf<QueryHandlerSetting, String>()
     private val factoryFnNames = mutableListOf<String>()
 
-    fun generate(settings: List<QueryHandlerSetting>): GeneratedFile {
-        val target = Utility.findLocalQueryBusTarget(settings)
+    fun generate(settings: List<QueryHandlerSetting>, namespace: String? = null): GeneratedFile {
+        val target = Utility.findLocalQueryBusTarget(settings, namespace)
         val file = buildFile(settings, target)
         val stringBuffer = StringBuffer()
         file.writeTo(stringBuffer)
@@ -33,7 +33,7 @@ class LocalQueryBusGenerator {
                 Framework.LocalBusResolver.parameterizedBy(
                     Framework.Query.parameterizedBy(TypeVariableName.invoke("*")),
                     Framework.QueryHandler.parameterizedBy(
-                        Framework.Query.parameterizedBy(TypeVariableName.invoke("*")),
+                        TypeVariableName.invoke("*"),
                         TypeVariableName.invoke("*")
                     )
                 )
@@ -75,12 +75,11 @@ class LocalQueryBusGenerator {
                 )
                 .addModifiers(KModifier.OVERRIDE)
                 .addParameter("query", Framework.Query.parameterizedBy(typeR))
-                .addParameter("message", Framework.Message.copy(nullable = true))
                 .addCode(
                     CodeBlock.builder()
                         .add("val handler = this.resolve(query)\n")
                         .beginControlFlow("if (null !== handler)")
-                        .add("return handler.handle(query = query, message = message) as R\n")
+                        .add("return handler.execute(query = query, message = null) as R\n")
                         .endControlFlow()
                         .add("throw %T(query.toString())\n", Framework.QueryHandlerNotFoundException)
                         .build()
@@ -148,7 +147,7 @@ class LocalQueryBusGenerator {
                 .addParameter("instance", Framework.Query.parameterizedBy(TypeVariableName.invoke("*")))
                 .returns(
                     Framework.QueryHandler.parameterizedBy(
-                        Framework.Query.parameterizedBy(TypeVariableName.invoke("*")),
+                        TypeVariableName.invoke("*"),
                         TypeVariableName.invoke("*")
                     ).copy(nullable = true)
                 )

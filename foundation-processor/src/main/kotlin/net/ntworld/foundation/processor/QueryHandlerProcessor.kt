@@ -1,9 +1,9 @@
 package net.ntworld.foundation.processor
 
-import net.ntworld.foundation.EventHandler
 import net.ntworld.foundation.Handler
+import net.ntworld.foundation.cqrs.QueryHandler
 import net.ntworld.foundation.generator.GeneratorSettings
-import net.ntworld.foundation.generator.setting.EventHandlerSetting
+import net.ntworld.foundation.generator.setting.QueryHandlerSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
@@ -11,43 +11,45 @@ import javax.lang.model.element.Element
 import javax.lang.model.element.PackageElement
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.DeclaredType
-import javax.lang.model.type.TypeMirror
 
-class EventHandlerProcessor() : Processor {
+class QueryHandlerProcessor() : Processor {
     override val annotations: List<Class<out Annotation>> = listOf(
         Handler::class.java
     )
 
-    internal data class CollectedEventHandler(
-        val eventPackageName: String,
-        val eventClassName: String,
+    internal data class CollectedQueryHandler(
+        val queryPackageName: String,
+        val queryClassName: String,
         val handlerPackageName: String,
         val handlerClassName: String,
-        val makeByFactory: Boolean
+        val makeByFactory: Boolean,
+        val version: Int
     )
 
-    private val data = mutableMapOf<String, CollectedEventHandler>()
+    private val data = mutableMapOf<String, CollectedQueryHandler>()
 
     override fun startProcess(settings: GeneratorSettings) {
         data.clear()
-        settings.eventHandlers.forEach { item ->
-            data[item.name] = CollectedEventHandler(
-                eventPackageName = item.event.packageName,
-                eventClassName = item.event.className,
+        settings.queryHandlers.forEach { item ->
+            data[item.name] = CollectedQueryHandler(
+                queryPackageName = item.query.packageName,
+                queryClassName = item.query.className,
                 handlerPackageName = item.handler.packageName,
                 handlerClassName = item.handler.className,
-                makeByFactory = item.makeByFactory
+                makeByFactory = item.makeByFactory,
+                version = item.version
             )
         }
     }
 
     override fun applySettings(settings: GeneratorSettings): GeneratorSettings {
-        val eventHandlers = data.values.map {
-            EventHandlerSetting(
-                event = ClassInfo(
-                    packageName = it.eventPackageName,
-                    className = it.eventClassName
+        val queryHandlers = data.values.map {
+            QueryHandlerSetting(
+                query = ClassInfo(
+                    packageName = it.queryPackageName,
+                    className = it.queryClassName
                 ),
+                version = it.version,
                 handler = ClassInfo(
                     packageName = it.handlerPackageName,
                     className = it.handlerClassName
@@ -55,7 +57,7 @@ class EventHandlerProcessor() : Processor {
                 makeByFactory = it.makeByFactory
             )
         }
-        return settings.copy(eventHandlers = eventHandlers)
+        return settings.copy(queryHandlers = queryHandlers)
     }
 
     override fun shouldProcess(
@@ -67,7 +69,7 @@ class EventHandlerProcessor() : Processor {
         return when (annotation) {
             Handler::class.java -> {
                 CodeUtility.isImplementInterface(
-                    processingEnv, element.asType(), EventHandler::class.java.canonicalName, false
+                    processingEnv, element.asType(), QueryHandler::class.java.canonicalName, false
                 )
             }
 
@@ -85,7 +87,7 @@ class EventHandlerProcessor() : Processor {
             val packageName = this.getPackageNameOfClass(element)
             val className = element.simpleName.toString()
             val key = "$packageName.$className"
-            initCollectedEventHandlerIfNeeded(packageName, className)
+            initCollectedQueryHandlerIfNeeded(packageName, className)
 
             // If the Handler is provided enough information, then no need to find data
             if (processAnnotationProperties(processingEnv, key, element, element.getAnnotation(Handler::class.java))) {
@@ -95,14 +97,15 @@ class EventHandlerProcessor() : Processor {
             val implementedInterface = (element as TypeElement).interfaces
                 .firstOrNull {
                     val e = processingEnv.typeUtils.asElement(it) as? TypeElement ?: return@firstOrNull false
-                    e.qualifiedName.toString() == EventHandler::class.java.canonicalName
+                    e.qualifiedName.toString() == QueryHandler::class.java.canonicalName
                 }
 
             if (null !== implementedInterface) {
-                findImplementedEvent(processingEnv, key, implementedInterface as DeclaredType)
+                findImplementedQuery(processingEnv, key, implementedInterface as DeclaredType)
             }
 
             data[key] = data[key]!!.copy(
+                version = element.getAnnotation(Handler::class.java).version,
                 makeByFactory = !CodeUtility.canConstructedByInfrastructure(processingEnv, element)
             )
         }
@@ -114,7 +117,7 @@ class EventHandlerProcessor() : Processor {
         element: Element,
         annotation: Handler
     ): Boolean {
-        if (annotation.type !== Handler.Type.Event) {
+        if (annotation.type !== Handler.Type.Query) {
             return false
         }
 
@@ -138,22 +141,23 @@ class EventHandlerProcessor() : Processor {
 
         val inputElement = processingEnv.elementUtils.getTypeElement(inputTypeName)
         data[key] = data[key]!!.copy(
-            eventPackageName = getPackageNameOfClass(inputElement),
-            eventClassName = inputElement.simpleName.toString(),
+            queryPackageName = getPackageNameOfClass(inputElement),
+            queryClassName = inputElement.simpleName.toString(),
+            version = annotation.version,
             makeByFactory = annotation.factory
         )
         return true
     }
 
-    private fun findImplementedEvent(processingEnv: ProcessingEnvironment, key: String, type: DeclaredType) {
-        if (type.typeArguments.size != 1) {
+    private fun findImplementedQuery(processingEnv: ProcessingEnvironment, key: String, type: DeclaredType) {
+        if (type.typeArguments.size != 2) {
             return
         }
-        val eventType = type.typeArguments.first()
-        val element = processingEnv.typeUtils.asElement(eventType)
+        val queryType = type.typeArguments.first()
+        val element = processingEnv.typeUtils.asElement(queryType)
         data[key] = data[key]!!.copy(
-            eventPackageName = getPackageNameOfClass(element),
-            eventClassName = element.simpleName.toString()
+            queryPackageName = getPackageNameOfClass(element),
+            queryClassName = element.simpleName.toString()
         )
     }
 
@@ -165,12 +169,13 @@ class EventHandlerProcessor() : Processor {
         return upperElement.qualifiedName.toString()
     }
 
-    private fun initCollectedEventHandlerIfNeeded(packageName: String, className: String) {
+    private fun initCollectedQueryHandlerIfNeeded(packageName: String, className: String) {
         val key = "$packageName.$className"
         if (!data.containsKey(key)) {
-            data[key] = CollectedEventHandler(
-                eventPackageName = "",
-                eventClassName = "",
+            data[key] = CollectedQueryHandler(
+                queryPackageName = "",
+                queryClassName = "",
+                version = 0,
                 handlerPackageName = packageName,
                 handlerClassName = className,
                 makeByFactory = false

@@ -9,8 +9,8 @@ class LocalEventBusGenerator {
     private val factoryFnMap = mutableMapOf<EventHandlerSetting, String>()
     private val factoryFnNames = mutableListOf<String>()
 
-    fun generate(settings: List<EventHandlerSetting>): GeneratedFile {
-        val target = Utility.findLocalEventBusTarget(settings)
+    fun generate(settings: List<EventHandlerSetting>, namespace: String? = null): GeneratedFile {
+        val target = Utility.findLocalEventBusTarget(settings, namespace)
         val file = buildFile(settings, target)
         val stringBuffer = StringBuffer()
         file.writeTo(stringBuffer)
@@ -51,7 +51,7 @@ class LocalEventBusGenerator {
             "kotlin",
             "Array"
         ).parameterizedBy(
-            Framework.EventHandler.parameterizedBy(Framework.Event)
+            Framework.EventHandler.parameterizedBy(TypeVariableName.invoke("*"))
         )
     }
 
@@ -83,12 +83,11 @@ class LocalEventBusGenerator {
             FunSpec.builder("process")
                 .addModifiers(KModifier.OVERRIDE)
                 .addParameter("event", Framework.Event)
-                .addParameter("message", Framework.Message.copy(nullable = true))
                 .addCode(
                     CodeBlock.builder()
                         .add("val handlers = this.resolve(event)\n")
                         .beginControlFlow("if (null !== handlers)")
-                        .add("handlers.forEach { it.handle(event = event, message = message) }\n")
+                        .add("handlers.forEach { it.execute(event = event, message = null) }\n")
                         .endControlFlow()
                         .build()
                 )
@@ -96,21 +95,14 @@ class LocalEventBusGenerator {
         )
     }
 
-    internal fun groupHandlers(settings: List<EventHandlerSetting>): Map<ClassInfo, List<EventHandlerSetting>> {
-        val grouped = mutableMapOf<ClassInfo, MutableList<EventHandlerSetting>>()
-        val classInfoMap = mutableMapOf<String, ClassInfo>()
-        settings.forEach { setting ->
-            setting.events.forEach {
-                val key = it.fullName()
-                if (!classInfoMap.containsKey(key)) {
-                    classInfoMap[key] = it.copy()
-                }
-
-                if (!grouped.containsKey(classInfoMap[key]!!)) {
-                    grouped[classInfoMap[key]!!] = mutableListOf()
-                }
-                grouped[classInfoMap[key]!!]!!.add(setting)
+    internal fun groupHandlers(settings: List<EventHandlerSetting>): Map<String, List<EventHandlerSetting>> {
+        val grouped = mutableMapOf<String, MutableList<EventHandlerSetting>>()
+        settings.forEach {
+            val key = it.event.fullName()
+            if (!grouped.containsKey(key)) {
+                grouped[key] = mutableListOf()
             }
+            grouped[key]!!.add(it)
         }
         return grouped
     }
@@ -122,7 +114,7 @@ class LocalEventBusGenerator {
         code.beginControlFlow("return when (instance)")
 
         grouped.forEach {
-            code.add("is %T -> arrayOf(\n", it.key.toClassName())
+            code.add("is %T -> arrayOf(\n", it.value.first().event.toClassName())
             code.indent()
             buildCodeToResolveHandlers(it.value, code, type)
             code.unindent()

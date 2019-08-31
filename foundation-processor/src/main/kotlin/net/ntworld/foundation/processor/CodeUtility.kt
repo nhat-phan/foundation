@@ -1,7 +1,10 @@
 package net.ntworld.foundation.processor
 
+import net.ntworld.foundation.Infrastructure
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.Element
+import javax.lang.model.element.ElementKind
+import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.TypeMirror
 
@@ -76,4 +79,22 @@ internal object CodeUtility {
         )
     }
 
+    fun canConstructedByInfrastructure(
+        processingEnv: ProcessingEnvironment,
+        element: TypeElement
+    ): Boolean {
+        val constructors = element.enclosedElements.filter { it.kind == ElementKind.CONSTRUCTOR }
+        for (ctor in constructors) {
+            if (ctor !is ExecutableElement) {
+                continue
+            }
+
+            if (ctor.parameters.size == 1) {
+                val firstParam = ctor.parameters.first()
+                val typeElement = processingEnv.typeUtils.asElement(firstParam.asType()) as? TypeElement ?: return false
+                return typeElement.qualifiedName.toString() == Infrastructure::class.java.canonicalName
+            }
+        }
+        return false
+    }
 }

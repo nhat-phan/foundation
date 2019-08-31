@@ -18,10 +18,11 @@ import javax.lang.model.element.TypeElement
 @SupportedOptions(FrameworkProcessor.KAPT_KOTLIN_GENERATED_OPTION_NAME)
 class FoundationProcessor : AbstractProcessor() {
     private val processors: List<Processor> = listOf(
-        EventHandlerProcessor()
-        // EventHandlerProcessor(),
-        // EventSourcingProcessor(),
-        // AggregateFactoryProcessor()
+        EventHandlerProcessor(),
+        CommandHandlerProcessor(),
+        QueryHandlerProcessor(),
+        EventSourcingProcessor(),
+        AggregateFactoryProcessor()
     )
 
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment?): Boolean {
@@ -48,7 +49,28 @@ class FoundationProcessor : AbstractProcessor() {
         settings.aggregateFactories.forEach {
             ProcessorOutput.writeGeneratedFile(processingEnv, AggregateFactoryGenerator.generate(it))
         }
-        ProcessorOutput.writeGeneratedFile(processingEnv, InfrastructureProviderGenerator().generate(settings))
+
+        val infrastructureProviderTarget = InfrastructureProviderGenerator().findTarget(settings)
+
+        ProcessorOutput.writeGeneratedFile(
+            processingEnv,
+            LocalEventBusGenerator().generate(settings.eventHandlers, infrastructureProviderTarget.packageName)
+        )
+
+        ProcessorOutput.writeGeneratedFile(
+            processingEnv,
+            LocalCommandBusGenerator().generate(settings.commandHandlers, infrastructureProviderTarget.packageName)
+        )
+
+        ProcessorOutput.writeGeneratedFile(
+            processingEnv,
+            LocalQueryBusGenerator().generate(settings.queryHandlers, infrastructureProviderTarget.packageName)
+        )
+
+        ProcessorOutput.writeGeneratedFile(
+            processingEnv,
+            InfrastructureProviderGenerator().generate(settings, infrastructureProviderTarget.packageName)
+        )
 
         return true
     }

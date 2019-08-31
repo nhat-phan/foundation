@@ -21,63 +21,33 @@ class LocalEventBusGeneratorTest {
     fun testGenerate() {
         val settings = listOf(
             EventHandlerSetting(
-                events = listOf(
-                    ClassInfo(className = "CreatedEvent", packageName = "com.example.contract")
-                ),
+                event = ClassInfo(className = "CreatedEvent", packageName = "com.example.contract"),
                 handler = ClassInfo(className = "CreatedEventHandler", packageName = "com.example.eventHandler"),
                 makeByFactory = false
             ),
             EventHandlerSetting(
-                events = listOf(
-                    ClassInfo(className = "UpdatedEvent", packageName = "com.example.contract")
-                ),
+                event = ClassInfo(className = "UpdatedEvent", packageName = "com.example.contract"),
                 handler = ClassInfo(className = "UpdatedEventHandlerOne", packageName = "com.example.eventHandler"),
                 makeByFactory = true
             ),
             EventHandlerSetting(
-                events = listOf(
-                    ClassInfo(className = "UpdatedEvent", packageName = "com.example.contract")
-                ),
+                event = ClassInfo(className = "UpdatedEvent", packageName = "com.example.contract"),
                 handler = ClassInfo(className = "UpdatedEventHandlerTwo", packageName = "com.example.eventHandler"),
                 makeByFactory = false
             ),
             EventHandlerSetting(
-                events = listOf(
-                    ClassInfo(className = "DeletedEvent", packageName = "com.example.contract")
-                ),
+                event = ClassInfo(className = "DeletedEvent", packageName = "com.example.contract"),
                 handler = ClassInfo(className = "DeletedEventHandler", packageName = "com.example.eventHandler"),
                 makeByFactory = true
             ),
             EventHandlerSetting(
-                events = listOf(
-                    ClassInfo(className = "DeletedEvent", packageName = "com.example.contract")
-                ),
+                event = ClassInfo(className = "DeletedEvent", packageName = "com.example.contract"),
                 handler = ClassInfo(className = "DeletedEventHandlerTwo", packageName = "com.example.eventHandler"),
                 makeByFactory = false
             ),
             EventHandlerSetting(
-                events = listOf(
-                    ClassInfo(className = "DeletedEvent", packageName = "com.example.contract")
-                ),
+                event = ClassInfo(className = "DeletedEvent", packageName = "com.example.contract"),
                 handler = ClassInfo(className = "DeletedEventHandler", packageName = "com.example.eventHandler.anotherDomain"),
-                makeByFactory = true
-            ),
-            EventHandlerSetting(
-                events = listOf(
-                    ClassInfo(className = "CreatedEvent", packageName = "com.example.contract"),
-                    ClassInfo(className = "UpdatedEvent", packageName = "com.example.contract"),
-                    ClassInfo(className = "DeletedEvent", packageName = "com.example.contract")
-                ),
-                handler = ClassInfo(className = "AllEventsHandler", packageName = "com.example.eventHandler"),
-                makeByFactory = false
-            ),
-            EventHandlerSetting(
-                events = listOf(
-                    ClassInfo(className = "CreatedEvent", packageName = "com.example.contract"),
-                    ClassInfo(className = "UpdatedEvent", packageName = "com.example.contract"),
-                    ClassInfo(className = "DeletedEvent", packageName = "com.example.contract")
-                ),
-                handler = ClassInfo(className = "AllEventsHandler", packageName = "com.example.eventHandler.anotherDomain"),
                 makeByFactory = true
             )
         )

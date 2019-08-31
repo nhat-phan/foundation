@@ -5,10 +5,9 @@ import net.ntworld.foundation.generator.type.ClassInfo
 
 @Serializable
 data class EventHandlerSetting(
-    val events: List<ClassInfo>,
+    val event: ClassInfo,
     override val handler: ClassInfo,
     override val makeByFactory: Boolean
 ) : HandlerSetting {
-    override val name: String
-        get() = "${handler.packageName}.${handler.className}"
+    override val name: String = "${handler.packageName}.${handler.className}"
 }

@@ -1,9 +1,7 @@
 package net.ntworld.foundation.generator
 
 import kotlinx.serialization.Serializable
-import net.ntworld.foundation.generator.setting.AggregateFactorySetting
-import net.ntworld.foundation.generator.setting.EventHandlerSetting
-import net.ntworld.foundation.generator.setting.EventSourcingSetting
+import net.ntworld.foundation.generator.setting.*
 
 @Serializable
 data class GeneratorSettings(
@@ -11,5 +9,7 @@ data class GeneratorSettings(
     val provider: String,
     val aggregateFactories: List<AggregateFactorySetting>,
     val events: List<EventSourcingSetting>,
-    val eventHandlers: List<EventHandlerSetting>
+    val eventHandlers: List<EventHandlerSetting>,
+    val commandHandlers: List<CommandHandlerSetting>,
+    val queryHandlers: List<QueryHandlerSetting>
 )

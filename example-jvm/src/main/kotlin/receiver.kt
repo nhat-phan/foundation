@@ -174,7 +174,7 @@ class FindSettingByIdQueryHandler(
         return execute(query, null)
     }
 
-    override fun execute(query: FindSettingByIdQuery, message: Message?): SettingData {
+    override fun execute(query: Query<*>, message: Message?): SettingData {
         // In command, there are - steps
         //   $1. Get all info you need from your domain
         //   $2. Get all info you need from other domain via queryBus().process(...)

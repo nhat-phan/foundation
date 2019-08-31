@@ -7,8 +7,8 @@ import net.ntworld.foundation.mocking.ManualMock
 import net.ntworld.foundation.mocking.mock
 import net.ntworld.foundation.mocking.verify
 
-@Handler
-class CreateTodoCommandHandler : CommandHandler<CreateTodoCommand> {
+@Handler(version = 1)
+class CreateTodoCommandHandlerV1 : CommandHandler<CreateTodoCommand> {
     override fun handle(command: CreateTodoCommand) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }

@@ -7,8 +7,12 @@ import net.ntworld.foundation.generator.type.ClassInfo
 class InfrastructureProviderGenerator {
     private val variableNames = mutableListOf<String>()
 
-    fun generate(settings: GeneratorSettings): GeneratedFile {
-        val target = Utility.findInfrastructureProviderTarget(settings)
+    fun findTarget(settings: GeneratorSettings): ClassInfo {
+        return Utility.findInfrastructureProviderTarget(settings)
+    }
+
+    fun generate(settings: GeneratorSettings, namespace: String? = null): GeneratedFile {
+        val target = Utility.findInfrastructureProviderTarget(settings, namespace)
         val file = buildFile(settings, target)
         val stringBuffer = StringBuffer()
         file.writeTo(stringBuffer)
@@ -38,7 +42,11 @@ class InfrastructureProviderGenerator {
         return builder.build()
     }
 
-    internal fun buildRegisterCodeForEvent(type: TypeSpec.Builder, init: CodeBlock.Builder, setting: EventSourcingSetting) {
+    internal fun buildRegisterCodeForEvent(
+        type: TypeSpec.Builder,
+        init: CodeBlock.Builder,
+        setting: EventSourcingSetting
+    ) {
         val eventConverter = Utility.findEventConverterTarget(setting)
         val eventConverterClass = ClassName(eventConverter.packageName, eventConverter.className)
         val eventClass = ClassName(setting.event.packageName, setting.event.className)

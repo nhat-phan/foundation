@@ -9,8 +9,8 @@ class LocalCommandBusGenerator {
     private val factoryFnMap = mutableMapOf<CommandHandlerSetting, String>()
     private val factoryFnNames = mutableListOf<String>()
 
-    fun generate(settings: List<CommandHandlerSetting>): GeneratedFile {
-        val target = Utility.findLocalCommandBusTarget(settings)
+    fun generate(settings: List<CommandHandlerSetting>, namespace: String? = null): GeneratedFile {
+        val target = Utility.findLocalCommandBusTarget(settings, namespace)
         val file = buildFile(settings, target)
         val stringBuffer = StringBuffer()
         file.writeTo(stringBuffer)
@@ -32,7 +32,7 @@ class LocalCommandBusGenerator {
             .addSuperinterface(
                 Framework.LocalBusResolver.parameterizedBy(
                     Framework.Command,
-                    Framework.CommandHandler.parameterizedBy(Framework.Command)
+                    Framework.CommandHandler.parameterizedBy(TypeVariableName.invoke("*"))
                 )
             )
 
@@ -64,12 +64,11 @@ class LocalCommandBusGenerator {
             FunSpec.builder("process")
                 .addModifiers(KModifier.OVERRIDE)
                 .addParameter("command", Framework.Command)
-                .addParameter("message", Framework.Message.copy(nullable = true))
                 .addCode(
                     CodeBlock.builder()
                         .add("val handler = this.resolve(command)\n")
                         .beginControlFlow("if (null !== handler)")
-                        .add("handler.handle(command = command, message = message)\n")
+                        .add("handler.execute(command = command, message = null)\n")
                         .endControlFlow()
                         .build()
                 )
@@ -134,7 +133,7 @@ class LocalCommandBusGenerator {
             FunSpec.builder("resolve")
                 .addModifiers(KModifier.OVERRIDE)
                 .addParameter("instance", Framework.Command)
-                .returns(Framework.CommandHandler.parameterizedBy(Framework.Command).copy(nullable = true))
+                .returns(Framework.CommandHandler.parameterizedBy(TypeVariableName.invoke("*")).copy(nullable = true))
                 .addCode(code.build())
                 .build()
         )

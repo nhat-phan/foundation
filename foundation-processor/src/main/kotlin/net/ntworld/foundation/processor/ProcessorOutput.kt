@@ -31,7 +31,9 @@ internal object ProcessorOutput {
                 provider = "",
                 events = listOf(),
                 aggregateFactories = listOf(),
-                eventHandlers = listOf()
+                eventHandlers = listOf(),
+                commandHandlers = listOf(),
+                queryHandlers = listOf()
             )
         }
         return SettingsSerializer.parse(files[path]!!)
@@ -52,7 +54,9 @@ internal object ProcessorOutput {
                 provider = "",
                 events = listOf(),
                 aggregateFactories = listOf(),
-                eventHandlers = listOf()
+                eventHandlers = listOf(),
+                commandHandlers = listOf(),
+                queryHandlers = listOf()
             )
         }
         val content = file.readText()

@@ -54,7 +54,9 @@ class InfrastructureProviderGeneratorTest {
                     hasSecondConstructor = false
                 )
             ),
-            eventHandlers = listOf()
+            eventHandlers = listOf(),
+            commandHandlers = listOf(),
+            queryHandlers = listOf()
         )
 
         val result = InfrastructureProviderGenerator().generate(settings)

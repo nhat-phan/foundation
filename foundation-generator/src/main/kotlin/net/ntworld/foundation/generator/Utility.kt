@@ -5,8 +5,8 @@ import net.ntworld.foundation.generator.type.ClassInfo
 import java.lang.Math.min
 
 internal object Utility {
-    fun findLocalEventBusTarget(settings: List<EventHandlerSetting>): ClassInfo {
-        var packageName = ""
+    fun findLocalEventBusTarget(settings: List<EventHandlerSetting>, namespace: String? = null): ClassInfo {
+        var packageName = if (null !== namespace) namespace else ""
         settings.forEach {
             packageName = this.guessPackageName(packageName, it.handler.packageName)
         }
@@ -16,8 +16,8 @@ internal object Utility {
         )
     }
 
-    fun findLocalCommandBusTarget(settings: List<CommandHandlerSetting>): ClassInfo {
-        var packageName = ""
+    fun findLocalCommandBusTarget(settings: List<CommandHandlerSetting>, namespace: String? = null): ClassInfo {
+        var packageName = if (null !== namespace) namespace else ""
         settings.forEach {
             packageName = this.guessPackageName(packageName, it.handler.packageName)
         }
@@ -27,8 +27,8 @@ internal object Utility {
         )
     }
 
-    fun findLocalQueryBusTarget(settings: List<QueryHandlerSetting>): ClassInfo {
-        var packageName = ""
+    fun findLocalQueryBusTarget(settings: List<QueryHandlerSetting>, namespace: String? = null): ClassInfo {
+        var packageName = if (null !== namespace) namespace else ""
         settings.forEach {
             packageName = this.guessPackageName(packageName, it.handler.packageName)
         }
@@ -84,8 +84,8 @@ internal object Utility {
         )
     }
 
-    fun findInfrastructureProviderTarget(settings: GeneratorSettings): ClassInfo {
-        var packageName = ""
+    fun findInfrastructureProviderTarget(settings: GeneratorSettings, namespace: String? = null): ClassInfo {
+        var packageName = if (null !== namespace) namespace else ""
         settings.aggregateFactories.forEach {
             packageName = this.guessPackageName(packageName, it.implementation.packageName)
         }

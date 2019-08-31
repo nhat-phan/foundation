@@ -6,7 +6,8 @@ import net.ntworld.foundation.Message
 interface QueryHandler<in T, out R> where T : Query<out R> {
     fun handle(query: T): R
 
-    fun execute(query: T, message: Message?): R = handle(query)
+    @Suppress("UNCHECKED_CAST")
+    fun execute(query: Query<*>, message: Message?): R = handle(query as T)
 
     fun <T> use(infrastructure: Infrastructure, block: InfrastructureQueryHandlerContext.() -> T): T {
         return block.invoke(InfrastructureQueryHandlerContext(infrastructure))
