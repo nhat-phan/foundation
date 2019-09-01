@@ -20,6 +20,7 @@ dependencies {
     // implementation(project(":foundation", "jvmDefault"))
     implementation(project(":foundation-generator"))
     implementation(kotlin("stdlib"))
+    compile("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.1.0")
 
     // We have a problem that if reference to the project :foundation
     // the generated pom is pointed to wrong artifact. In fact, the processor

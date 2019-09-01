@@ -1,5 +1,9 @@
 package net.ntworld.foundation.processor
 
+import kotlinx.metadata.KmClassifier
+import kotlinx.metadata.jvm.KotlinClassHeader
+import kotlinx.metadata.jvm.KotlinClassMetadata
+import kotlinx.metadata.jvm.syntheticMethodForAnnotations
 import net.ntworld.foundation.EventHandler
 import net.ntworld.foundation.Handler
 import net.ntworld.foundation.generator.GeneratorSettings
@@ -64,6 +68,49 @@ class EventHandlerProcessor() : Processor {
         processingEnv: ProcessingEnvironment,
         roundEnv: RoundEnvironment
     ): Boolean {
+//        val debug = mutableListOf<String>()
+//        val packageE = processingEnv.elementUtils.getPackageElement("com.example.contract")
+//        packageE.enclosedElements.forEach {
+//            if (it.simpleName.toString() == "CreateTodoCommand") {
+//                debug.add(it.kind.isInterface.toString())
+//                debug.add("---------")
+//                it.enclosedElements.forEach {
+//                    debug.add(it.simpleName.toString())
+//                }
+//                debug.add("---------")
+//                debug.add("---------")
+//                val metadataAnnotation = it.getAnnotation(Metadata::class.java)
+//                if (null !== metadataAnnotation) {
+//                    val header = KotlinClassHeader(
+//                        data1 = metadataAnnotation.data1,
+//                        data2 = metadataAnnotation.data2,
+//                        bytecodeVersion = metadataAnnotation.bytecodeVersion,
+//                        extraInt = metadataAnnotation.extraInt,
+//                        extraString = metadataAnnotation.extraString,
+//                        kind = metadataAnnotation.kind,
+//                        metadataVersion = metadataAnnotation.metadataVersion,
+//                        packageName = metadataAnnotation.packageName
+//                    )
+//                    val metadata = KotlinClassMetadata.read(header)
+//                    if (metadata is KotlinClassMetadata.Class) {
+//                        val kmClass = metadata.toKmClass()
+//
+//                        // kmClass.s
+//                        kmClass.properties.forEach {
+//                            debug.add(it.name)
+////                            debug.add(it.syntheticMethodForAnnotations!!.name)
+////                            if (it.returnType.classifier is KmClassifier.Class) {
+////                                debug.add((it.returnType.classifier as KmClassifier.Class).name)
+////                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//        throw Exception(debug.joinToString(" & "))
+//
+//
         return when (annotation) {
             Handler::class.java -> {
                 CodeUtility.isImplementInterface(

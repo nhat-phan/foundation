@@ -42,6 +42,8 @@ class LocalCommandBusGenerator {
         buildResolveFunction(settings, type)
         if (factoryFnNames.isNotEmpty()) {
             type.addModifiers(KModifier.ABSTRACT)
+        } else {
+            type.addModifiers(KModifier.OPEN)
         }
         return type.build()
     }

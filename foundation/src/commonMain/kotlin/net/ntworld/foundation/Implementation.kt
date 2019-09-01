@@ -13,5 +13,6 @@ annotation class Implementation(
         Event,
         Command,
         Query,
+        ReceivedData
     }
 }

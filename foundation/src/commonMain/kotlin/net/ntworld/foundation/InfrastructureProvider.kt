@@ -6,7 +6,7 @@ import net.ntworld.foundation.internal.resolver.EventConverterResolver
 import net.ntworld.foundation.internal.resolver.MessageTranslatorResolver
 import kotlin.reflect.KClass
 
-open class InfrastructureProvider : InfrastructureResolver() {
+open class InfrastructureProvider(next: Infrastructure? = null) : InfrastructureResolver(next) {
     private val aggregateFactoryResolver = AggregateFactoryResolver()
     private val eventConverterResolver = EventConverterResolver()
     private val messageTranslatorResolver = MessageTranslatorResolver()
@@ -23,7 +23,7 @@ open class InfrastructureProvider : InfrastructureResolver() {
         aggregateFactoryResolver.register(kClass, converter)
     }
 
-    override fun <A : Aggregate<S>, S: State> factoryOf(type: KClass<A>): AggregateFactory<A, S> {
+    override fun <A : Aggregate<S>, S : State> factoryOf(type: KClass<A>): AggregateFactory<A, S> {
         if (aggregateFactoryResolver.canResolve(type)) {
             return aggregateFactoryResolver.resolve(type)
         }
