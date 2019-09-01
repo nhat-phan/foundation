@@ -15,9 +15,11 @@ interface Infrastructure {
 
     fun environment(): Environment
 
+    // fun <T : Any> resolve(type: KClass<T>): T
+
     fun <A : Aggregate<S>, S : State> factoryOf(type: KClass<A>): AggregateFactory<A, S>
 
-    fun <T : ReceivedData<Q, R>, Q: Query<R>, R> receiverOf(type: KClass<T>): DataReceiver<T>
+    fun <T : ReceivedData<Q, R>, Q : Query<R>, R> receiverOf(type: KClass<T>): DataReceiver<T>
 
     fun <A : Aggregate<S>, S : State> storeOf(type: KClass<A>): StateStore<S>
 

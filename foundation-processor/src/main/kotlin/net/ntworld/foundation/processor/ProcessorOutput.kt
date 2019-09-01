@@ -24,11 +24,23 @@ internal object ProcessorOutput {
         files.clear()
     }
 
+    fun deleteFile(processingEnv: ProcessingEnvironment, path: String) {
+        if (isTest) {
+            return
+        }
+
+        val base = getKaptGeneratedDirectory(processingEnv)
+        val file = Paths.get(base, path).toFile()
+        if (file.exists()) {
+            file.delete()
+        }
+    }
+
     fun readSettingsFileTest(): GeneratorSettings {
         val path = FrameworkProcessor.SETTINGS_PATH + "/" + FrameworkProcessor.SETTINGS_FILENAME
         if (!files.contains(path)) {
             return GeneratorSettings(
-                provider = "",
+                globalDirectory = "",
                 events = listOf(),
                 aggregateFactories = listOf(),
                 eventHandlers = listOf(),
@@ -51,7 +63,7 @@ internal object ProcessorOutput {
         ).toFile()
         if (!file.exists()) {
             return GeneratorSettings(
-                provider = "",
+                globalDirectory = "",
                 events = listOf(),
                 aggregateFactories = listOf(),
                 eventHandlers = listOf(),
@@ -94,6 +106,17 @@ internal object ProcessorOutput {
             file.fileName,
             file.content
         )
+    }
+
+    fun writeGlobalFile(processingEnv: ProcessingEnvironment, settings: GeneratorSettings, file: GeneratedFile) {
+        if (settings.globalDirectory.isNotEmpty()) {
+            deleteFile(processingEnv, settings.globalDirectory + "/" + file.fileName)
+        }
+        val mergedSettings = settings.copy(
+            globalDirectory = file.path
+        )
+        writeText(processingEnv, file.directory, file.fileName, file.content)
+        updateSettingsFile(processingEnv, mergedSettings)
     }
 
     private fun getKaptGeneratedDirectory(processingEnv: ProcessingEnvironment): String {

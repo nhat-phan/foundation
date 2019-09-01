@@ -34,11 +34,7 @@ class FoundationProcessor : AbstractProcessor() {
             this.runProcessor(roundEnv, input, processor)
         }
 
-        val final = settings.copy(
-            description = settings.description + " x "
-        )
-
-        ProcessorOutput.updateSettingsFile(processingEnv, final)
+        ProcessorOutput.updateSettingsFile(processingEnv, settings)
 
         settings.events.forEach {
             ProcessorOutput.writeGeneratedFile(processingEnv, EventEntityGenerator.generate(it))
@@ -50,26 +46,30 @@ class FoundationProcessor : AbstractProcessor() {
             ProcessorOutput.writeGeneratedFile(processingEnv, AggregateFactoryGenerator.generate(it))
         }
 
-        val infrastructureProviderTarget = InfrastructureProviderGenerator().findTarget(settings)
+        val globalTarget = InfrastructureProviderGenerator().findTarget(settings)
 
-        ProcessorOutput.writeGeneratedFile(
+        ProcessorOutput.writeGlobalFile(
             processingEnv,
-            LocalEventBusGenerator().generate(settings.eventHandlers, infrastructureProviderTarget.packageName)
+            settings,
+            LocalEventBusGenerator().generate(settings.eventHandlers, globalTarget.packageName)
         )
 
-        ProcessorOutput.writeGeneratedFile(
+        ProcessorOutput.writeGlobalFile(
             processingEnv,
-            LocalCommandBusGenerator().generate(settings.commandHandlers, infrastructureProviderTarget.packageName)
+            settings,
+            LocalCommandBusGenerator().generate(settings.commandHandlers, globalTarget.packageName)
         )
 
-        ProcessorOutput.writeGeneratedFile(
+        ProcessorOutput.writeGlobalFile(
             processingEnv,
-            LocalQueryBusGenerator().generate(settings.queryHandlers, infrastructureProviderTarget.packageName)
+            settings,
+            LocalQueryBusGenerator().generate(settings.queryHandlers, globalTarget.packageName)
         )
 
-        ProcessorOutput.writeGeneratedFile(
+        ProcessorOutput.writeGlobalFile(
             processingEnv,
-            InfrastructureProviderGenerator().generate(settings, infrastructureProviderTarget.packageName)
+            settings,
+            InfrastructureProviderGenerator().generate(settings, globalTarget.packageName)
         )
 
         return true

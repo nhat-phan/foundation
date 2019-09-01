@@ -43,7 +43,7 @@ class AggregateFactoryProcessor : Processor {
                 stateClassName = item.state.className,
                 isAbstract = item.isAbstract,
                 isEventSourced = item.isEventSourced,
-                extendsAbstractEventSourced = false
+                extendsAbstractEventSourced = true
             )
         }
     }

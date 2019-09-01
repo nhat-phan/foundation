@@ -6,7 +6,7 @@ import net.ntworld.foundation.generator.setting.*
 @Serializable
 data class GeneratorSettings(
     val description: String = "",
-    val provider: String,
+    val globalDirectory: String,
     val aggregateFactories: List<AggregateFactorySetting>,
     val events: List<EventSourcingSetting>,
     val eventHandlers: List<EventHandlerSetting>,

@@ -9,6 +9,32 @@ import javax.lang.model.element.TypeElement
 import javax.lang.model.type.TypeMirror
 
 internal object CodeUtility {
+    val debug = mutableListOf<String>()
+
+    fun isInheritOrImplement(
+        processingEnv: ProcessingEnvironment,
+        type: TypeMirror,
+        qualifiedName: String
+    ): Boolean {
+        val checkImplement = isImplementInterface(processingEnv, type, qualifiedName, true)
+        if (checkImplement) {
+            return true
+        }
+
+        val element = processingEnv.typeUtils.asElement(type) as? TypeElement ?: return false
+        val base = element.superclass
+        val baseTypeElement = processingEnv.typeUtils.asElement(base) as? TypeElement ?: return false
+        if (baseTypeElement.qualifiedName.toString() == qualifiedName) {
+            return true
+        }
+
+        if (baseTypeElement.qualifiedName.toString() == java.lang.Object::class.java.canonicalName) {
+            return false
+        }
+
+        return isInheritOrImplement(processingEnv, baseTypeElement.asType(), qualifiedName)
+    }
+
     fun isImplementInterface(
         processingEnv: ProcessingEnvironment,
         type: TypeMirror,
@@ -43,14 +69,14 @@ internal object CodeUtility {
     ): Boolean {
         val casted = element as? TypeElement ?: return false
         val base = casted.superclass
-        val baseElement = processingEnv.typeUtils.asElement(base) as? TypeElement ?: return false
-        if (baseElement.qualifiedName.toString() == classNameQualifiedName) {
+        val baseTypeElement = processingEnv.typeUtils.asElement(base) as? TypeElement ?: return false
+        if (baseTypeElement.qualifiedName.toString() == classNameQualifiedName) {
             return true
         }
 
         if (recursive && isInheritClass(
                 processingEnv,
-                baseElement,
+                baseTypeElement,
                 classNameQualifiedName,
                 recursive
             )
@@ -92,7 +118,9 @@ internal object CodeUtility {
             if (ctor.parameters.size == 1) {
                 val firstParam = ctor.parameters.first()
                 val typeElement = processingEnv.typeUtils.asElement(firstParam.asType()) as? TypeElement ?: return false
-                return typeElement.qualifiedName.toString() == Infrastructure::class.java.canonicalName
+                if (typeElement.qualifiedName.toString() == Infrastructure::class.java.canonicalName) {
+                    return true
+                }
             }
         }
         return false
