@@ -4,15 +4,12 @@ import kotlinx.serialization.Serializable
 import net.ntworld.foundation.generator.type.ClassInfo
 
 @Serializable
-data class ImplementationSetting(
-    val implementation: ClassInfo,
+data class MessageSetting(
     val contract: ClassInfo,
+    val channel: String,
     val type: Type
 ) {
     enum class Type {
-        Aggregate,
-        State,
-        ReceivedData,
         Event,
         Command,
         Query

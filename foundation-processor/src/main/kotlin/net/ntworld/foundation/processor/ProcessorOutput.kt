@@ -40,12 +40,17 @@ internal object ProcessorOutput {
         val path = FrameworkProcessor.SETTINGS_PATH + "/" + FrameworkProcessor.SETTINGS_FILENAME
         if (!files.contains(path)) {
             return GeneratorSettings(
+                description = "",
                 globalDirectory = "",
+                annotationProcessorRunInfo = listOf(),
                 events = listOf(),
                 aggregateFactories = listOf(),
                 eventHandlers = listOf(),
                 commandHandlers = listOf(),
-                queryHandlers = listOf()
+                queryHandlers = listOf(),
+                implementations = listOf(),
+                messages = listOf(),
+                contracts = listOf()
             )
         }
         return SettingsSerializer.parse(files[path]!!)
@@ -63,12 +68,17 @@ internal object ProcessorOutput {
         ).toFile()
         if (!file.exists()) {
             return GeneratorSettings(
+                description = "",
                 globalDirectory = "",
+                annotationProcessorRunInfo = listOf(),
                 events = listOf(),
                 aggregateFactories = listOf(),
                 eventHandlers = listOf(),
                 commandHandlers = listOf(),
-                queryHandlers = listOf()
+                queryHandlers = listOf(),
+                implementations = listOf(),
+                messages = listOf(),
+                contracts = listOf()
             )
         }
         val content = file.readText()
@@ -113,7 +123,7 @@ internal object ProcessorOutput {
             deleteFile(processingEnv, settings.globalDirectory + "/" + file.fileName)
         }
         val mergedSettings = settings.copy(
-            globalDirectory = file.path
+            globalDirectory = file.directory
         )
         writeText(processingEnv, file.directory, file.fileName, file.content)
         updateSettingsFile(processingEnv, mergedSettings)

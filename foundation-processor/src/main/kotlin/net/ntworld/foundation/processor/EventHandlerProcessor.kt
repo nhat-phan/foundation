@@ -95,13 +95,33 @@ class EventHandlerProcessor() : Processor {
 //                    if (metadata is KotlinClassMetadata.Class) {
 //                        val kmClass = metadata.toKmClass()
 //
+//                        kmClass.supertypes.forEach {
+//                            if (it.classifier is KmClassifier.Class) {
+//                                debug.add((it.classifier as KmClassifier.Class).name)
+//                            }
+//                        }
+//
 //                        // kmClass.s
 //                        kmClass.properties.forEach {
 //                            debug.add(it.name)
-////                            debug.add(it.syntheticMethodForAnnotations!!.name)
-////                            if (it.returnType.classifier is KmClassifier.Class) {
-////                                debug.add((it.returnType.classifier as KmClassifier.Class).name)
-////                            }
+//                            if (null !== it.syntheticMethodForAnnotations) {
+//                                debug.add(it.syntheticMethodForAnnotations!!.name)
+//                            }
+//                            if (it.returnType.classifier is KmClassifier.Class) {
+//                                debug.add((it.returnType.classifier as KmClassifier.Class).name)
+//                            }
+//                            it.returnType.arguments.forEach {
+//                                val type = it.type
+//                                val variance = it.variance
+//                                if (variance !== null) {
+//                                    debug.add(variance.name)
+//                                }
+//                                if (null !== type) {
+//                                    if (type.classifier is KmClassifier.Class) {
+//                                        debug.add((type.classifier as KmClassifier.Class).name)
+//                                    }
+//                                }
+//                            }
 //                        }
 //                    }
 //                }
@@ -109,8 +129,8 @@ class EventHandlerProcessor() : Processor {
 //        }
 //
 //        throw Exception(debug.joinToString(" & "))
-//
-//
+
+
         return when (annotation) {
             Handler::class.java -> {
                 CodeUtility.isImplementInterface(

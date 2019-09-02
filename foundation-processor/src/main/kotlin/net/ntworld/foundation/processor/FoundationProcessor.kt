@@ -1,6 +1,7 @@
 package net.ntworld.foundation.processor
 
 import net.ntworld.foundation.generator.*
+import net.ntworld.foundation.generator.type.AnnotationProcessorRunInfo
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.RoundEnvironment
 import javax.annotation.processing.SupportedAnnotationTypes
@@ -17,6 +18,15 @@ import javax.lang.model.element.TypeElement
 )
 @SupportedOptions(FrameworkProcessor.KAPT_KOTLIN_GENERATED_OPTION_NAME)
 class FoundationProcessor : AbstractProcessor() {
+    private val annotationList = listOf(
+        FrameworkProcessor.Implementation,
+        FrameworkProcessor.Handler,
+        FrameworkProcessor.EventSourced,
+        FrameworkProcessor.EventSourcing,
+        FrameworkProcessor.EventSourcingMetadata,
+        FrameworkProcessor.EventSourcingEncrypted
+    )
+
     private val processors: List<Processor> = listOf(
         EventHandlerProcessor(),
         CommandHandlerProcessor(),
@@ -26,16 +36,50 @@ class FoundationProcessor : AbstractProcessor() {
     )
 
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment?): Boolean {
-        if (null === annotations || null === roundEnv) {
+        val start = System.currentTimeMillis()
+        val processingAnnotations = mutableListOf<String>()
+        if (null === annotations || null === roundEnv || !shouldProcess(annotations)) {
             return true
         }
 
-        val settings = processors.fold(ProcessorOutput.readSettingsFile(processingEnv)) { input, processor ->
+        val currentSettings = ProcessorOutput.readSettingsFile(processingEnv)
+        val lastRunInfo = currentSettings.annotationProcessorRunInfo.toMutableList()
+        annotations.forEach {
+            processingAnnotations.add(it.toString())
+        }
+
+        val settings = processors.fold(currentSettings) { input, processor ->
             this.runProcessor(roundEnv, input, processor)
         }
 
-        ProcessorOutput.updateSettingsFile(processingEnv, settings)
+        val end = System.currentTimeMillis()
+        lastRunInfo.add(
+            AnnotationProcessorRunInfo(
+                annotations = processingAnnotations,
+                startedAt = start,
+                finishedAt = end,
+                duration = (end - start)
+            )
+        )
+        val final = settings.copy(
+            annotationProcessorRunInfo = lastRunInfo
+        )
+        ProcessorOutput.updateSettingsFile(processingEnv, final)
+        generate(final)
 
+        return true
+    }
+
+    private fun shouldProcess(annotations: MutableSet<out TypeElement>): Boolean {
+        annotations.forEach {
+            if (annotationList.contains(it.qualifiedName.toString())) {
+                return@shouldProcess true
+            }
+        }
+        return false
+    }
+
+    private fun generate(settings: GeneratorSettings) {
         settings.events.forEach {
             ProcessorOutput.writeGeneratedFile(processingEnv, EventEntityGenerator.generate(it))
             ProcessorOutput.writeGeneratedFile(processingEnv, EventConverterGenerator.generate(it))
@@ -71,8 +115,6 @@ class FoundationProcessor : AbstractProcessor() {
             settings,
             InfrastructureProviderGenerator().generate(settings, globalTarget.packageName)
         )
-
-        return true
     }
 
     private fun runProcessor(

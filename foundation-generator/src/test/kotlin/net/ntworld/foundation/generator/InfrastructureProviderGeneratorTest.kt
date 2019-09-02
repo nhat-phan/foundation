@@ -10,6 +10,7 @@ class InfrastructureProviderGeneratorTest {
         val settings = GeneratorSettings(
             globalDirectory = "",
             aggregateFactories = listOf(),
+            annotationProcessorRunInfo = listOf(),
             events = listOf(
                 EventSourcingSetting(
                     event = ClassInfo(
@@ -56,7 +57,10 @@ class InfrastructureProviderGeneratorTest {
             ),
             eventHandlers = listOf(),
             commandHandlers = listOf(),
-            queryHandlers = listOf()
+            queryHandlers = listOf(),
+            implementations = listOf(),
+            messages = listOf(),
+            contracts = listOf()
         )
 
         val result = InfrastructureProviderGenerator().generate(settings)
