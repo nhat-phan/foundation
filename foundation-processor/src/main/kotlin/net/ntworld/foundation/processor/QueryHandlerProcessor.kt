@@ -140,6 +140,7 @@ class QueryHandlerProcessor() : Processor {
         }
 
         val inputElement = processingEnv.elementUtils.getTypeElement(inputTypeName)
+        ContractCollector.collect(processingEnv, inputElement)
         data[key] = data[key]!!.copy(
             queryPackageName = getPackageNameOfClass(inputElement),
             queryClassName = inputElement.simpleName.toString(),
@@ -155,6 +156,7 @@ class QueryHandlerProcessor() : Processor {
         }
         val queryType = type.typeArguments.first()
         val element = processingEnv.typeUtils.asElement(queryType)
+        ContractCollector.collect(processingEnv, element)
         data[key] = data[key]!!.copy(
             queryPackageName = getPackageNameOfClass(element),
             queryClassName = element.simpleName.toString()

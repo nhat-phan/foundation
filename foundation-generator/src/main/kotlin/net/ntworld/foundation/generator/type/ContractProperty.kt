@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class ContractProperty(
     val name: String,
     val order: Int,
-    val unknownAnnotations: List<ClassInfo>,
+    val unknownAnnotations: List<String>,
     val hasNotNullAnnotation: Boolean,
     val hasFakedAnnotation: Boolean,
     val fakedType: String?

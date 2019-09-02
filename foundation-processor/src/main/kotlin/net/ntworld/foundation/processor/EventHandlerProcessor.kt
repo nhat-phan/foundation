@@ -1,9 +1,5 @@
 package net.ntworld.foundation.processor
 
-import kotlinx.metadata.KmClassifier
-import kotlinx.metadata.jvm.KotlinClassHeader
-import kotlinx.metadata.jvm.KotlinClassMetadata
-import kotlinx.metadata.jvm.syntheticMethodForAnnotations
 import net.ntworld.foundation.EventHandler
 import net.ntworld.foundation.Handler
 import net.ntworld.foundation.generator.GeneratorSettings
@@ -15,7 +11,6 @@ import javax.lang.model.element.Element
 import javax.lang.model.element.PackageElement
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.DeclaredType
-import javax.lang.model.type.TypeMirror
 
 class EventHandlerProcessor() : Processor {
     override val annotations: List<Class<out Annotation>> = listOf(
@@ -204,6 +199,7 @@ class EventHandlerProcessor() : Processor {
         }
 
         val inputElement = processingEnv.elementUtils.getTypeElement(inputTypeName)
+        ContractCollector.collect(processingEnv, element)
         data[key] = data[key]!!.copy(
             eventPackageName = getPackageNameOfClass(inputElement),
             eventClassName = inputElement.simpleName.toString(),
@@ -218,6 +214,7 @@ class EventHandlerProcessor() : Processor {
         }
         val eventType = type.typeArguments.first()
         val element = processingEnv.typeUtils.asElement(eventType)
+        ContractCollector.collect(processingEnv, element)
         data[key] = data[key]!!.copy(
             eventPackageName = getPackageNameOfClass(element),
             eventClassName = element.simpleName.toString()

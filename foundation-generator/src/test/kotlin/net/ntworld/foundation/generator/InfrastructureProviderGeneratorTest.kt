@@ -11,7 +11,7 @@ class InfrastructureProviderGeneratorTest {
             globalDirectory = "",
             aggregateFactories = listOf(),
             annotationProcessorRunInfo = listOf(),
-            events = listOf(
+            eventSourcings = listOf(
                 EventSourcingSetting(
                     event = ClassInfo(
                         packageName = "com.company.event",

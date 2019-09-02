@@ -89,7 +89,7 @@ internal object Utility {
         settings.aggregateFactories.forEach {
             packageName = this.guessPackageName(packageName, it.implementation.packageName)
         }
-        settings.events.forEach {
+        settings.eventSourcings.forEach {
             packageName = this.guessPackageName(packageName, it.implementation.packageName)
         }
         return ClassInfo(

@@ -7,8 +7,11 @@ import net.ntworld.foundation.generator.type.ClassInfo
 data class ImplementationSetting(
     val implementation: ClassInfo,
     val contract: ClassInfo,
-    val type: Type
-) {
+    val type: Type,
+    val isGenerated: Boolean
+) : Setting {
+    override val name: String = "${implementation.packageName}.${implementation.className}"
+
     enum class Type {
         Aggregate,
         State,

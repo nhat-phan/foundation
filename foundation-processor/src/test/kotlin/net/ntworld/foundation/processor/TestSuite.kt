@@ -25,7 +25,7 @@ open class TestSuite {
 
     fun findEventSettings(name: String): EventSourcingSetting? {
         val settings = ProcessorOutput.readSettingsFileTest()
-        return settings.events.firstOrNull {
+        return settings.eventSourcings.firstOrNull {
             it.name == name
         }
     }

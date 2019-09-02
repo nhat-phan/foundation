@@ -140,6 +140,7 @@ class CommandHandlerProcessor() : Processor {
         }
 
         val inputElement = processingEnv.elementUtils.getTypeElement(inputTypeName)
+        ContractCollector.collect(processingEnv, inputElement)
         data[key] = data[key]!!.copy(
             commandPackageName = getPackageNameOfClass(inputElement),
             commandClassName = inputElement.simpleName.toString(),
@@ -155,6 +156,7 @@ class CommandHandlerProcessor() : Processor {
         }
         val commandType = type.typeArguments.first()
         val element = processingEnv.typeUtils.asElement(commandType)
+        ContractCollector.collect(processingEnv, element)
         data[key] = data[key]!!.copy(
             commandPackageName = getPackageNameOfClass(element),
             commandClassName = element.simpleName.toString()

@@ -9,7 +9,7 @@ import net.ntworld.foundation.generator.type.KotlinMetadata
 data class ContractSetting(
     val contract: ClassInfo,
     val metadata: KotlinMetadata,
-    val supertypes: List<ContractSetting>?,
+    val supertypes: List<String>?,
     val properties: Map<String, ContractProperty>
 ) : Setting {
     override val name: String = "${contract.packageName}.${contract.className}"

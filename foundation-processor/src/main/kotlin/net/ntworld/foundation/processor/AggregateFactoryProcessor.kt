@@ -185,6 +185,7 @@ class AggregateFactoryProcessor : Processor {
                 if (superclass is DeclaredType) {
                     val stateType = superclass.typeArguments.first()
                     val state = processingEnv.typeUtils.asElement(stateType)
+                    ContractCollector.collect(processingEnv, state)
                     data[key]!!.statePackageName = getPackageNameOfClass(state)
                     data[key]!!.stateClassName = state.simpleName.toString()
                 }

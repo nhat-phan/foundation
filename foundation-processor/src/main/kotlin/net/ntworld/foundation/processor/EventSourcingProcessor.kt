@@ -37,7 +37,7 @@ class EventSourcingProcessor : Processor {
 
     override fun startProcess(settings: GeneratorSettings) {
         data.clear()
-        settings.events.forEach { item ->
+        settings.eventSourcings.forEach { item ->
             val fields = mutableMapOf<String, CollectedEventField>()
 
             item.fields.forEach {
@@ -75,7 +75,7 @@ class EventSourcingProcessor : Processor {
             )
         }
 
-        return settings.copy(events = events.toList())
+        return settings.copy(eventSourcings = events.toList())
     }
 
     override fun shouldProcess(

@@ -8,7 +8,9 @@ data class MessageSetting(
     val contract: ClassInfo,
     val channel: String,
     val type: Type
-) {
+): Setting {
+    override val name: String = "${contract.packageName}.${contract.className}"
+
     enum class Type {
         Event,
         Command,

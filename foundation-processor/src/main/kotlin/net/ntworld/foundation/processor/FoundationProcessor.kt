@@ -36,6 +36,8 @@ class FoundationProcessor : AbstractProcessor() {
     )
 
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment?): Boolean {
+        ContractCollector.reset()
+
         val start = System.currentTimeMillis()
         val processingAnnotations = mutableListOf<String>()
         if (null === annotations || null === roundEnv || !shouldProcess(annotations)) {
@@ -48,7 +50,7 @@ class FoundationProcessor : AbstractProcessor() {
             processingAnnotations.add(it.toString())
         }
 
-        val settings = processors.fold(currentSettings) { input, processor ->
+        val processedSettings = processors.fold(currentSettings) { input, processor ->
             this.runProcessor(roundEnv, input, processor)
         }
 
@@ -61,11 +63,15 @@ class FoundationProcessor : AbstractProcessor() {
                 duration = (end - start)
             )
         )
-        val final = settings.copy(
-            annotationProcessorRunInfo = lastRunInfo
-        )
-        ProcessorOutput.updateSettingsFile(processingEnv, final)
-        generate(final)
+
+        val mutableSettings = processedSettings.copy(annotationProcessorRunInfo = lastRunInfo).toMutable()
+        ContractCollector.getCollectedSettings().forEach {
+            mutableSettings.put(it)
+        }
+
+        val settings = mutableSettings.toGeneratorSettings()
+        ProcessorOutput.updateSettingsFile(processingEnv, settings)
+        generate(settings)
 
         return true
     }
@@ -80,7 +86,7 @@ class FoundationProcessor : AbstractProcessor() {
     }
 
     private fun generate(settings: GeneratorSettings) {
-        settings.events.forEach {
+        settings.eventSourcings.forEach {
             ProcessorOutput.writeGeneratedFile(processingEnv, EventEntityGenerator.generate(it))
             ProcessorOutput.writeGeneratedFile(processingEnv, EventConverterGenerator.generate(it))
             ProcessorOutput.writeGeneratedFile(processingEnv, EventMessageTranslatorGenerator.generate(it))
