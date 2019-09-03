@@ -1,8 +1,16 @@
 package net.ntworld.foundation.processor
 
 import kotlinx.metadata.KmClass
+import kotlinx.metadata.KmClassifier
 import kotlinx.metadata.jvm.KotlinClassHeader
 import kotlinx.metadata.jvm.KotlinClassMetadata
+import kotlinx.metadata.jvm.getterSignature
+import kotlinx.metadata.jvm.syntheticMethodForAnnotations
+import net.ntworld.foundation.Event
+import net.ntworld.foundation.Faked
+import net.ntworld.foundation.State
+import net.ntworld.foundation.cqrs.Command
+import net.ntworld.foundation.cqrs.Query
 import net.ntworld.foundation.generator.setting.ContractSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 import net.ntworld.foundation.generator.type.ContractProperty
@@ -12,9 +20,15 @@ import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.TypeElement
-import javax.lang.model.type.DeclaredType
 
 object ContractCollector {
+    private val BASE_CONTRACTS = arrayOf(
+        Event::class.java.canonicalName,
+        Query::class.java.canonicalName,
+        Command::class.java.canonicalName,
+        State::class.java.canonicalName
+    )
+    private const val KIND_SYNTHETIC_CLASS = 3
     private val collected = mutableMapOf<String, ContractSetting>()
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -40,7 +54,6 @@ object ContractCollector {
             return null
         }
 
-
         val header = KotlinClassHeader(
             data1 = metadataAnnotation.data1,
             data2 = metadataAnnotation.data2,
@@ -51,69 +64,169 @@ object ContractCollector {
             metadataVersion = metadataAnnotation.metadataVersion,
             packageName = metadataAnnotation.packageName
         )
-
         val metadata = KotlinClassMetadata.read(header) as? KotlinClassMetadata.Class ?: return null
-
         val kmClass = metadata.toKmClass()
-        val propertyList = getPropertiesList(kmClass)
-
-        val properties = mutableMapOf<String, ContractProperty>()
-        for (property in propertyList) {
-            val getterName = "get${property.capitalize()}"
-            for (i in 0..element.enclosedElements.lastIndex) {
-                val enclosedElement = element.enclosedElements[i]
-                if (enclosedElement.kind == ElementKind.METHOD && enclosedElement.simpleName.toString() == getterName) {
-                    properties[property] = buildContractProperty(property, enclosedElement, i)
-                }
-            }
-        }
+        val supertypes = this.findSupertypes(element, kmClass)
+        val properties = this.findProperties(element, kmClass)
 
         return buildSetting(
+            processingEnv,
             element,
             processingEnv.elementUtils.getPackageOf(element).qualifiedName.toString(),
             element.simpleName.toString(),
+            supertypes,
             properties,
             header
         )
     }
 
-    private fun buildContractProperty(
-        property: String,
-        getterElement: Element,
-        index: Int
-    ): ContractProperty {
-        val annotations = getterElement.annotationMirrors
-        val unknownAnnotations = mutableListOf<String>()
-        var hasNotNullAnnotation = false
-        annotations.forEach {
-            val annotationElement = it.annotationType.asElement() as? TypeElement ?: return@forEach
-
-            if (annotationElement.qualifiedName.toString() == NotNull::class.java.canonicalName) {
-                hasNotNullAnnotation = true
-                return@forEach
+    private fun findSupertypes(element: TypeElement, kmClass: KmClass): List<String> {
+        val result = mutableListOf<String>()
+        for (supertype in kmClass.supertypes) {
+            if (supertype.classifier !is KmClassifier.Class) {
+                continue
+            }
+            val classifier = supertype.classifier as KmClassifier.Class
+            val qualifiedName = classifier.name.replace('/', '.')
+            if (!BASE_CONTRACTS.contains(qualifiedName)) {
+                result.add(qualifiedName)
             }
         }
+        return result
+    }
+
+    private fun findProperties(element: TypeElement, kmClass: KmClass): Map<String, ContractProperty> {
+        val properties = mutableMapOf<String, ContractProperty>()
+        val syntheticClassTypeElement = findSyntheticClassTypeElement(element)
+        for (property in kmClass.properties) {
+            val getterSignature = property.getterSignature
+            if (null === getterSignature) {
+                continue
+            }
+
+            val getterName = getterSignature.name
+            for (i in 0..element.enclosedElements.lastIndex) {
+                val enclosedElement = element.enclosedElements[i]
+                if (enclosedElement.kind == ElementKind.METHOD && enclosedElement.simpleName.toString() == getterName) {
+                    var syntheticMethodForAnnotationsName: String? = null
+                    val syntheticMethodForAnnotations = property.syntheticMethodForAnnotations
+                    if (null !== syntheticMethodForAnnotations) {
+                        syntheticMethodForAnnotationsName = syntheticMethodForAnnotations.name
+                    }
+
+                    properties[property.name] = buildContractProperty(
+                        property.name,
+                        enclosedElement,
+                        syntheticClassTypeElement,
+                        syntheticMethodForAnnotationsName,
+                        i
+                    )
+                }
+            }
+        }
+        return properties
+    }
+
+    private fun findSyntheticClassTypeElement(element: TypeElement): TypeElement? {
+        for (enclosedElement in element.enclosedElements) {
+            if (enclosedElement.kind != ElementKind.CLASS) {
+                continue
+            }
+            val metadataAnnotation = enclosedElement.getAnnotation(Metadata::class.java)
+            if (null === metadataAnnotation) {
+                return null
+            }
+            if (metadataAnnotation.kind != KIND_SYNTHETIC_CLASS) {
+                return null
+            }
+            return enclosedElement as TypeElement
+        }
+        return null
+    }
+
+    private fun buildContractProperty(
+        propertyName: String,
+        getterElement: Element,
+        syntheticClassTypeElement: TypeElement?,
+        syntheticMethodForAnnotationsName: String?,
+        index: Int
+    ): ContractProperty {
+        val getter = findContractPropertyOfElement(getterElement)
+        val result = ContractProperty(
+            name = propertyName,
+            order = index,
+            unknownAnnotations = getter.unknownAnnotations,
+            hasNotNullAnnotation = getter.hasNotNullAnnotation,
+            hasFakedAnnotation = getter.hasFakedAnnotation,
+            fakedType = getter.fakedType
+        )
+
+        if (null === syntheticClassTypeElement || null === syntheticMethodForAnnotationsName) {
+            return result
+        }
+
+        val element = syntheticClassTypeElement.enclosedElements.find {
+            it.simpleName.toString() == syntheticMethodForAnnotationsName
+        }
+        if (null === element) {
+            return result
+        }
+
+        val synthetic = findContractPropertyOfElement(element)
+
+        var fakeType: String? = null
+        if (getter.hasFakedAnnotation) fakeType = getter.fakedType
+        if (synthetic.hasFakedAnnotation) fakeType = synthetic.fakedType
 
         return ContractProperty(
-            name = property,
+            name = propertyName,
             order = index,
-            unknownAnnotations = unknownAnnotations,
-            hasNotNullAnnotation = hasNotNullAnnotation,
-            hasFakedAnnotation = false,
-            fakedType = null
+            unknownAnnotations = (getter.unknownAnnotations + synthetic.unknownAnnotations).distinct(),
+            hasNotNullAnnotation = getter.hasNotNullAnnotation || synthetic.hasNotNullAnnotation,
+            hasFakedAnnotation = getter.hasFakedAnnotation || synthetic.hasFakedAnnotation,
+            fakedType = fakeType
         )
     }
 
-    private fun getPropertiesList(kmClass: KmClass): List<String> {
-        return kmClass.properties.map {
-            it.name
+    private fun findContractPropertyOfElement(element: Element): ContractProperty {
+        val annotations = element.annotationMirrors
+        val unknownAnnotations = mutableListOf<String>()
+        var hasFakedAnnotation = false
+        var fakedType: String? = null
+        var hasNotNullAnnotation = false
+        annotations.forEach {
+            val annotationElement = it.annotationType.asElement() as? TypeElement ?: return@forEach
+            val qualifiedName = annotationElement.qualifiedName.toString()
+
+            if (qualifiedName == NotNull::class.java.canonicalName) {
+                hasNotNullAnnotation = true
+                return@forEach
+            }
+
+            if (qualifiedName == Faked::class.java.canonicalName) {
+                hasFakedAnnotation = true
+                fakedType = element.getAnnotation(Faked::class.java).type
+                return@forEach
+            }
+
+            unknownAnnotations.add(qualifiedName)
         }
+        return ContractProperty(
+            name = "",
+            order = 0,
+            unknownAnnotations = unknownAnnotations,
+            hasNotNullAnnotation = hasNotNullAnnotation,
+            hasFakedAnnotation = hasFakedAnnotation,
+            fakedType = fakedType
+        )
     }
 
     private fun buildSetting(
+        processingEnv: ProcessingEnvironment,
         element: TypeElement,
         packageName: String,
         className: String,
+        supertypes: List<String>,
         properties: Map<String, ContractProperty>,
         header: KotlinClassHeader
     ): ContractSetting {
@@ -129,10 +242,24 @@ object ContractCollector {
                 extraString = header.extraString,
                 extraInt = header.extraInt
             ),
-            supertypes = listOf(),
-            properties = properties
+            supertypes = supertypes,
+            properties = sortProperties(properties)
         )
+        supertypes.forEach {
+            collect(processingEnv, it)
+        }
         collected[element.qualifiedName.toString()] = result
+        return result
+    }
+
+    private fun sortProperties(properties: Map<String, ContractProperty>): Map<String, ContractProperty> {
+        val keys = properties.keys.toList()
+        val order = properties.mapValues { it.value.order }
+        val sortedKeys = keys.sortedWith(Comparator { o1, o2 -> order[o1]!!.compareTo(order[o2]!!) })
+        val result = mutableMapOf<String, ContractProperty>()
+        for (key in sortedKeys) {
+            result[key] = properties[key]!!
+        }
         return result
     }
 

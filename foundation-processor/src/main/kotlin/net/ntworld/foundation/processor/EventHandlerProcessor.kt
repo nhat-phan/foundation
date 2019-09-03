@@ -12,7 +12,7 @@ import javax.lang.model.element.PackageElement
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.DeclaredType
 
-class EventHandlerProcessor() : Processor {
+class EventHandlerProcessor : Processor {
     override val annotations: List<Class<out Annotation>> = listOf(
         Handler::class.java
     )
@@ -63,69 +63,6 @@ class EventHandlerProcessor() : Processor {
         processingEnv: ProcessingEnvironment,
         roundEnv: RoundEnvironment
     ): Boolean {
-//        val debug = mutableListOf<String>()
-//        val packageE = processingEnv.elementUtils.getPackageElement("com.example.contract")
-//        packageE.enclosedElements.forEach {
-//            if (it.simpleName.toString() == "CreateTodoCommand") {
-//                debug.add(it.kind.isInterface.toString())
-//                debug.add("---------")
-//                it.enclosedElements.forEach {
-//                    debug.add(it.simpleName.toString())
-//                }
-//                debug.add("---------")
-//                debug.add("---------")
-//                val metadataAnnotation = it.getAnnotation(Metadata::class.java)
-//                if (null !== metadataAnnotation) {
-//                    val header = KotlinClassHeader(
-//                        data1 = metadataAnnotation.data1,
-//                        data2 = metadataAnnotation.data2,
-//                        bytecodeVersion = metadataAnnotation.bytecodeVersion,
-//                        extraInt = metadataAnnotation.extraInt,
-//                        extraString = metadataAnnotation.extraString,
-//                        kind = metadataAnnotation.kind,
-//                        metadataVersion = metadataAnnotation.metadataVersion,
-//                        packageName = metadataAnnotation.packageName
-//                    )
-//                    val metadata = KotlinClassMetadata.read(header)
-//                    if (metadata is KotlinClassMetadata.Class) {
-//                        val kmClass = metadata.toKmClass()
-//
-//                        kmClass.supertypes.forEach {
-//                            if (it.classifier is KmClassifier.Class) {
-//                                debug.add((it.classifier as KmClassifier.Class).name)
-//                            }
-//                        }
-//
-//                        // kmClass.s
-//                        kmClass.properties.forEach {
-//                            debug.add(it.name)
-//                            if (null !== it.syntheticMethodForAnnotations) {
-//                                debug.add(it.syntheticMethodForAnnotations!!.name)
-//                            }
-//                            if (it.returnType.classifier is KmClassifier.Class) {
-//                                debug.add((it.returnType.classifier as KmClassifier.Class).name)
-//                            }
-//                            it.returnType.arguments.forEach {
-//                                val type = it.type
-//                                val variance = it.variance
-//                                if (variance !== null) {
-//                                    debug.add(variance.name)
-//                                }
-//                                if (null !== type) {
-//                                    if (type.classifier is KmClassifier.Class) {
-//                                        debug.add((type.classifier as KmClassifier.Class).name)
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//
-//        throw Exception(debug.joinToString(" & "))
-
-
         return when (annotation) {
             Handler::class.java -> {
                 CodeUtility.isImplementInterface(
