@@ -8,6 +8,7 @@ data class ContractProperty(
     val order: Int,
     val unknownAnnotations: List<String>,
     val hasNotNullAnnotation: Boolean,
+    val hasNullableAnnotation: Boolean,
     val hasFakedAnnotation: Boolean,
     val fakedType: String?
 )

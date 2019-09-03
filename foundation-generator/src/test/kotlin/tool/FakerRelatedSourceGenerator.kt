@@ -50,8 +50,7 @@ class FakerRelatedSourceGenerator {
 
     @Test
     fun runGeneratorOfFakedData() {
-        val data = getAllGroups()
-        println(generateFakedDataFile(data))
+        // println(generateFakedDataFile(getAllGroups()))
     }
 
     @Test
@@ -62,7 +61,7 @@ class FakerRelatedSourceGenerator {
             items.addAll(it.items)
         }
 
-        println(generateJavaFakerWrapperJvmClass(items))
+        // println(generateJavaFakerWrapperJvmClass(items))
     }
 
     private fun generateJavaFakerWrapperJvmClass(items: List<Item>): FileSpec {

@@ -10,6 +10,7 @@ internal object FrameworkProcessor {
     const val AbstractEventSourced = "net.ntworld.foundation.eventSourcing.AbstractEventSourced"
 
     const val Handler = "net.ntworld.foundation.Handler"
+    const val Faked = "net.ntworld.foundation.Faked"
     const val Implementation = "net.ntworld.foundation.Implementation"
 
     const val EventSourced = "net.ntworld.foundation.eventSourcing.EventSourced"

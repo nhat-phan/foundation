@@ -16,6 +16,7 @@ import net.ntworld.foundation.generator.type.ClassInfo
 import net.ntworld.foundation.generator.type.ContractProperty
 import net.ntworld.foundation.generator.type.KotlinMetadata
 import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
@@ -26,7 +27,8 @@ object ContractCollector {
         Event::class.java.canonicalName,
         Query::class.java.canonicalName,
         Command::class.java.canonicalName,
-        State::class.java.canonicalName
+        State::class.java.canonicalName,
+        "kotlin.Any"
     )
     private const val KIND_SYNTHETIC_CLASS = 3
     private val collected = mutableMapOf<String, ContractSetting>()
@@ -104,6 +106,7 @@ object ContractCollector {
                 continue
             }
 
+            val offset = if (null === syntheticClassTypeElement) 1 else 0
             val getterName = getterSignature.name
             for (i in 0..element.enclosedElements.lastIndex) {
                 val enclosedElement = element.enclosedElements[i]
@@ -119,7 +122,7 @@ object ContractCollector {
                         enclosedElement,
                         syntheticClassTypeElement,
                         syntheticMethodForAnnotationsName,
-                        i
+                        i + offset
                     )
                 }
             }
@@ -158,6 +161,7 @@ object ContractCollector {
             unknownAnnotations = getter.unknownAnnotations,
             hasNotNullAnnotation = getter.hasNotNullAnnotation,
             hasFakedAnnotation = getter.hasFakedAnnotation,
+            hasNullableAnnotation = getter.hasNullableAnnotation,
             fakedType = getter.fakedType
         )
 
@@ -183,6 +187,7 @@ object ContractCollector {
             order = index,
             unknownAnnotations = (getter.unknownAnnotations + synthetic.unknownAnnotations).distinct(),
             hasNotNullAnnotation = getter.hasNotNullAnnotation || synthetic.hasNotNullAnnotation,
+            hasNullableAnnotation = getter.hasNullableAnnotation || synthetic.hasNullableAnnotation,
             hasFakedAnnotation = getter.hasFakedAnnotation || synthetic.hasFakedAnnotation,
             fakedType = fakeType
         )
@@ -194,12 +199,18 @@ object ContractCollector {
         var hasFakedAnnotation = false
         var fakedType: String? = null
         var hasNotNullAnnotation = false
+        var hasNullableAnnotation = false
         annotations.forEach {
             val annotationElement = it.annotationType.asElement() as? TypeElement ?: return@forEach
             val qualifiedName = annotationElement.qualifiedName.toString()
 
             if (qualifiedName == NotNull::class.java.canonicalName) {
                 hasNotNullAnnotation = true
+                return@forEach
+            }
+
+            if (qualifiedName == Nullable::class.java.canonicalName) {
+                hasNullableAnnotation = true
                 return@forEach
             }
 
@@ -216,6 +227,7 @@ object ContractCollector {
             order = 0,
             unknownAnnotations = unknownAnnotations,
             hasNotNullAnnotation = hasNotNullAnnotation,
+            hasNullableAnnotation = hasNullableAnnotation,
             hasFakedAnnotation = hasFakedAnnotation,
             fakedType = fakedType
         )
@@ -235,10 +247,10 @@ object ContractCollector {
             metadata = KotlinMetadata(
                 kind = header.kind,
                 packageName = header.packageName,
-                metadataVersion = header.metadataVersion.toSet(),
-                bytecodeVersion = header.bytecodeVersion.toSet(),
-                data1 = header.data1.toSet(),
-                data2 = header.data2.toSet(),
+                metadataVersion = header.metadataVersion.toList(),
+                bytecodeVersion = header.bytecodeVersion.toList(),
+                data1 = header.data1.toList(),
+                data2 = header.data2.toList(),
                 extraString = header.extraString,
                 extraInt = header.extraInt
             ),
@@ -257,8 +269,10 @@ object ContractCollector {
         val order = properties.mapValues { it.value.order }
         val sortedKeys = keys.sortedWith(Comparator { o1, o2 -> order[o1]!!.compareTo(order[o2]!!) })
         val result = mutableMapOf<String, ContractProperty>()
+        var index = 1
         for (key in sortedKeys) {
-            result[key] = properties[key]!!
+            result[key] = properties[key]!!.copy(order = index)
+            index++
         }
         return result
     }
@@ -273,8 +287,13 @@ object ContractCollector {
         return collected.values.toList()
     }
 
-    fun collect(processingEnv: ProcessingEnvironment, canonicalName: String) =
-        collect(processingEnv, processingEnv.elementUtils.getTypeElement(canonicalName))
+    fun collect(processingEnv: ProcessingEnvironment, canonicalName: String) {
+        val element = processingEnv.elementUtils.getTypeElement(canonicalName)
+        if (null !== element) {
+            collect(processingEnv, element)
+        }
+        // throw Exception(canonicalName)
+    }
 
     fun collect(processingEnv: ProcessingEnvironment, element: Element): ContractSetting? {
         if (!shouldCollect(element)) {

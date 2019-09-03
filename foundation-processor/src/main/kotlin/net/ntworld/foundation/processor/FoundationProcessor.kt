@@ -9,6 +9,7 @@ import javax.annotation.processing.SupportedOptions
 import javax.lang.model.element.TypeElement
 
 @SupportedAnnotationTypes(
+    FrameworkProcessor.Faked,
     FrameworkProcessor.Implementation,
     FrameworkProcessor.Handler,
     FrameworkProcessor.EventSourced,
@@ -28,6 +29,7 @@ class FoundationProcessor : AbstractProcessor() {
     )
 
     private val processors: List<Processor> = listOf(
+        FakedAnnotationProcessor(),
         EventHandlerProcessor(),
         CommandHandlerProcessor(),
         QueryHandlerProcessor(),
@@ -54,6 +56,14 @@ class FoundationProcessor : AbstractProcessor() {
             this.runProcessor(roundEnv, input, processor)
         }
 
+        val mutableSettings = processedSettings.toMutable()
+        ContractCollector.getCollectedSettings().forEach {
+            mutableSettings.put(it)
+        }
+
+        val settings = mutableSettings.toGeneratorSettings()
+        generate(settings)
+
         val end = System.currentTimeMillis()
         lastRunInfo.add(
             AnnotationProcessorRunInfo(
@@ -63,15 +73,7 @@ class FoundationProcessor : AbstractProcessor() {
                 duration = (end - start)
             )
         )
-
-        val mutableSettings = processedSettings.copy(annotationProcessorRunInfo = lastRunInfo).toMutable()
-        ContractCollector.getCollectedSettings().forEach {
-            mutableSettings.put(it)
-        }
-
-        val settings = mutableSettings.toGeneratorSettings()
-        ProcessorOutput.updateSettingsFile(processingEnv, settings)
-        generate(settings)
+        ProcessorOutput.updateSettingsFile(processingEnv, settings.copy(annotationProcessorRunInfo = lastRunInfo))
 
         return true
     }

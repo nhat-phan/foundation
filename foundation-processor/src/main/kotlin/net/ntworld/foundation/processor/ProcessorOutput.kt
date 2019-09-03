@@ -50,7 +50,8 @@ internal object ProcessorOutput {
                 queryHandlers = listOf(),
                 implementations = listOf(),
                 messages = listOf(),
-                contracts = listOf()
+                contracts = listOf(),
+                fakedAnnotations = listOf()
             )
         }
         return SettingsSerializer.parse(files[path]!!)
@@ -78,7 +79,8 @@ internal object ProcessorOutput {
                 queryHandlers = listOf(),
                 implementations = listOf(),
                 messages = listOf(),
-                contracts = listOf()
+                contracts = listOf(),
+                fakedAnnotations = listOf()
             )
         }
         val content = file.readText()

@@ -11,6 +11,7 @@ class MutableGeneratorSettings(private val settings: GeneratorSettings) {
     private val implementations = toMutableMap(settings.implementations)
     private val messages = toMutableMap(settings.messages)
     private val contracts = toMutableMap(settings.contracts)
+    private val fakedAnnotations = toMutableMap(settings.fakedAnnotations)
 
     private fun <T : Setting> toMutableMap(data: List<T>): MutableMap<String, T> {
         val map = mutableMapOf<String, T>()
@@ -69,6 +70,10 @@ class MutableGeneratorSettings(private val settings: GeneratorSettings) {
         return contracts[name]
     }
 
+    fun hasFakedAnnotationSetting(name: String): FakedAnnotationSetting? {
+        return fakedAnnotations[name]
+    }
+
     fun getAggregateFactory(name: String): AggregateFactorySetting? {
         return aggregateFactories[name]
     }
@@ -101,6 +106,10 @@ class MutableGeneratorSettings(private val settings: GeneratorSettings) {
         return contracts[name]
     }
 
+    fun getFakedAnnotationSetting(name: String): FakedAnnotationSetting? {
+        return fakedAnnotations[name]
+    }
+
     fun <T : Setting> put(setting: T): MutableGeneratorSettings {
         when (setting) {
             is AggregateFactorySetting -> aggregateFactories[setting.name] = setting
@@ -111,6 +120,7 @@ class MutableGeneratorSettings(private val settings: GeneratorSettings) {
             is ImplementationSetting -> implementations[setting.name] = setting
             is MessageSetting -> messages[setting.name] = setting
             is ContractSetting -> contracts[setting.name] = setting
+            is FakedAnnotationSetting -> fakedAnnotations[setting.name] = setting
         }
         return this
     }

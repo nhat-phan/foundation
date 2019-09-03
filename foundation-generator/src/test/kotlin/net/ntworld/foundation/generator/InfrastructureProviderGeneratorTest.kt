@@ -60,7 +60,8 @@ class InfrastructureProviderGeneratorTest {
             queryHandlers = listOf(),
             implementations = listOf(),
             messages = listOf(),
-            contracts = listOf()
+            contracts = listOf(),
+            fakedAnnotations = listOf()
         )
 
         val result = InfrastructureProviderGenerator().generate(settings)

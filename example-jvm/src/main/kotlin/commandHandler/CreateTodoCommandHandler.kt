@@ -13,10 +13,10 @@ class CreateTodoCommandHandler(
     private val infrastructure: Infrastructure
 ) : CommandHandler<CreateTodoCommand> {
     override fun handle(command: CreateTodoCommand) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
 
+// TODO: implement better mock for handler
 //class CreateTodoCommandHandlerMock() : ManualMock(), CommandHandler<CreateTodoCommand> {
 //    override fun handle(command: CreateTodoCommand) {
 //        return mockFunction(this::handle, command)

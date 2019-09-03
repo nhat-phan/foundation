@@ -1,0 +1,159 @@
+{
+  "description": "",
+  "globalDirectory": "/com/example",
+  "annotationProcessorRunInfo": [],
+  "aggregateFactories": [],
+  "eventSourcings": [],
+  "eventHandlers": [],
+  "commandHandlers": [],
+  "queryHandlers": [],
+  "implementations": [],
+  "messages": [],
+  "contracts": [
+    {
+      "contract": {
+        "className": "ListTypeContract",
+        "packageName": "com.example.contract"
+      },
+      "metadata": {
+        "kind": 1,
+        "packageName": "",
+        "metadataVersion": [
+          1,
+          1,
+          15
+        ],
+        "bytecodeVersion": [
+          1,
+          0,
+          3
+        ],
+        "data1": [
+          "\u0000\u001e\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010 \n\u0002\u0010\u0005\n\u0002\b\u0005\n\u0002\u0010\u000e\n\u0002\b\f\bf\u0018\u00002\u00020\u0001R\u0018\u0010\u0002\u001a\b\u0012\u0004\u0012\u00020\u00040\u0003X¦\u0004¢\u0006\u0006\u001a\u0004\b\u0005\u0010\u0006R\u001a\u0010\u0007\u001a\n\u0012\u0006\u0012\u0004\u0018\u00010\u00040\u0003X¦\u0004¢\u0006\u0006\u001a\u0004\b\b\u0010\u0006R\u001a\u0010\t\u001a\n\u0012\u0006\u0012\u0004\u0018\u00010\n0\u0003X¦\u0004¢\u0006\u0006\u001a\u0004\b\u000b\u0010\u0006R\u0018\u0010\f\u001a\b\u0012\u0004\u0012\u00020\n0\u0003X¦\u0004¢\u0006\u0006\u001a\u0004\b\r\u0010\u0006R\u001a\u0010\u000e\u001a\n\u0012\u0004\u0012\u00020\u0004\u0018\u00010\u0003X¦\u0004¢\u0006\u0006\u001a\u0004\b\u000f\u0010\u0006R\u001c\u0010\u0010\u001a\f\u0012\u0006\u0012\u0004\u0018\u00010\u0004\u0018\u00010\u0003X¦\u0004¢\u0006\u0006\u001a\u0004\b\u0011\u0010\u0006R\u001c\u0010\u0012\u001a\f\u0012\u0006\u0012\u0004\u0018\u00010\n\u0018\u00010\u0003X¦\u0004¢\u0006\u0006\u001a\u0004\b\u0013\u0010\u0006R\u001a\u0010\u0014\u001a\n\u0012\u0004\u0012\u00020\n\u0018\u00010\u0003X¦\u0004¢\u0006\u0006\u001a\u0004\b\u0015\u0010\u0006¨\u0006\u0016"
+        ],
+        "data2": [
+          "Lcom/example/contract/ListTypeContract;",
+          "Lnet/ntworld/foundation/cqrs/Command;",
+          "listByte",
+          "",
+          "",
+          "getListByte",
+          "()Ljava/util/List;",
+          "listOfNullableByte",
+          "getListOfNullableByte",
+          "listOfNullableString",
+          "",
+          "getListOfNullableString",
+          "listString",
+          "getListString",
+          "nullableListOfByte",
+          "getNullableListOfByte",
+          "nullableListOfNullableByte",
+          "getNullableListOfNullableByte",
+          "nullableListOfNullableString",
+          "getNullableListOfNullableString",
+          "nullableListOfString",
+          "getNullableListOfString",
+          "example-jvm"
+        ],
+        "extraString": "",
+        "extraInt": 0
+      },
+      "supertypes": [
+      ],
+      "properties": {
+        "listByte": {
+          "name": "listByte",
+          "order": 1,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "listOfNullableByte": {
+          "name": "listOfNullableByte",
+          "order": 2,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "nullableListOfByte": {
+          "name": "nullableListOfByte",
+          "order": 3,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": false,
+          "hasNullableAnnotation": true,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "nullableListOfNullableByte": {
+          "name": "nullableListOfNullableByte",
+          "order": 4,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": false,
+          "hasNullableAnnotation": true,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "listString": {
+          "name": "listString",
+          "order": 5,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "listOfNullableString": {
+          "name": "listOfNullableString",
+          "order": 6,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "nullableListOfString": {
+          "name": "nullableListOfString",
+          "order": 7,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": false,
+          "hasNullableAnnotation": true,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "nullableListOfNullableString": {
+          "name": "nullableListOfNullableString",
+          "order": 8,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": false,
+          "hasNullableAnnotation": true,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        }
+      },
+      "name": "com.example.contract.ListTypeContract"
+    }
+  ],
+  "fakedAnnotations": [
+    {
+      "annotation": {
+        "className": "EmailFaked",
+        "packageName": "com.example.contract"
+      },
+      "fakedType": "internet.emailAddress",
+      "name": "com.example.contract.EmailFaked"
+    }
+  ]
+}
