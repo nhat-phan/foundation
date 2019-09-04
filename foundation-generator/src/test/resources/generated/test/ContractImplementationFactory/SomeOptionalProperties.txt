@@ -1,0 +1,43 @@
+package com.example.contract.generated
+
+import com.example.contract.SomeOptionalProperties
+import kotlin.String
+import kotlin.Suppress
+import net.ntworld.foundation.Faker
+
+class SomeOptionalPropertiesFactory(
+  private val faker: Faker
+) {
+  fun make(id: String, lastName: String): SomeOptionalProperties = SomeOptionalPropertiesImpl(
+    id = id,
+    lastName = lastName,
+    email = createFakedData("fakedEmail"),
+    firstName = createFakedData("fakedFirstName")
+  )
+
+  fun make(
+    id: String,
+    lastName: String,
+    email: String
+  ): SomeOptionalProperties = SomeOptionalPropertiesImpl(
+    id = id,
+    lastName = lastName,
+    email = email,
+    firstName = createFakedData("fakedFirstName")
+  )
+
+  fun make(
+    id: String,
+    email: String,
+    firstName: String,
+    lastName: String
+  ): SomeOptionalProperties = SomeOptionalPropertiesImpl(
+    id = id,
+    email = email,
+    firstName = firstName,
+    lastName = lastName
+  )
+
+  @Suppress("UNCHECKED_CAST")
+  private fun <T> createFakedData(type: String): T = faker.makeFakeData(type) as T
+}

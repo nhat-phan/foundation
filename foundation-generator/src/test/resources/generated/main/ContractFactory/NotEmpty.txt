@@ -1,0 +1,12 @@
+package com.example
+
+import com.example.generated.BasicTypesContractFactory
+import com.example.generated.YourImplementationFactory
+import kotlin.reflect.KClass
+
+object ContractFactory {
+  fun of(contract: KClass<BasicTypesContract>): BasicTypesContractFactory =
+      BasicTypesContractFactory
+
+  fun of(contract: KClass<YourContract>): YourImplementationFactory = YourImplementationFactory
+}

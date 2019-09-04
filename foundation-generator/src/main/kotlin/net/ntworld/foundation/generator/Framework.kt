@@ -12,6 +12,7 @@ internal object Framework {
     val InfrastructureProvider = ClassName(namespace, "InfrastructureProvider")
 
     val Faker = ClassName(namespace, "Faker")
+    val JavaFakerWrapper = ClassName("$namespace.util", "JavaFakerWrapper")
 
     val LocalBusResolver = ClassName(namespace, "LocalBusResolver")
 

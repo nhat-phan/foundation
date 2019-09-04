@@ -1,0 +1,17 @@
+package com.example
+
+import com.example.generated.BasicTypesContractFactory
+import com.example.generated.YourImplementationFactory
+import kotlin.reflect.KClass
+import net.ntworld.foundation.Faker
+import net.ntworld.foundation.util.JavaFakerWrapper
+
+object ContractFactory {
+  private val faker: Faker = JavaFakerWrapper(com.github.javafaker.Faker())
+
+
+  fun of(contract: KClass<BasicTypesContract>): BasicTypesContract =
+      BasicTypesContractFactory(faker)
+
+  fun of(contract: KClass<YourContract>): YourContract = YourImplementationFactory(faker)
+}

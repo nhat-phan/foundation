@@ -1,12 +1,9 @@
 package net.ntworld.foundation.generator
 
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.fail
 
-class ContractReaderTest {
+class ContractReaderTest : TestSuite() {
     internal class ExpectedProperty(
         val order: Int,
         val type: String,
@@ -192,11 +189,5 @@ class ContractReaderTest {
                 fail("""Expect "typeName" of property "${actual.name}" should be "${expectation.type}" but actual value is "${actual.type}"""")
             }
         }
-    }
-
-    private fun readSettingsFromResource(path: String): GeneratorSettings {
-        val input = ContractReaderTest::class.java.getResource(path).readText()
-        val json = Json(JsonConfiguration.Stable)
-        return json.parse(GeneratorSettings.serializer(), input)
     }
 }

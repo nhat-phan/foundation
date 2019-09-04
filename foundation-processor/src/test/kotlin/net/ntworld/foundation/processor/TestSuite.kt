@@ -2,6 +2,7 @@ package net.ntworld.foundation.processor
 
 import net.ntworld.foundation.generator.setting.AggregateFactorySetting
 import net.ntworld.foundation.generator.setting.EventSourcingSetting
+import net.ntworld.foundation.processor.util.ProcessorOutput
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 

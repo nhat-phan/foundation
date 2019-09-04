@@ -98,10 +98,18 @@ internal object Utility {
         )
     }
 
-    fun buildGeneratedFile(target: ClassInfo, content: String): GeneratedFile {
+    fun buildMainGeneratedFile(target: ClassInfo, content: String) =
+        buildGeneratedFile(target, content, GeneratedFile.Type.Main)
+
+    fun buildTestGeneratedFile(target: ClassInfo, content: String) =
+        buildGeneratedFile(target, content, GeneratedFile.Type.Test)
+
+    private fun buildGeneratedFile(target: ClassInfo, content: String, type: GeneratedFile.Type): GeneratedFile {
         val directory = target.packageName.replace(".", "/")
         val fileName = target.className + ".kt"
         return GeneratedFile(
+            type = type,
+            target = target,
             directory = "/$directory",
             fileName = fileName,
             path = "/$directory/$fileName",

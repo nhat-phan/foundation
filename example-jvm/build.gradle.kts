@@ -49,9 +49,16 @@ idea {
             "build/generated/source/kaptKotlin/main"
         )
 
+        testSourceDirs = testSourceDirs + files(
+            "build/generated/source/kapt/test",
+            "build/generated/source/kaptKotlin/test"
+        )
+
         generatedSourceDirs = generatedSourceDirs + files(
             "build/generated/source/kapt/main",
-            "build/generated/source/kaptKotlin/main"
+            "build/generated/source/kaptKotlin/main",
+            "build/generated/source/kapt/test",
+            "build/generated/source/kaptKotlin/test"
         )
     }
 }

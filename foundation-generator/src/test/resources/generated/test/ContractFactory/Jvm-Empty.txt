@@ -1,0 +1,9 @@
+package com.example
+
+import net.ntworld.foundation.Faker
+import net.ntworld.foundation.util.JavaFakerWrapper
+
+object ContractFactory {
+  private val faker: Faker = JavaFakerWrapper(com.github.javafaker.Faker())
+
+}

@@ -10,7 +10,8 @@ data class ContractSetting(
     val contract: ClassInfo,
     val metadata: KotlinMetadata,
     val supertypes: List<String>?,
-    val properties: Map<String, ContractProperty>
+    val properties: Map<String, ContractProperty>,
+    val collectedBy: String = "unknown"
 ) : Setting {
     override val name: String = "${contract.packageName}.${contract.className}"
 }

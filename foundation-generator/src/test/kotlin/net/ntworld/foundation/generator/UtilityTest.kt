@@ -3,7 +3,7 @@ package net.ntworld.foundation.generator
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class UtilityTest {
+class UtilityTest : TestSuite() {
     @Test
     fun testGuessPackageName() {
         data class DataItem(val current: String, val given: String, val result: String)

@@ -1,12 +1,24 @@
 package net.ntworld.foundation.processor
 
 import net.ntworld.foundation.generator.*
+import net.ntworld.foundation.generator.main.*
+import net.ntworld.foundation.generator.test.ContractImplementationFactoryTestGenerator
 import net.ntworld.foundation.generator.type.AnnotationProcessorRunInfo
+import net.ntworld.foundation.generator.type.ClassInfo
+import net.ntworld.foundation.processor.internal.*
+import net.ntworld.foundation.processor.internal.AggregateFactoryProcessor
+import net.ntworld.foundation.processor.internal.CommandHandlerProcessor
+import net.ntworld.foundation.processor.internal.EventHandlerProcessor
+import net.ntworld.foundation.processor.internal.Processor
+import net.ntworld.foundation.processor.util.ContractCollector
+import net.ntworld.foundation.processor.util.FrameworkProcessor
+import net.ntworld.foundation.processor.util.ProcessorOutput
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.RoundEnvironment
 import javax.annotation.processing.SupportedAnnotationTypes
 import javax.annotation.processing.SupportedOptions
 import javax.lang.model.element.TypeElement
+import kotlin.contracts.contract
 
 @SupportedAnnotationTypes(
     FrameworkProcessor.Faked,
@@ -89,39 +101,75 @@ class FoundationProcessor : AbstractProcessor() {
 
     private fun generate(settings: GeneratorSettings) {
         settings.eventSourcings.forEach {
-            ProcessorOutput.writeGeneratedFile(processingEnv, EventEntityGenerator.generate(it))
-            ProcessorOutput.writeGeneratedFile(processingEnv, EventConverterGenerator.generate(it))
-            ProcessorOutput.writeGeneratedFile(processingEnv, EventMessageTranslatorGenerator.generate(it))
+            ProcessorOutput.writeGeneratedFile(processingEnv, EventEntityMainGenerator.generate(it))
+            ProcessorOutput.writeGeneratedFile(processingEnv, EventConverterMainGenerator.generate(it))
+            ProcessorOutput.writeGeneratedFile(processingEnv, EventMessageTranslatorMainGenerator.generate(it))
         }
 
         settings.aggregateFactories.forEach {
-            ProcessorOutput.writeGeneratedFile(processingEnv, AggregateFactoryGenerator.generate(it))
+            ProcessorOutput.writeGeneratedFile(processingEnv, AggregateFactoryMainGenerator.generate(it))
         }
 
-        val globalTarget = InfrastructureProviderGenerator().findTarget(settings)
+        val globalTarget = InfrastructureProviderMainGenerator().findTarget(settings)
+        // generateUnimplementedContracts(settings, globalTarget)
+        generateProviderAndBuses(settings, globalTarget)
+    }
 
+    private fun generateUnimplementedContracts(settings: GeneratorSettings, global: ClassInfo) {
+        val reader = ContractReader(
+            contractSettings = settings.contracts,
+            fakedAnnotationSettings = settings.fakedAnnotations
+        )
+
+        val factoryMainGenerator = ContractFactoryMainGenerator()
+        settings.contracts.forEach {
+            if (it.collectedBy !== ContractCollector.COLLECTED_BY_KAPT) {
+                return@forEach
+            }
+
+            val properties = reader.findPropertiesOfContract(it.name)
+            if (null !== properties) {
+                val implFile = ContractImplementationMainGenerator.generate(it, properties)
+                ProcessorOutput.writeGeneratedFile(processingEnv, implFile)
+
+                val implFactoryFile = ContractImplementationFactoryMainGenerator.generate(
+                    it, properties, implFile.target
+                )
+                ProcessorOutput.writeGeneratedFile(processingEnv, implFactoryFile)
+                factoryMainGenerator.add(it.contract, implFactoryFile.target)
+
+                val implFactoryTestFile = ContractImplementationFactoryTestGenerator.generate(
+                    it, properties, implFile.target
+                )
+                ProcessorOutput.writeGeneratedFile(processingEnv, implFactoryTestFile)
+            }
+        }
+        // ProcessorOutput.writeGeneratedFile(processingEnv, factoryMainGenerator.generate(global.packageName))
+    }
+
+    private fun generateProviderAndBuses(settings: GeneratorSettings, global: ClassInfo) {
         ProcessorOutput.writeGlobalFile(
             processingEnv,
             settings,
-            LocalEventBusGenerator().generate(settings.eventHandlers, globalTarget.packageName)
+            LocalEventBusMainGenerator().generate(settings.eventHandlers, global.packageName)
         )
 
         ProcessorOutput.writeGlobalFile(
             processingEnv,
             settings,
-            LocalCommandBusGenerator().generate(settings.commandHandlers, globalTarget.packageName)
+            LocalCommandBusMainGenerator().generate(settings.commandHandlers, global.packageName)
         )
 
         ProcessorOutput.writeGlobalFile(
             processingEnv,
             settings,
-            LocalQueryBusGenerator().generate(settings.queryHandlers, globalTarget.packageName)
+            LocalQueryBusMainGenerator().generate(settings.queryHandlers, global.packageName)
         )
 
         ProcessorOutput.writeGlobalFile(
             processingEnv,
             settings,
-            InfrastructureProviderGenerator().generate(settings, globalTarget.packageName)
+            InfrastructureProviderMainGenerator().generate(settings, global.packageName)
         )
     }
 
