@@ -23,10 +23,8 @@ class ContractReader(
         val fakedType: String
     )
 
-
     private val settings: Map<String, ContractSetting> = mutableMapOf()
     private val fakedAnnotations: Map<String, FakedAnnotationSetting> = mutableMapOf()
-    private val properties: Map<String, ContractProperty> = mutableMapOf()
 
     init {
         contractSettings.forEach {
@@ -219,25 +217,4 @@ class ContractReader(
         }
         return result
     }
-
-//    private fun mergeContractProperty(name: String, supertypeProperty: ContractProperty) {
-//        val current = properties[name]
-//        if (null === current) {
-//            (properties as MutableMap)[name] = supertypeProperty
-//            return
-//        }
-//
-//        var fakeType: String? = null
-//        if (current.hasFakedAnnotation) fakeType = current.fakedType
-//        if (supertypeProperty.hasFakedAnnotation) fakeType = supertypeProperty.fakedType
-//
-//        (properties as MutableMap)[name] = ContractProperty(
-//            name = name,
-//            order = current.order,
-//            unknownAnnotations = (current.unknownAnnotations + supertypeProperty.unknownAnnotations).distinct(),
-//            hasNotNullAnnotation = current.hasNotNullAnnotation || supertypeProperty.hasNotNullAnnotation,
-//            hasFakedAnnotation = current.hasFakedAnnotation || supertypeProperty.hasFakedAnnotation,
-//            fakedType = fakeType
-//        )
-//    }
 }

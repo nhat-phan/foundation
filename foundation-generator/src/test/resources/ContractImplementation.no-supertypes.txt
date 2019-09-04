@@ -1,0 +1,14 @@
+package com.example.contract.generated
+
+import com.example.contract.NoSupertypeContractCommand
+import kotlin.Int
+import kotlin.String
+import kotlin.collections.List
+
+data class NoSupertypeContractCommandImpl(
+  override val zelda: String,
+  override val name: String,
+  override val email: String?,
+  override val list: List<String>,
+  override val phones: List<Int>
+) : NoSupertypeContractCommand

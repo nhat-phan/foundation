@@ -1,0 +1,11 @@
+package com.example.contract.generated
+
+import com.example.contract.OneSupertypeOverrideContract
+import kotlin.String
+
+data class OneSupertypeOverrideContractImpl(
+  override val zelda: String,
+  override val email: String,
+  override val firstName: String,
+  override val lastName: String
+) : OneSupertypeOverrideContract

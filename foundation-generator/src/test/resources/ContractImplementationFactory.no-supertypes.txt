@@ -1,0 +1,22 @@
+package com.example.contract.generated
+
+import com.example.contract.NoSupertypeContractCommand
+import kotlin.Int
+import kotlin.String
+import kotlin.collections.List
+
+object NoSupertypeContractCommandFactory {
+  fun make(
+    zelda: String,
+    name: String,
+    email: String?,
+    list: List<String>,
+    phones: List<Int>
+  ): NoSupertypeContractCommand = NoSupertypeContractCommandImpl(
+    zelda = zelda,
+    name = name,
+    email = email,
+    list = list,
+    phones = phones
+  )
+}

@@ -1,0 +1,17 @@
+package com.example.contract.generated
+
+import com.example.contract.ListTypeContract
+import kotlin.Byte
+import kotlin.String
+import kotlin.collections.List
+
+data class ListTypeContractImpl(
+  override val listByte: List<Byte>,
+  override val listOfNullableByte: List<Byte?>,
+  override val nullableListOfByte: List<Byte>?,
+  override val nullableListOfNullableByte: List<Byte?>?,
+  override val listString: List<String>,
+  override val listOfNullableString: List<String?>,
+  override val nullableListOfString: List<String>?,
+  override val nullableListOfNullableString: List<String?>?
+) : ListTypeContract

@@ -38,6 +38,31 @@ internal object Utility {
         )
     }
 
+    fun findContractFactoryTarget(factories: List<ClassInfo>, namespace: String? = null): ClassInfo {
+        var packageName = if (null !== namespace) namespace else ""
+        factories.forEach {
+            packageName = this.guessPackageName(packageName, it.packageName)
+        }
+        return ClassInfo(
+            className = "ContractFactory",
+            packageName = packageName
+        )
+    }
+
+    fun findContractImplementationTarget(setting: ContractSetting): ClassInfo {
+        return ClassInfo(
+            className = "${setting.contract.className}Impl",
+            packageName = findTargetNamespace(setting.contract.packageName)
+        )
+    }
+
+    fun findContractImplementationFactoryTarget(setting: ContractSetting): ClassInfo {
+        return ClassInfo(
+            className = "${setting.contract.className}Factory",
+            packageName = findTargetNamespace(setting.contract.packageName)
+        )
+    }
+
     fun findEventConverterTarget(setting: EventSourcingSetting): ClassInfo {
         return ClassInfo(
             className = "${setting.implementation.className}Converter",

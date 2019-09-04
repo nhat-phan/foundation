@@ -5,6 +5,7 @@ import net.ntworld.foundation.FakedData
 import net.ntworld.foundation.Handler
 import net.ntworld.foundation.cqrs.Command
 import net.ntworld.foundation.cqrs.CommandHandler
+import kotlin.reflect.KClass
 
 // --------------------------------------------------------------------------------
 
@@ -134,3 +135,32 @@ class OneSupertypeOverrideContractHandler : CommandHandler<OneSupertypeOverrideC
     override fun handle(command: OneSupertypeOverrideContract) {
     }
 }
+
+//// --------------------------------------------------------------------------------
+//
+//object OneSupertypeContractFactory {
+//    fun make(zelda: String, firstName: String, lastName: String, email: String): OneSupertypeContract {
+//        TODO()
+//    }
+//}
+//
+//object OneSupertypeOverrideContractFactory {
+//    fun make(zelda: String, email: String, firstName: String, lastName: String): OneSupertypeOverrideContract {
+//        TODO()
+//    }
+//}
+//
+//object ContractFactory {
+//    fun of(contract: KClass<OneSupertypeContract>): OneSupertypeContractFactory {
+//        return OneSupertypeContractFactory
+//    }
+//
+//    fun of(contract: KClass<OneSupertypeOverrideContract>): OneSupertypeOverrideContractFactory {
+//        return OneSupertypeOverrideContractFactory
+//    }
+//}
+//
+//fun main() {
+//    println(ContractFactory.of(OneSupertypeContract::class))
+//    println(ContractFactory.of(OneSupertypeOverrideContract::class))
+//}
