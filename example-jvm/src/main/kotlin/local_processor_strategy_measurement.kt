@@ -90,7 +90,7 @@ fun main_local_processor_strategy() {
     println("useCanProcess() took ${b2} ms to process $time on smallList")
     println("useResolveExec() took ${b3} ms to process $time on smallList")
 
-// Result:
+// QueryResult:
 // useCanProcess() took 661 ms to process 1000000 on smallList
 // useTryCatch() took 1699 ms to process 1000000 on smallList
 // useResolveExec() took 29 ms to process 1000000 on smallList

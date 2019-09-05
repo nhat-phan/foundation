@@ -13,6 +13,7 @@ data class ImplementationSetting(
     override val name: String = "${implementation.packageName}.${implementation.className}"
 
     enum class Type {
+        Unknown,
         Aggregate,
         State,
         ReceivedData,

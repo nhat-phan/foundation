@@ -4,6 +4,7 @@ import net.ntworld.foundation.cqrs.CommandBus
 import net.ntworld.foundation.cqrs.Query
 import net.ntworld.foundation.cqrs.QueryBus
 import net.ntworld.foundation.cqrs.ReceivedData
+import net.ntworld.foundation.cqrs.QueryResult
 import net.ntworld.foundation.eventSourcing.*
 import kotlin.reflect.KClass
 
@@ -31,7 +32,7 @@ open class InfrastructureWrapper(private val base: Infrastructure) : Infrastruct
         return base.factoryOf(type)
     }
 
-    override fun <T : ReceivedData<Q, R>, Q : Query<R>, R> receiverOf(type: KClass<T>): DataReceiver<T> {
+    override fun <T : ReceivedData<Q, R>, Q : Query<R>, R: QueryResult> receiverOf(type: KClass<T>): DataReceiver<T> {
         return base.receiverOf(type)
     }
 

@@ -4,6 +4,7 @@ import net.ntworld.foundation.cqrs.CommandBus
 import net.ntworld.foundation.cqrs.Query
 import net.ntworld.foundation.cqrs.QueryBus
 import net.ntworld.foundation.cqrs.ReceivedData
+import net.ntworld.foundation.cqrs.QueryResult
 import net.ntworld.foundation.eventSourcing.*
 import kotlin.reflect.KClass
 
@@ -42,7 +43,7 @@ class MemorizedInfrastructure(base: Infrastructure) : InfrastructureWrapper(base
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ReceivedData<Q, R>, Q : Query<R>, R> receiverOf(type: KClass<T>): DataReceiver<T> {
+    override fun <T : ReceivedData<Q, R>, Q : Query<R>, R: QueryResult> receiverOf(type: KClass<T>): DataReceiver<T> {
         if (!_dataReceivers.containsKey(type)) {
             _dataReceivers[type] = super.receiverOf(type)
         }

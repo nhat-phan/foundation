@@ -19,14 +19,14 @@ internal class EventSourcingProcessor : Processor {
         EventSourcing.Metadata::class.java
     )
 
-    internal data class CollectedEventField(
+    private data class CollectedEventField(
         val name: String,
         val metadata: Boolean,
         val encrypted: Boolean,
         val faked: String
     )
 
-    internal data class CollectedEvent(
+    private data class CollectedEvent(
         val packageName: String,
         val className: String,
         val fields: MutableMap<String, CollectedEventField>,

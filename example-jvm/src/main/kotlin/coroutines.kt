@@ -204,7 +204,7 @@ fun main_coroutines() {
 
     try {
         val message = client(waiter)
-        println("Result: ${message.body}")
+        println("QueryResult: ${message.body}")
     } catch (exception: Exception) {
         println("ERROR: ${waiter.count()}")
         exception.printStackTrace()

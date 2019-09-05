@@ -136,7 +136,7 @@ internal class AggregateFactoryProcessor : Processor {
         processingEnv: ProcessingEnvironment
     ) {
         elements.forEach {
-            val key = processElement(it, processingEnv, true)
+            val key = processElement(it, processingEnv)
 
             data[key]!!.isAbstract = true
             if (null !== it.getAnnotation(EventSourced::class.java)) {
@@ -147,7 +147,7 @@ internal class AggregateFactoryProcessor : Processor {
 
     private fun processElementsAnnotatedByEventSourced(elements: List<Element>, processingEnv: ProcessingEnvironment) {
         elements.forEach {
-            val key = processElement(it, processingEnv, false)
+            val key = processElement(it, processingEnv)
 
             data[key]!!.isEventSourced = true
             if (null !== it.getAnnotation(Implementation::class.java)) {
@@ -158,8 +158,7 @@ internal class AggregateFactoryProcessor : Processor {
 
     private fun processElement(
         element: Element,
-        processingEnv: ProcessingEnvironment,
-        processingImplementation: Boolean
+        processingEnv: ProcessingEnvironment
     ): String {
         val packageName = this.getPackageNameOfClass(element)
         val className = element.simpleName.toString()
@@ -200,21 +199,6 @@ internal class AggregateFactoryProcessor : Processor {
             }
         }
 
-        // find aggregate by find the aggregate interface which implementation implement
-        /** Reserve for processing Implementation by type + contract later
-        if (processingImplementation) {
-        val mirrors = element.annotationMirrors
-        mirrors.forEach {
-        if (it.annotationType.toString() == FrameworkProcessor.Implementation) {
-        it.elementValues.forEach {
-        debug.add(it.key.toString())
-        debug.add(it.value.value.toString())
-        }
-        }
-
-        }
-        }
-         */
         val aggregate = (element as TypeElement).interfaces.firstOrNull {
             CodeUtility.isImplementInterface(
                 processingEnv,

@@ -3,9 +3,8 @@ package com.example.entity
 import net.ntworld.foundation.*
 import net.ntworld.foundation.cqrs.*
 
-
 // contracts
-interface SettingData {
+interface SettingData: QueryResult {
     val id: String
 
     @Faked(type = FakedData.Name.fullName)
@@ -178,7 +177,7 @@ class FindSettingByIdQueryHandler(
         // In command, there are - steps
         //   $1. Get all info you need from your domain
         //   $2. Get all info you need from other domain via queryBus().process(...)
-        //   $3. Transform data to correct Result type
+        //   $3. Transform data to correct QueryResult type
         return use(infrastructure) {
             // val result = eventBus()
             val result = queryBus()

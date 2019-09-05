@@ -8,9 +8,9 @@ import net.ntworld.foundation.Event
 import net.ntworld.foundation.eventSourcing.EventSourced
 
 interface TodoState : State {
-    override val id: String
+    // override val id: String
 
-    override val isGenerated: Boolean
+    // override val isGenerated: Boolean
 
     val name: String
 }

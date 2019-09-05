@@ -27,6 +27,7 @@ internal object Framework {
     val CommandBus = ClassName("$namespace.cqrs", "CommandBus")
 
     val Query = ClassName("$namespace.cqrs", "Query")
+    val QueryResult = ClassName("$namespace.cqrs", "QueryResult")
     val QueryHandler = ClassName("$namespace.cqrs", "QueryHandler")
     val QueryBus = ClassName("$namespace.cqrs", "QueryBus")
 

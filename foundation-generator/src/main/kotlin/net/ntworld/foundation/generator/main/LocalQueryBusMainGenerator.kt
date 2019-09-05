@@ -72,7 +72,7 @@ class LocalQueryBusMainGenerator {
         val typeR = TypeVariableName.invoke("R")
         type.addFunction(
             FunSpec.builder("process")
-                .addTypeVariable(typeR)
+                .addTypeVariable(TypeVariableName.invoke("R:${Framework.QueryResult}"))
                 .returns(typeR)
                 .addAnnotation(
                     AnnotationSpec.builder(Suppress::class)

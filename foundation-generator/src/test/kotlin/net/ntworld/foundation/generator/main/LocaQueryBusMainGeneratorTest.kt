@@ -5,7 +5,7 @@ import net.ntworld.foundation.generator.setting.QueryHandlerSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 import kotlin.test.Test
 
-class LocaQueryBusGeneratorTest: TestSuite() {
+class LocaQueryBusMainGeneratorTest: TestSuite() {
     @Test
     fun testGenerate() {
         val settings = listOf(

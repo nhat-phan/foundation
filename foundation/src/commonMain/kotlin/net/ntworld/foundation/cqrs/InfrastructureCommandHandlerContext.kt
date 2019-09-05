@@ -11,7 +11,8 @@ open class InfrastructureCommandHandlerContext(open val self: Infrastructure) {
     fun <A : Aggregate<S>, S : State> factoryOf(type: KClass<A>): AggregateFactory<A, S> = self.factoryOf(type)
 
     @InfrastructureDsl.CommandHandlerDsl
-    fun <T : ReceivedData<Q, R>, Q: Query<R>, R> receiverOf(type: KClass<T>): DataReceiver<T> = self.receiverOf(type)
+    fun <T : ReceivedData<Q, R>, Q : Query<R>, R : QueryResult> receiverOf(type: KClass<T>): DataReceiver<T> =
+        self.receiverOf(type)
 
     @InfrastructureDsl.CommandHandlerDsl
     fun <A : Aggregate<S>, S : State> storeOf(type: KClass<A>): StateStore<S> = self.storeOf(type)

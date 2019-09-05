@@ -41,6 +41,7 @@ class FoundationProcessor : AbstractProcessor() {
     )
 
     private val processors: List<Processor> = listOf(
+        ImplementationProcessor(),
         FakedAnnotationProcessor(),
         EventHandlerProcessor(),
         CommandHandlerProcessor(),
@@ -111,7 +112,7 @@ class FoundationProcessor : AbstractProcessor() {
         }
 
         val globalTarget = InfrastructureProviderMainGenerator().findTarget(settings)
-        // generateUnimplementedContracts(settings, globalTarget)
+        generateUnimplementedContracts(settings, globalTarget)
         generateProviderAndBuses(settings, globalTarget)
     }
 
@@ -121,9 +122,14 @@ class FoundationProcessor : AbstractProcessor() {
             fakedAnnotationSettings = settings.fakedAnnotations
         )
 
-        val factoryMainGenerator = ContractFactoryMainGenerator()
+        // val factoryMainGenerator = ContractFactoryMainGenerator()
+        val implementations = mutableMapOf<String, String>()
+        settings.implementations.forEach {
+            implementations[it.contract.fullName()] = it.name
+        }
+
         settings.contracts.forEach {
-            if (it.collectedBy !== ContractCollector.COLLECTED_BY_KAPT) {
+            if (it.collectedBy !== ContractCollector.COLLECTED_BY_KAPT || implementations.containsKey(it.name)) {
                 return@forEach
             }
 
@@ -132,12 +138,13 @@ class FoundationProcessor : AbstractProcessor() {
                 val implFile = ContractImplementationMainGenerator.generate(it, properties)
                 ProcessorOutput.writeGeneratedFile(processingEnv, implFile)
 
+                /*
                 val implFactoryFile = ContractImplementationFactoryMainGenerator.generate(
                     it, properties, implFile.target
                 )
                 ProcessorOutput.writeGeneratedFile(processingEnv, implFactoryFile)
                 factoryMainGenerator.add(it.contract, implFactoryFile.target)
-
+                */
                 val implFactoryTestFile = ContractImplementationFactoryTestGenerator.generate(
                     it, properties, implFile.target
                 )

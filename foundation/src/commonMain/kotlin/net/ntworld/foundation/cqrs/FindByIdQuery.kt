@@ -1,5 +1,5 @@
 package net.ntworld.foundation.cqrs
 
-interface FindByIdQuery<Result> : Query<Result> {
+interface FindByIdQuery<R: QueryResult> : Query<R> {
     val id: String
 }

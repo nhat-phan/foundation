@@ -24,10 +24,6 @@ import javax.lang.model.element.TypeElement
 
 object ContractCollector {
     private val BASE_CONTRACTS = arrayOf(
-        Event::class.java.canonicalName,
-        Query::class.java.canonicalName,
-        Command::class.java.canonicalName,
-        State::class.java.canonicalName,
         "kotlin.Any"
     )
     private const val KIND_SYNTHETIC_CLASS = 3
