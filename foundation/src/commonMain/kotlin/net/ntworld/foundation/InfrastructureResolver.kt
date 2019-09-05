@@ -120,6 +120,13 @@ open class InfrastructureResolver(
         throw CannotResolveException("Infrastructure.eventBus() cannot be resolved")
     }
 
+    override fun serviceBus(): ServiceBus {
+        if (null !== next) {
+            return next!!.serviceBus()
+        }
+        throw CannotResolveException("Infrastructure.serviceBus() cannot be resolved")
+    }
+
     override fun encryptor(): Encryptor {
         if (null !== next) {
             return next!!.encryptor()

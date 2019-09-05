@@ -56,6 +56,10 @@ open class InfrastructureWrapper(private val base: Infrastructure) : Infrastruct
         return base.eventBus()
     }
 
+    override fun serviceBus(): ServiceBus {
+        return base.serviceBus()
+    }
+
     override fun encryptor(): Encryptor {
         return base.encryptor()
     }

@@ -15,10 +15,14 @@ data class ImplementationSetting(
     enum class Type {
         Unknown,
         Aggregate,
+        Error,
         State,
         ReceivedData,
         Event,
         Command,
-        Query
+        Query,
+        QueryResult,
+        Request,
+        Response
     }
 }

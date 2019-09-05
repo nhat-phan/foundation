@@ -34,6 +34,9 @@ open class InfrastructureContext(open val self: Infrastructure) {
     fun eventBus(): EventBus = self.eventBus()
 
     @InfrastructureDsl.GenericDsl
+    fun serviceBus(): ServiceBus = self.serviceBus()
+
+    @InfrastructureDsl.GenericDsl
     fun encryptor(): Encryptor = self.encryptor()
 
     @InfrastructureDsl.GenericDsl

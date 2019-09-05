@@ -17,6 +17,7 @@ class MemorizedInfrastructure(base: Infrastructure) : InfrastructureWrapper(base
     private var _queryBus: QueryBus? = null
     private var _commandBus: CommandBus? = null
     private var _eventBus: EventBus? = null
+    private var _serviceBus: ServiceBus? = null
     private var _encryptor: Encryptor? = null
     private var _faker: Faker? = null
     private var _encryptors = mutableMapOf<String, Encryptor>()
@@ -84,6 +85,13 @@ class MemorizedInfrastructure(base: Infrastructure) : InfrastructureWrapper(base
             _eventBus = super.eventBus()
         }
         return _eventBus!!
+    }
+
+    override fun serviceBus(): ServiceBus {
+        if (null === _serviceBus) {
+            _serviceBus = super.serviceBus()
+        }
+        return _serviceBus!!
     }
 
     override fun encryptor(): Encryptor {

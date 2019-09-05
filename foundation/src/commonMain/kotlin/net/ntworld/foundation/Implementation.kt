@@ -10,10 +10,14 @@ annotation class Implementation(
     enum class Type {
         Auto,
         Aggregate,
+        Error,
         State,
         ReceivedData,
         Event,
         Command,
-        Query
+        Query,
+        QueryResult,
+        Request,
+        Response
     }
 }

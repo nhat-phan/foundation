@@ -33,6 +33,8 @@ interface Infrastructure {
 
     fun eventBus(): EventBus
 
+    fun serviceBus(): ServiceBus
+
     fun encryptor(): Encryptor
 
     fun faker(): Faker
