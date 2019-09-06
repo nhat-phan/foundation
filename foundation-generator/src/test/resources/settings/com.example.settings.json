@@ -13,9 +13,9 @@
         "net.ntworld.foundation.eventSourcing.EventSourcing",
         "net.ntworld.foundation.Handler"
       ],
-      "startedAt": 1567761080013,
-      "finishedAt": 1567761080317,
-      "duration": 304
+      "startedAt": 1567795888203,
+      "finishedAt": 1567795888497,
+      "duration": 294
     }
   ],
   "aggregateFactories": [
@@ -298,6 +298,8 @@
       "makeByFactory": true,
       "name": "queryHandler.GetAllTodoQueryHandler"
     }
+  ],
+  "requestHandlers": [
   ],
   "implementations": [
     {

@@ -6,15 +6,15 @@ import net.ntworld.foundation.generator.Framework
 import net.ntworld.foundation.generator.GeneratedFile
 import net.ntworld.foundation.generator.GeneratorOutput
 import net.ntworld.foundation.generator.Utility
-import net.ntworld.foundation.generator.setting.QueryHandlerSetting
+import net.ntworld.foundation.generator.setting.RequestHandlerSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 
-class LocalQueryBusMainGenerator {
-    private val factoryFnMap = mutableMapOf<QueryHandlerSetting, String>()
+class LocalServiceBusMainGenerator {
+    private val factoryFnMap = mutableMapOf<RequestHandlerSetting, String>()
     private val factoryFnNames = mutableListOf<String>()
 
-    fun generate(settings: List<QueryHandlerSetting>, namespace: String? = null): GeneratedFile {
-        val target = Utility.findLocalQueryBusTarget(settings, namespace)
+    fun generate(settings: List<RequestHandlerSetting>, namespace: String? = null): GeneratedFile {
+        val target = Utility.findLocalServiceBusTarget(settings, namespace)
         val file = buildFile(settings, target)
         val stringBuffer = StringBuffer()
         file.writeTo(stringBuffer)
@@ -22,7 +22,7 @@ class LocalQueryBusMainGenerator {
         return Utility.buildMainGeneratedFile(target, stringBuffer.toString())
     }
 
-    internal fun buildFile(settings: List<QueryHandlerSetting>, target: ClassInfo): FileSpec {
+    private fun buildFile(settings: List<RequestHandlerSetting>, target: ClassInfo): FileSpec {
         val file = FileSpec.builder(target.packageName, target.className)
         GeneratorOutput.addHeader(file, this::class.qualifiedName)
         file.addType(buildClass(settings, target))
@@ -30,13 +30,13 @@ class LocalQueryBusMainGenerator {
         return file.build()
     }
 
-    internal fun buildClass(settings: List<QueryHandlerSetting>, target: ClassInfo): TypeSpec {
+    private fun buildClass(settings: List<RequestHandlerSetting>, target: ClassInfo): TypeSpec {
         val type = TypeSpec.classBuilder(target.className)
-            .addSuperinterface(Framework.QueryBus)
+            .addSuperinterface(Framework.ServiceBus)
             .addSuperinterface(
                 Framework.LocalBusResolver.parameterizedBy(
-                    Framework.Query.parameterizedBy(TypeVariableName.invoke("*")),
-                    Framework.QueryHandler.parameterizedBy(
+                    Framework.Request.parameterizedBy(TypeVariableName.invoke("*")),
+                    Framework.RequestHandler.parameterizedBy(
                         TypeVariableName.invoke("*"),
                         TypeVariableName.invoke("*")
                     )
@@ -55,7 +55,7 @@ class LocalQueryBusMainGenerator {
         return type.build()
     }
 
-    internal fun buildConstructor(type: TypeSpec.Builder) {
+    private fun buildConstructor(type: TypeSpec.Builder) {
         type.primaryConstructor(
             FunSpec.constructorBuilder()
                 .addParameter("infrastructure", Framework.Infrastructure)
@@ -68,27 +68,27 @@ class LocalQueryBusMainGenerator {
         )
     }
 
-    internal fun buildProcessFunction(type: TypeSpec.Builder) {
+    private fun buildProcessFunction(type: TypeSpec.Builder) {
         val typeR = TypeVariableName.invoke("R")
         type.addFunction(
             FunSpec.builder("process")
-                .addTypeVariable(TypeVariableName.invoke("R: ${Framework.QueryResult}"))
-                .returns(typeR)
+                .addTypeVariable(TypeVariableName.invoke("R: ${Framework.Response}<*>"))
+                .returns(Framework.ServiceBusProcessResult.parameterizedBy(typeR))
                 .addAnnotation(
                     AnnotationSpec.builder(Suppress::class)
                         .addMember("%S", "UNCHECKED_CAST")
                         .build()
                 )
                 .addModifiers(KModifier.OVERRIDE)
-                .addParameter("query", Framework.Query.parameterizedBy(typeR))
+                .addParameter("request", Framework.Request.parameterizedBy(typeR))
                 .addCode(
                     CodeBlock.builder()
-                        .add("val handler = this.resolve(query)\n")
+                        .add("val handler = this.resolve(request)\n")
                         .beginControlFlow("if (null !== handler)")
-                        .add("return handler.execute(query = query, message = null) as R\n")
+                        .add("return handler.execute(request = request, message = null) as R\n")
                         .endControlFlow()
-                        .add("throw %T(query.toString())\n",
-                            Framework.QueryHandlerNotFoundException
+                        .add("throw %T(request.toString())\n",
+                            Framework.RequestHandlerNotFoundException
                         )
                         .build()
                 )
@@ -100,7 +100,7 @@ class LocalQueryBusMainGenerator {
         type.addFunction(
             FunSpec.builder("getVersioningStrategy")
                 .addModifiers(KModifier.OPEN)
-                .addParameter("query", Framework.Query.parameterizedBy(TypeVariableName.invoke("*")))
+                .addParameter("request", Framework.Request.parameterizedBy(TypeVariableName.invoke("*")))
                 .returns(Framework.HandlerVersioningStrategy)
                 .addStatement("return %T.useLatestVersion",
                     Framework.HandlerVersioningStrategy
@@ -109,10 +109,10 @@ class LocalQueryBusMainGenerator {
         )
     }
 
-    internal fun groupHandlers(settings: List<QueryHandlerSetting>): Map<String, List<QueryHandlerSetting>> {
-        val grouped = mutableMapOf<String, MutableList<QueryHandlerSetting>>()
+    internal fun groupHandlers(settings: List<RequestHandlerSetting>): Map<String, List<RequestHandlerSetting>> {
+        val grouped = mutableMapOf<String, MutableList<RequestHandlerSetting>>()
         settings.forEach {
-            val key = it.query.fullName()
+            val key = it.request.fullName()
             if (!grouped.containsKey(key)) {
                 grouped[key] = mutableListOf()
             }
@@ -121,7 +121,7 @@ class LocalQueryBusMainGenerator {
         return grouped
     }
 
-    internal fun buildResolveFunction(settings: List<QueryHandlerSetting>, type: TypeSpec.Builder) {
+    internal fun buildResolveFunction(settings: List<RequestHandlerSetting>, type: TypeSpec.Builder) {
         val grouped = groupHandlers(settings)
 
         val code = CodeBlock.builder()
@@ -137,11 +137,11 @@ class LocalQueryBusMainGenerator {
         grouped.forEach {
             if (it.value.size == 1) {
                 val first = it.value.first()
-                code.add("is %T -> ", first.query.toClassName())
+                code.add("is %T -> ", first.request.toClassName())
                 buildCodeToResolveHandler(first, code, type)
                 code.add("\n")
             } else {
-                code.beginControlFlow("is %T ->", it.value.first().query.toClassName())
+                code.beginControlFlow("is %T ->", it.value.first().request.toClassName())
                 buildCodeToResolveVersioningHandler(it.value, code, type)
                 code.endControlFlow()
             }
@@ -154,9 +154,9 @@ class LocalQueryBusMainGenerator {
         type.addFunction(
             FunSpec.builder("resolve")
                 .addModifiers(KModifier.OVERRIDE)
-                .addParameter("instance", Framework.Query.parameterizedBy(TypeVariableName.invoke("*")))
+                .addParameter("instance", Framework.Request.parameterizedBy(TypeVariableName.invoke("*")))
                 .returns(
-                    Framework.QueryHandler.parameterizedBy(
+                    Framework.RequestHandler.parameterizedBy(
                         TypeVariableName.invoke("*"),
                         TypeVariableName.invoke("*")
                     ).copy(nullable = true)
@@ -167,7 +167,7 @@ class LocalQueryBusMainGenerator {
     }
 
     internal fun buildCodeToResolveHandler(
-        item: QueryHandlerSetting,
+        item: RequestHandlerSetting,
         code: CodeBlock.Builder,
         type: TypeSpec.Builder
     ) {
@@ -190,11 +190,11 @@ class LocalQueryBusMainGenerator {
     }
 
     internal fun buildCodeToResolveVersioningHandler(
-        settings: List<QueryHandlerSetting>,
+        settings: List<RequestHandlerSetting>,
         code: CodeBlock.Builder,
         type: TypeSpec.Builder
     ) {
-        val map = mutableMapOf<Int, QueryHandlerSetting>()
+        val map = mutableMapOf<Int, RequestHandlerSetting>()
         var latestVersion: Int = Int.MIN_VALUE
         for (item in settings) {
             map[item.version] = item
@@ -221,7 +221,7 @@ class LocalQueryBusMainGenerator {
         code.endControlFlow()
     }
 
-    internal fun findFactoryFunctionName(setting: QueryHandlerSetting): Pair<Boolean, String> {
+    internal fun findFactoryFunctionName(setting: RequestHandlerSetting): Pair<Boolean, String> {
         if (factoryFnMap.contains(setting)) {
             return Pair(true, factoryFnMap[setting]!!)
         }

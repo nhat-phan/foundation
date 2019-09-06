@@ -1,6 +1,7 @@
 package net.ntworld.foundation.generator.main
 
 import com.squareup.kotlinpoet.*
+import kotlinx.serialization.Serializable
 import net.ntworld.foundation.generator.ContractReader
 import net.ntworld.foundation.generator.GeneratedFile
 import net.ntworld.foundation.generator.GeneratorOutput
@@ -9,8 +10,10 @@ import net.ntworld.foundation.generator.setting.ContractSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 
 object ContractImplementationMainGenerator {
+    fun findImplementationTarget(setting: ContractSetting) = Utility.findContractImplementationTarget(setting)
+
     fun generate(setting: ContractSetting, properties: Map<String, ContractReader.Property>): GeneratedFile {
-        val target = Utility.findContractImplementationTarget(setting)
+        val target = findImplementationTarget(setting)
         val file =
             buildFile(setting, target, properties)
         val stringBuffer = StringBuffer()
@@ -43,6 +46,10 @@ object ContractImplementationMainGenerator {
         properties: Map<String, ContractReader.Property>
     ): TypeSpec {
         val type = TypeSpec.classBuilder(target.className)
+            .addAnnotation(
+                AnnotationSpec.builder(Serializable::class)
+                    .build()
+            )
         type.addSuperinterface(setting.contract.toClassName())
 
         if (properties.isNotEmpty())

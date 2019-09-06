@@ -1,9 +1,12 @@
 package com.example
 
+import kotlin.String
+import kotlin.Suppress
 import net.ntworld.foundation.Faker
 import net.ntworld.foundation.util.JavaFakerWrapper
 
-object ContractFactory {
-  private val faker: Faker = JavaFakerWrapper(com.github.javafaker.Faker())
+private val faker: Faker = JavaFakerWrapper(com.github.javafaker.Faker())
 
-}
+
+@Suppress("UNCHECKED_CAST")
+private fun <T> createFakedData(type: String): T = faker.makeFakeData(type) as T

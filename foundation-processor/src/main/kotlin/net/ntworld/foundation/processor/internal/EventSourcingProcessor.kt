@@ -91,7 +91,7 @@ internal class EventSourcingProcessor : Processor {
             }
 
             EventSourcing.Encrypted::class.java, EventSourcing.Metadata::class.java -> {
-                element.kind === ElementKind.FIELD && element.enclosingElement.kind === ElementKind.CLASS
+                element.kind == ElementKind.FIELD && element.enclosingElement.kind == ElementKind.CLASS
             }
 
             else -> false

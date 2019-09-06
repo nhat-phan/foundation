@@ -10,7 +10,9 @@ import kotlin.Int
 import kotlin.Long
 import kotlin.Short
 import kotlin.String
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class BasicTypeContractImpl(
   override val byte: Byte,
   override val short: Short,

@@ -38,6 +38,17 @@ internal object Utility {
         )
     }
 
+    fun findLocalServiceBusTarget(settings: List<RequestHandlerSetting>, namespace: String? = null): ClassInfo {
+        var packageName = if (null !== namespace) namespace else ""
+        settings.forEach {
+            packageName = this.guessPackageName(packageName, it.handler.packageName)
+        }
+        return ClassInfo(
+            className = "LocalServiceBus",
+            packageName = packageName
+        )
+    }
+
     fun findContractFactoryTarget(factories: List<ClassInfo>, namespace: String? = null): ClassInfo {
         var packageName = if (null !== namespace) namespace else ""
         factories.forEach {

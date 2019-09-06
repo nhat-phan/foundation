@@ -1,0 +1,38 @@
+import com.example.contract.OneSupertypeOverrideContract
+import com.example.contract.generated.OneSupertypeOverrideContractImpl
+import kotlin.String
+
+fun OneSupertypeOverrideContract.Companion.make(): OneSupertypeOverrideContract =
+    OneSupertypeOverrideContractImpl(
+  zelda = createFakedData("zelda.character"),
+  email = createFakedData("internet.emailAddress"),
+  firstName = createFakedData("name.firstName"),
+  lastName = createFakedData("name.lastName")
+)
+
+fun OneSupertypeOverrideContract.Companion.make(zelda: String): OneSupertypeOverrideContract =
+    OneSupertypeOverrideContractImpl(
+  zelda = zelda,
+  email = createFakedData("internet.emailAddress"),
+  firstName = createFakedData("name.firstName"),
+  lastName = createFakedData("name.lastName")
+)
+
+fun OneSupertypeOverrideContract.Companion.make(zelda: String, email: String):
+    OneSupertypeOverrideContract = OneSupertypeOverrideContractImpl(
+  zelda = zelda,
+  email = email,
+  firstName = createFakedData("name.firstName"),
+  lastName = createFakedData("name.lastName")
+)
+
+fun OneSupertypeOverrideContract.Companion.make(
+  zelda: String,
+  email: String,
+  firstName: String
+): OneSupertypeOverrideContract = OneSupertypeOverrideContractImpl(
+  zelda = zelda,
+  email = email,
+  firstName = firstName,
+  lastName = createFakedData("name.lastName")
+)

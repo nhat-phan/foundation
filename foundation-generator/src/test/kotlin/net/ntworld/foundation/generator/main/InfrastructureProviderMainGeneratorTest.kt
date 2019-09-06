@@ -60,6 +60,7 @@ class InfrastructureProviderMainGeneratorTest : TestSuite() {
             eventHandlers = listOf(),
             commandHandlers = listOf(),
             queryHandlers = listOf(),
+            requestHandlers = listOf(),
             implementations = listOf(),
             messages = listOf(),
             contracts = listOf(),

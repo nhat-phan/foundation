@@ -4,7 +4,9 @@ import com.example.contract.NoSupertypeContractCommand
 import kotlin.Int
 import kotlin.String
 import kotlin.collections.List
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class NoSupertypeContractCommandImpl(
   override val zelda: String,
   override val name: String,

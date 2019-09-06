@@ -1,12 +1,41 @@
 package com.example
 
-import com.example.generated.BasicTypesContractFactory
-import com.example.generated.YourImplementationFactory
-import kotlin.reflect.KClass
+import com.example.contract.ListTypeContract
+import com.example.contract.OneSupertypeContract
+import com.example.generated.ListTypeContractImpl
+import com.example.generated.OneSupertypeContractImpl
+import kotlin.Byte
+import kotlin.String
+import kotlin.collections.List
 
-object ContractFactory {
-  fun of(contract: KClass<BasicTypesContract>): BasicTypesContractFactory =
-      BasicTypesContractFactory
+fun ListTypeContract.Companion.make(
+  listByte: List<Byte>,
+  listOfNullableByte: List<Byte?>,
+  nullableListOfByte: List<Byte>?,
+  nullableListOfNullableByte: List<Byte?>?,
+  listString: List<String>,
+  listOfNullableString: List<String?>,
+  nullableListOfString: List<String>?,
+  nullableListOfNullableString: List<String?>?
+): ListTypeContract = ListTypeContractImpl(
+  listByte = listByte,
+  listOfNullableByte = listOfNullableByte,
+  nullableListOfByte = nullableListOfByte,
+  nullableListOfNullableByte = nullableListOfNullableByte,
+  listString = listString,
+  listOfNullableString = listOfNullableString,
+  nullableListOfString = nullableListOfString,
+  nullableListOfNullableString = nullableListOfNullableString
+)
 
-  fun of(contract: KClass<YourContract>): YourImplementationFactory = YourImplementationFactory
-}
+fun OneSupertypeContract.Companion.make(
+  zelda: String,
+  firstName: String,
+  lastName: String,
+  email: String
+): OneSupertypeContract = OneSupertypeContractImpl(
+  zelda = zelda,
+  firstName = firstName,
+  lastName = lastName,
+  email = email
+)

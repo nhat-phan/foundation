@@ -30,6 +30,7 @@ dependencies {
     compile("com.github.javafaker:javafaker:$javaFakerVersion")
 
     kapt(project(":foundation-processor"))
+    kaptTest(project(":foundation-processor"))
 
     // ------- Dependencies for testing with published artifact
     // implementation(kotlin("stdlib"))

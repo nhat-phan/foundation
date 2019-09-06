@@ -1,13 +1,13 @@
-package net.ntworld.foundation.generator.main
+package net.ntworld.foundation.generator.test
 
+import com.squareup.kotlinpoet.FileSpec
 import net.ntworld.foundation.generator.ContractReader
 import net.ntworld.foundation.generator.TestSuite
+import net.ntworld.foundation.generator.type.ClassInfo
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class ContractImplementationMainGeneratorTest  : TestSuite() {
-    // TODO: Add default value case
-
+class ContractExtensionTestGeneratorTest: TestSuite() {
     @Test
     fun `testGenerate BasicTypeContract`() {
         runTestForContract("BasicTypeContract")
@@ -33,30 +33,35 @@ class ContractImplementationMainGeneratorTest  : TestSuite() {
         runTestForContract("OneSupertypeOverrideContract")
     }
 
-    @Test
-    fun `testGenerate DefaultValueContract`() {
-        val allSettings = readSettingsFromResource("/settings/com.example.settings.json")
-        val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
-        val contract = "com.example.contract.DefaultValueContract"
-        val setting = allSettings.toMutable().getContract(contract)
-        val properties = reader.findPropertiesOfContract(contract)
-
-        val result = ContractImplementationMainGenerator.generate(setting!!, properties!!)
-        println(result.content)
-        // assertGeneratedFileMatched(result, "/ContractImplementation/OneSupertypeOverrideContract.txt")
-    }
-
     // Bookmark: Add new test case when adding new contract settings
     // TODO: Add multiple supertypes cases
+
+    private fun getFakedFile(): FileSpec.Builder {
+        return FileSpec.builder("", "ContractFactories")
+    }
 
     private fun runTestForContract(name: String) {
         val allSettings = readSettingsFromResource("/settings/com.example.settings.json")
         val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
         val contract = "com.example.contract.$name"
-        val setting = allSettings.toMutable().getContract(contract)
-        val properties = reader.findPropertiesOfContract(contract)
+        val setting = allSettings.toMutable().getContract(contract)!!
+        val properties = reader.findPropertiesOfContract(contract)!!
+        val implementation = ClassInfo(
+            packageName = "${setting.contract.packageName}.generated",
+            className = "${setting.contract.className}Impl"
+        )
 
-        val result = ContractImplementationMainGenerator.generate(setting!!, properties!!)
-        assertGeneratedFileMatched(result, "/ContractImplementation/$name.txt")
+        val file = getFakedFile()
+        ContractExtensionTestGenerator.generate(setting, properties, implementation, file)
+        assertGeneratedContentMatched(file, "ContractExtension/$name.txt")
+    }
+
+    private fun assertGeneratedContentMatched(file: FileSpec.Builder, path: String) {
+        val stringBuffer = StringBuffer()
+        file.build().writeTo(stringBuffer)
+        assertEquals(
+            readResource("/generated/test/$path"),
+            stringBuffer.toString()
+        )
     }
 }

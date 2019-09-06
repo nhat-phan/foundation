@@ -21,7 +21,7 @@ internal class QueryHandlerProcessor() : Processor {
         Handler::class.java
     )
 
-    internal data class CollectedQueryHandler(
+    private data class CollectedQueryHandler(
         val queryPackageName: String,
         val queryClassName: String,
         val handlerPackageName: String,
@@ -134,7 +134,7 @@ internal class QueryHandlerProcessor() : Processor {
             if (it.annotationType.toString() == FrameworkProcessor.Handler) {
                 it.elementValues.forEach {
                     if (it.key.simpleName.toString() == "input" &&
-                        it.value.value.toString() !== java.lang.Object::class.java.canonicalName
+                        it.value.value.toString() != java.lang.Object::class.java.canonicalName
                     ) {
                         inputTypeName = it.value.value.toString()
                     }

@@ -2,7 +2,9 @@ package com.example.contract.generated
 
 import com.example.contract.OneSupertypeOverrideContract
 import kotlin.String
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class OneSupertypeOverrideContractImpl(
   override val zelda: String,
   override val email: String,

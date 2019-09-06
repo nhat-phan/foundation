@@ -4,7 +4,9 @@ import com.example.contract.ListTypeContract
 import kotlin.Byte
 import kotlin.String
 import kotlin.collections.List
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ListTypeContractImpl(
   override val listByte: List<Byte>,
   override val listOfNullableByte: List<Byte?>,

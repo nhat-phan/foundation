@@ -15,6 +15,7 @@ data class GeneratorSettings(
     val eventHandlers: List<EventHandlerSetting>,
     val commandHandlers: List<CommandHandlerSetting>,
     val queryHandlers: List<QueryHandlerSetting>,
+    val requestHandlers: List<RequestHandlerSetting>,
     val implementations: List<ImplementationSetting>,
     val messages: List<MessageSetting>,
     val contracts: List<ContractSetting>,

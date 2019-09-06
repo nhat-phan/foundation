@@ -6,71 +6,64 @@ import net.ntworld.foundation.generator.*
 import net.ntworld.foundation.generator.Framework
 import net.ntworld.foundation.generator.Utility
 import net.ntworld.foundation.generator.type.ClassInfo
-import kotlin.reflect.KClass
 
-@Deprecated("No longer needed", level = DeprecationLevel.WARNING)
 class ContractFactoryTestGenerator(private val platform: Platform) {
     data class Item(
         val contract: ClassInfo,
-        val factory: ClassInfo
+        val implementation: ClassInfo
     )
 
     private val items = mutableMapOf<String, Item>()
 
-    fun add(contract: ClassInfo, factory: ClassInfo) {
+    fun add(contract: ClassInfo, implementation: ClassInfo) {
         items[contract.fullName()] = Item(
             contract = contract,
-            factory = factory
+            implementation = implementation
         )
     }
 
-    fun generate(namespace: String? = null): GeneratedFile {
+    fun generate(settings: GeneratorSettings, namespace: String? = null): GeneratedFile {
         val target = Utility.findContractFactoryTarget(
-            items.map { it.value.factory },
+            items.map { it.value.contract },
             namespace
         )
-        val file = buildFile(target)
+        val file = buildFile(settings, target)
         val stringBuffer = StringBuffer()
         file.writeTo(stringBuffer)
 
         return Utility.buildTestGeneratedFile(target, stringBuffer.toString())
     }
 
-    private fun buildFile(target: ClassInfo): FileSpec {
+    private fun buildFile(settings: GeneratorSettings, target: ClassInfo): FileSpec {
+        val allSettings = settings.toMutable()
         val file = FileSpec.builder(target.packageName, target.className)
         GeneratorOutput.addHeader(file, this::class.qualifiedName)
-        file.addType(buildClass(target))
 
+        file.addProperty(buildFakerProperty())
+        file.addFunction(buildCreateFakedDataFunction())
+        val reader = ContractReader(settings.contracts, settings.fakedAnnotations)
+        items.forEach { (contract, item) ->
+            if (!reader.hasCompanionObject(contract)) {
+                return@forEach
+            }
+            val setting = allSettings.getContract(contract)
+            val properties = reader.findPropertiesOfContract(contract)
+            if (null !== setting && null !== properties) {
+                ContractExtensionTestGenerator.generate(setting, properties, item.implementation, file)
+            }
+        }
         return file.build()
     }
 
-    private fun buildClass(target: ClassInfo): TypeSpec {
-        val type = TypeSpec.objectBuilder(target.className)
-
+    private fun buildFakerProperty(): PropertySpec {
         val code = when (platform) {
             Platform.Jvm -> getInitFakerForJvm()
         }
 
-        type.addProperty(
-            PropertySpec.builder("faker", Framework.Faker)
-                .addModifiers(KModifier.PRIVATE)
-                .initializer(code)
-                .build()
-        )
-
-        items.values.forEach {
-            val of = FunSpec.builder("of")
-            of.addParameter(
-                "contract",
-                KClass::class.asTypeName().parameterizedBy(it.contract.toClassName())
-            )
-            of.returns(it.contract.toClassName())
-            of.addCode("return %T(faker)\n", it.factory.toClassName())
-
-            type.addFunction(of.build())
-        }
-
-        return type.build()
+        return PropertySpec.builder("faker", Framework.Faker)
+            .addModifiers(KModifier.PRIVATE)
+            .initializer(code)
+            .build()
     }
 
     private fun getInitFakerForJvm(): CodeBlock {
@@ -78,5 +71,20 @@ class ContractFactoryTestGenerator(private val platform: Platform) {
         code.add("%T(%T())\n", Framework.JavaFakerWrapper, Framework.JavaFaker)
 
         return code.build()
+    }
+
+    private fun buildCreateFakedDataFunction(): FunSpec {
+        return FunSpec.builder("createFakedData")
+            .addModifiers(KModifier.PRIVATE)
+            .addTypeVariable(TypeVariableName.invoke("T"))
+            .addParameter("type", String::class)
+            .returns(TypeVariableName.invoke("T"))
+            .addAnnotation(
+                AnnotationSpec.builder(Suppress::class)
+                    .addMember("%S", "UNCHECKED_CAST")
+                    .build()
+            )
+            .addCode("return faker.makeFakeData(type) as T\n")
+            .build()
     }
 }

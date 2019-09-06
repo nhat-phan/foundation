@@ -13,6 +13,7 @@ annotation class Handler(
         Auto,
         Event,
         Command,
-        Query
+        Query,
+        Request
     }
 }

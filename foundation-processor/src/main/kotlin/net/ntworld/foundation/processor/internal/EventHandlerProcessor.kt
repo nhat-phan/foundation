@@ -120,7 +120,7 @@ internal class EventHandlerProcessor : Processor {
         element: Element,
         annotation: Handler
     ): Boolean {
-        if (annotation.type !== Handler.Type.Event) {
+        if (annotation.type != Handler.Type.Event) {
             return false
         }
 
@@ -130,7 +130,7 @@ internal class EventHandlerProcessor : Processor {
             if (it.annotationType.toString() == FrameworkProcessor.Handler) {
                 it.elementValues.forEach {
                     if (it.key.simpleName.toString() == "input" &&
-                        it.value.value.toString() !== java.lang.Object::class.java.canonicalName
+                        it.value.value.toString() != java.lang.Object::class.java.canonicalName
                     ) {
                         inputTypeName = it.value.value.toString()
                     }

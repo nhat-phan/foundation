@@ -1,64 +1,52 @@
 package net.ntworld.foundation.generator.main
 
-import com.squareup.kotlinpoet.*
-import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import net.ntworld.foundation.generator.GeneratedFile
-import net.ntworld.foundation.generator.GeneratorOutput
+import com.squareup.kotlinpoet.FileSpec
+import net.ntworld.foundation.generator.*
 import net.ntworld.foundation.generator.Utility
 import net.ntworld.foundation.generator.type.ClassInfo
-import kotlin.reflect.KClass
 
-@Deprecated("No longer needed", level = DeprecationLevel.WARNING)
 class ContractFactoryMainGenerator {
     data class Item(
         val contract: ClassInfo,
-        val factory: ClassInfo
+        val implementation: ClassInfo
     )
 
     private val items = mutableMapOf<String, Item>()
 
-    fun add(contract: ClassInfo, factory: ClassInfo) {
+    fun add(contract: ClassInfo, implementation: ClassInfo) {
         items[contract.fullName()] = Item(
             contract = contract,
-            factory = factory
+            implementation = implementation
         )
     }
 
-    fun generate(namespace: String? = null): GeneratedFile {
+    fun generate(settings: GeneratorSettings, namespace: String? = null): GeneratedFile {
         val target = Utility.findContractFactoryTarget(
-            items.map { it.value.factory },
+            items.map { it.value.contract },
             namespace
         )
-        val file = buildFile(target)
+        val file = buildFile(settings, target)
         val stringBuffer = StringBuffer()
         file.writeTo(stringBuffer)
 
         return Utility.buildMainGeneratedFile(target, stringBuffer.toString())
     }
 
-    private fun buildFile(target: ClassInfo): FileSpec {
+    private fun buildFile(settings: GeneratorSettings, target: ClassInfo): FileSpec {
+        val allSettings = settings.toMutable()
         val file = FileSpec.builder(target.packageName, target.className)
         GeneratorOutput.addHeader(file, this::class.qualifiedName)
-        file.addType(buildClass(target))
-
-        return file.build()
-    }
-
-    private fun buildClass(target: ClassInfo): TypeSpec {
-        val type = TypeSpec.objectBuilder(target.className)
-
-        items.values.forEach {
-            val of = FunSpec.builder("of")
-            of.addParameter(
-                "contract",
-                KClass::class.asTypeName().parameterizedBy(it.contract.toClassName())
-            )
-            of.returns(it.factory.toClassName())
-            of.addCode("return %T\n", it.factory.toClassName())
-
-            type.addFunction(of.build())
+        val reader = ContractReader(settings.contracts, settings.fakedAnnotations)
+        items.forEach { (contract, item) ->
+            if (!reader.hasCompanionObject(contract)) {
+                return@forEach
+            }
+            val setting = allSettings.getContract(contract)
+            val properties = reader.findPropertiesOfContract(contract)
+            if (null !== setting && null !== properties) {
+                ContractExtensionMainGenerator.generate(setting, properties, item.implementation, file)
+            }
         }
-
-        return type.build()
+        return file.build()
     }
 }

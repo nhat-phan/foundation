@@ -2,7 +2,6 @@ package net.ntworld.foundation.processor
 
 import net.ntworld.foundation.generator.*
 import net.ntworld.foundation.generator.main.*
-import net.ntworld.foundation.generator.test.ContractImplementationFactoryTestGenerator
 import net.ntworld.foundation.generator.type.AnnotationProcessorRunInfo
 import net.ntworld.foundation.generator.type.ClassInfo
 import net.ntworld.foundation.processor.internal.*
@@ -18,7 +17,6 @@ import javax.annotation.processing.RoundEnvironment
 import javax.annotation.processing.SupportedAnnotationTypes
 import javax.annotation.processing.SupportedOptions
 import javax.lang.model.element.TypeElement
-import kotlin.contracts.contract
 
 @SupportedAnnotationTypes(
     FrameworkProcessor.Faked,
@@ -46,6 +44,7 @@ class FoundationProcessor : AbstractProcessor() {
         EventHandlerProcessor(),
         CommandHandlerProcessor(),
         QueryHandlerProcessor(),
+        RequestHandlerProcessor(),
         EventSourcingProcessor(),
         AggregateFactoryProcessor()
     )
@@ -122,14 +121,14 @@ class FoundationProcessor : AbstractProcessor() {
             fakedAnnotationSettings = settings.fakedAnnotations
         )
 
-        // val factoryMainGenerator = ContractFactoryMainGenerator()
+        val factoryMainGenerator = ContractFactoryMainGenerator()
         val implementations = mutableMapOf<String, String>()
         settings.implementations.forEach {
             implementations[it.contract.fullName()] = it.name
         }
 
         settings.contracts.forEach {
-            if (it.collectedBy !== ContractCollector.COLLECTED_BY_KAPT || implementations.containsKey(it.name)) {
+            if (it.collectedBy != ContractCollector.COLLECTED_BY_KAPT || implementations.containsKey(it.name)) {
                 return@forEach
             }
 
@@ -138,20 +137,10 @@ class FoundationProcessor : AbstractProcessor() {
                 val implFile = ContractImplementationMainGenerator.generate(it, properties)
                 ProcessorOutput.writeGeneratedFile(processingEnv, implFile)
 
-                /*
-                val implFactoryFile = ContractImplementationFactoryMainGenerator.generate(
-                    it, properties, implFile.target
-                )
-                ProcessorOutput.writeGeneratedFile(processingEnv, implFactoryFile)
-                factoryMainGenerator.add(it.contract, implFactoryFile.target)
-                */
-                val implFactoryTestFile = ContractImplementationFactoryTestGenerator.generate(
-                    it, properties, implFile.target
-                )
-                ProcessorOutput.writeGeneratedFile(processingEnv, implFactoryTestFile)
+                factoryMainGenerator.add(it.contract, implFile.target)
             }
         }
-        // ProcessorOutput.writeGeneratedFile(processingEnv, factoryMainGenerator.generate(global.packageName))
+        ProcessorOutput.writeGeneratedFile(processingEnv, factoryMainGenerator.generate(settings, global.packageName))
     }
 
     private fun generateProviderAndBuses(settings: GeneratorSettings, global: ClassInfo) {
@@ -160,6 +149,12 @@ class FoundationProcessor : AbstractProcessor() {
             settings,
             LocalEventBusMainGenerator().generate(settings.eventHandlers, global.packageName)
         )
+
+//        ProcessorOutput.writeGlobalFile(
+//            processingEnv,
+//            settings,
+//            LocalServiceBusMainGenerator().generate(settings.requestHandlers, global.packageName)
+//        )
 
         ProcessorOutput.writeGlobalFile(
             processingEnv,

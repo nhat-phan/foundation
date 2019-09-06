@@ -1,14 +1,13 @@
 package net.ntworld.foundation.processor.internal
 
 import net.ntworld.foundation.Handler
-import net.ntworld.foundation.cqrs.CommandHandler
+import net.ntworld.foundation.RequestHandler
 import net.ntworld.foundation.generator.GeneratorSettings
-import net.ntworld.foundation.generator.setting.CommandHandlerSetting
+import net.ntworld.foundation.generator.setting.RequestHandlerSetting
 import net.ntworld.foundation.generator.type.ClassInfo
+import net.ntworld.foundation.processor.FoundationProcessorException
 import net.ntworld.foundation.processor.util.CodeUtility
 import net.ntworld.foundation.processor.util.ContractCollector
-import net.ntworld.foundation.processor.FoundationProcessorException
-import net.ntworld.foundation.processor.util.FrameworkProcessor
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.Element
@@ -16,28 +15,28 @@ import javax.lang.model.element.PackageElement
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.DeclaredType
 
-internal class CommandHandlerProcessor : Processor {
+internal class RequestHandlerProcessor : Processor {
     override val annotations: List<Class<out Annotation>> = listOf(
         Handler::class.java
     )
 
-    internal data class CollectedCommandHandler(
-        val commandPackageName: String,
-        val commandClassName: String,
+    private data class CollectedRequestHandler(
+        val requestPackageName: String,
+        val requestClassName: String,
         val handlerPackageName: String,
         val handlerClassName: String,
         val makeByFactory: Boolean,
         val version: Int
     )
 
-    private val data = mutableMapOf<String, CollectedCommandHandler>()
+    private val data = mutableMapOf<String, CollectedRequestHandler>()
 
     override fun startProcess(settings: GeneratorSettings) {
         data.clear()
-        settings.commandHandlers.forEach { item ->
-            data[item.name] = CollectedCommandHandler(
-                commandPackageName = item.command.packageName,
-                commandClassName = item.command.className,
+        settings.requestHandlers.forEach { item ->
+            data[item.name] = CollectedRequestHandler(
+                requestPackageName = item.request.packageName,
+                requestClassName = item.request.className,
                 handlerPackageName = item.handler.packageName,
                 handlerClassName = item.handler.className,
                 makeByFactory = item.makeByFactory,
@@ -47,11 +46,11 @@ internal class CommandHandlerProcessor : Processor {
     }
 
     override fun applySettings(settings: GeneratorSettings): GeneratorSettings {
-        val commandHandlers = data.values.map {
-            CommandHandlerSetting(
-                command = ClassInfo(
-                    packageName = it.commandPackageName,
-                    className = it.commandClassName
+        val requestHandlers = data.values.map {
+            RequestHandlerSetting(
+                request = ClassInfo(
+                    packageName = it.requestPackageName,
+                    className = it.requestClassName
                 ),
                 version = it.version,
                 handler = ClassInfo(
@@ -61,7 +60,7 @@ internal class CommandHandlerProcessor : Processor {
                 makeByFactory = it.makeByFactory
             )
         }
-        return settings.copy(commandHandlers = commandHandlers)
+        return settings.copy(requestHandlers = requestHandlers)
     }
 
     override fun shouldProcess(
@@ -73,7 +72,7 @@ internal class CommandHandlerProcessor : Processor {
         return when (annotation) {
             Handler::class.java -> {
                 CodeUtility.isImplementInterface(
-                    processingEnv, element.asType(), CommandHandler::class.java.canonicalName, false
+                    processingEnv, element.asType(), RequestHandler::class.java.canonicalName, false
                 )
             }
 
@@ -91,21 +90,21 @@ internal class CommandHandlerProcessor : Processor {
             val packageName = this.getPackageNameOfClass(element)
             val className = element.simpleName.toString()
             val key = "$packageName.$className"
-            initCollectedCommandHandlerIfNeeded(packageName, className)
+            initCollectedRequestHandlerIfNeeded(packageName, className)
 
             // If the Handler is provided enough information, then no need to find data
-            if (processAnnotationProperties(processingEnv, key, element, element.getAnnotation(Handler::class.java))) {
-                return@forEach
-            }
+//            if (processAnnotationProperties(processingEnv, key, element, element.getAnnotation(Handler::class.java))) {
+//                return@forEach
+//            }
 
             val implementedInterface = (element as TypeElement).interfaces
                 .firstOrNull {
                     val e = processingEnv.typeUtils.asElement(it) as? TypeElement ?: return@firstOrNull false
-                    e.qualifiedName.toString() == CommandHandler::class.java.canonicalName
+                    e.qualifiedName.toString() == RequestHandler::class.java.canonicalName
                 }
 
             if (null !== implementedInterface) {
-                findImplementedCommand(processingEnv, key, implementedInterface as DeclaredType)
+                findImplementedRequest(processingEnv, key, implementedInterface as DeclaredType)
             }
 
             data[key] = data[key]!!.copy(
@@ -118,55 +117,55 @@ internal class CommandHandlerProcessor : Processor {
         }
     }
 
-    private fun processAnnotationProperties(
-        processingEnv: ProcessingEnvironment,
-        key: String,
-        element: Element,
-        annotation: Handler
-    ): Boolean {
-        if (annotation.type != Handler.Type.Query) {
-            return false
-        }
+//    private fun processAnnotationProperties(
+//        processingEnv: ProcessingEnvironment,
+//        key: String,
+//        element: Element,
+//        annotation: Handler
+//    ): Boolean {
+//        if (annotation.type !== Handler.Type.Request) {
+//            return false
+//        }
+//
+//        var inputTypeName = ""
+//        val mirrors = element.annotationMirrors
+//        mirrors.forEach {
+//            if (it.annotationType.toString() == FrameworkProcessor.Handler) {
+//                it.elementValues.forEach {
+//                    if (it.key.simpleName.toString() == "input" &&
+//                        it.value.value.toString() != java.lang.Object::class.java.canonicalName
+//                    ) {
+//                        inputTypeName = it.value.value.toString()
+//                    }
+//                }
+//            }
+//        }
+//
+//        if (inputTypeName.isEmpty()) {
+//            return false
+//        }
+//
+//        val inputElement = processingEnv.elementUtils.getTypeElement(inputTypeName)
+//        ContractCollector.collect(processingEnv, inputElement)
+//        data[key] = data[key]!!.copy(
+//            requestPackageName = getPackageNameOfClass(inputElement),
+//            requestClassName = inputElement.simpleName.toString(),
+//            version = annotation.version,
+//            makeByFactory = annotation.factory
+//        )
+//        return true
+//    }
 
-        var inputTypeName = ""
-        val mirrors = element.annotationMirrors
-        mirrors.forEach {
-            if (it.annotationType.toString() == FrameworkProcessor.Handler) {
-                it.elementValues.forEach {
-                    if (it.key.simpleName.toString() == "input" &&
-                        it.value.value.toString() != java.lang.Object::class.java.canonicalName
-                    ) {
-                        inputTypeName = it.value.value.toString()
-                    }
-                }
-            }
-        }
-
-        if (inputTypeName.isEmpty()) {
-            return false
-        }
-
-        val inputElement = processingEnv.elementUtils.getTypeElement(inputTypeName)
-        ContractCollector.collect(processingEnv, inputElement)
-        data[key] = data[key]!!.copy(
-            commandPackageName = getPackageNameOfClass(inputElement),
-            commandClassName = inputElement.simpleName.toString(),
-            version = annotation.version,
-            makeByFactory = annotation.factory
-        )
-        return true
-    }
-
-    private fun findImplementedCommand(processingEnv: ProcessingEnvironment, key: String, type: DeclaredType) {
-        if (type.typeArguments.size != 1) {
+    private fun findImplementedRequest(processingEnv: ProcessingEnvironment, key: String, type: DeclaredType) {
+        if (type.typeArguments.size != 2) {
             return
         }
-        val commandType = type.typeArguments.first()
-        val element = processingEnv.typeUtils.asElement(commandType)
+        val requestType = type.typeArguments.first()
+        val element = processingEnv.typeUtils.asElement(requestType)
         ContractCollector.collect(processingEnv, element)
         data[key] = data[key]!!.copy(
-            commandPackageName = getPackageNameOfClass(element),
-            commandClassName = element.simpleName.toString()
+            requestPackageName = getPackageNameOfClass(element),
+            requestClassName = element.simpleName.toString()
         )
     }
 
@@ -178,12 +177,12 @@ internal class CommandHandlerProcessor : Processor {
         return upperElement.qualifiedName.toString()
     }
 
-    private fun initCollectedCommandHandlerIfNeeded(packageName: String, className: String) {
+    private fun initCollectedRequestHandlerIfNeeded(packageName: String, className: String) {
         val key = "$packageName.$className"
         if (!data.containsKey(key)) {
-            data[key] = CollectedCommandHandler(
-                commandPackageName = "",
-                commandClassName = "",
+            data[key] = CollectedRequestHandler(
+                requestPackageName = "",
+                requestClassName = "",
                 version = 0,
                 handlerPackageName = packageName,
                 handlerClassName = className,
