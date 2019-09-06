@@ -19,10 +19,10 @@ class ContractImplementationFactoryTestGeneratorTest : TestSuite() {
             properties = mapOf()
         )
         val properties = mapOf(
-            "id" to ContractReader.Property(name = "id", order = 1, type = type, fakedType = ""),
-            "email" to ContractReader.Property(name = "email", order = 2, type = type, fakedType = ""),
-            "firstName" to ContractReader.Property(name = "firstName", order = 3, type = type, fakedType = ""),
-            "lastName" to ContractReader.Property(name = "lastName", order = 4, type = type, fakedType = "")
+            "id" to ContractReader.Property(name = "id", order = 1, type = type),
+            "email" to ContractReader.Property(name = "email", order = 2, type = type),
+            "firstName" to ContractReader.Property(name = "firstName", order = 3, type = type),
+            "lastName" to ContractReader.Property(name = "lastName", order = 4, type = type)
         )
 
         val result = ContractImplementationFactoryTestGenerator.generate(
@@ -46,7 +46,7 @@ class ContractImplementationFactoryTestGeneratorTest : TestSuite() {
             properties = mapOf()
         )
         val properties = mapOf(
-            "id" to ContractReader.Property(name = "id", order = 1, type = type, fakedType = ""),
+            "id" to ContractReader.Property(name = "id", order = 1, type = type),
             "email" to ContractReader.Property(name = "email", order = 2, type = type, fakedType = "fakedEmail"),
             "firstName" to ContractReader.Property(
                 name = "firstName",
@@ -54,7 +54,7 @@ class ContractImplementationFactoryTestGeneratorTest : TestSuite() {
                 type = type,
                 fakedType = "fakedFirstName"
             ),
-            "lastName" to ContractReader.Property(name = "lastName", order = 4, type = type, fakedType = "")
+            "lastName" to ContractReader.Property(name = "lastName", order = 4, type = type)
         )
 
         val result = ContractImplementationFactoryTestGenerator.generate(

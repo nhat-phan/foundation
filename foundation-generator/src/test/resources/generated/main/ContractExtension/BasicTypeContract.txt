@@ -1,0 +1,51 @@
+import com.example.contract.BasicTypeContract
+import com.example.contract.generated.BasicTypeContractImpl
+import kotlin.Boolean
+import kotlin.Byte
+import kotlin.Char
+import kotlin.Double
+import kotlin.Float
+import kotlin.Int
+import kotlin.Long
+import kotlin.Short
+import kotlin.String
+
+fun BasicTypeContract.Companion.make(
+  byte: Byte,
+  short: Short,
+  int: Int,
+  long: Long,
+  float: Float,
+  double: Double,
+  string: String,
+  char: Char,
+  boolean: Boolean,
+  byteNullable: Byte?,
+  shortNullable: Short?,
+  intNullable: Int?,
+  longNullable: Long?,
+  floatNullable: Float?,
+  doubleNullable: Double?,
+  stringNullable: String?,
+  charNullable: Char?,
+  booleanNullable: Boolean?
+): BasicTypeContract = BasicTypeContractImpl(
+  byte = byte,
+  short = short,
+  int = int,
+  long = long,
+  float = float,
+  double = double,
+  string = string,
+  char = char,
+  boolean = boolean,
+  byteNullable = byteNullable,
+  shortNullable = shortNullable,
+  intNullable = intNullable,
+  longNullable = longNullable,
+  floatNullable = floatNullable,
+  doubleNullable = doubleNullable,
+  stringNullable = stringNullable,
+  charNullable = charNullable,
+  booleanNullable = booleanNullable
+)

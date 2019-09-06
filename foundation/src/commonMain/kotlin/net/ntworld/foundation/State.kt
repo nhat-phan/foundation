@@ -1,6 +1,6 @@
 package net.ntworld.foundation
 
-interface State {
+interface State : Contract {
     val id: String
 
     val isGenerated: Boolean

@@ -6,15 +6,12 @@ import kotlinx.metadata.jvm.KotlinClassHeader
 import kotlinx.metadata.jvm.KotlinClassMetadata
 import kotlinx.metadata.jvm.getterSignature
 import kotlinx.metadata.jvm.syntheticMethodForAnnotations
-import net.ntworld.foundation.Event
 import net.ntworld.foundation.Faked
-import net.ntworld.foundation.State
-import net.ntworld.foundation.cqrs.Command
-import net.ntworld.foundation.cqrs.Query
 import net.ntworld.foundation.generator.setting.ContractSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 import net.ntworld.foundation.generator.type.ContractProperty
 import net.ntworld.foundation.generator.type.KotlinMetadata
+import net.ntworld.foundation.processor.FoundationProcessor
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import javax.annotation.processing.ProcessingEnvironment
@@ -24,6 +21,7 @@ import javax.lang.model.element.TypeElement
 
 object ContractCollector {
     private val BASE_CONTRACTS = arrayOf(
+        FrameworkProcessor.Contract,
         "kotlin.Any"
     )
     private const val KIND_SYNTHETIC_CLASS = 3

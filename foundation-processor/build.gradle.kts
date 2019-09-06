@@ -26,7 +26,7 @@ dependencies {
     // the generated pom is pointed to wrong artifact. In fact, the processor
     // can work with any version of foundation therefore let include them
     // directly to dependency like this
-    implementation("com.github.nhat-phan.foundation:foundation-jvm:0.2+")
+    implementation("com.github.nhat-phan.foundation:foundation-jvm:0.3+")
 
     testImplementation(kotlin("test"))
     testImplementation(kotlin("test-junit"))

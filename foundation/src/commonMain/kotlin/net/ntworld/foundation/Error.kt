@@ -1,6 +1,6 @@
 package net.ntworld.foundation
 
-interface Error {
+interface Error : Contract {
     val type: String
 
     val message: String

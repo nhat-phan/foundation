@@ -1,3 +1,5 @@
 package net.ntworld.foundation.cqrs
 
-interface Query<R: QueryResult>
+import net.ntworld.foundation.Contract
+
+interface Query<R : QueryResult> : Contract

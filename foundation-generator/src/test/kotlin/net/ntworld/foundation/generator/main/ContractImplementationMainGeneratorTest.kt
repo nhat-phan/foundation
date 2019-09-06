@@ -10,7 +10,7 @@ class ContractImplementationMainGeneratorTest  : TestSuite() {
 
     @Test
     fun `testGenerate BasicTypesContract`() {
-        val allSettings = readSettingsFromResource("/settings/contract.basic-types.json")
+        val allSettings = readSettingsFromResource("/settings/com.example.settings.json")
         val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
         val contract = "com.example.contract.BasicTypeContract"
         val setting = allSettings.toMutable().getContract(contract)
@@ -23,7 +23,7 @@ class ContractImplementationMainGeneratorTest  : TestSuite() {
 
     @Test
     fun `testGenerate ListTypeContract`() {
-        val allSettings = readSettingsFromResource("/settings/contract.list-type.json")
+        val allSettings = readSettingsFromResource("/settings/com.example.settings.json")
         val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
         val contract = "com.example.contract.ListTypeContract"
         val setting = allSettings.toMutable().getContract(contract)
@@ -36,7 +36,7 @@ class ContractImplementationMainGeneratorTest  : TestSuite() {
 
     @Test
     fun `testGenerate NoSupertypeContract`() {
-        val allSettings = readSettingsFromResource("/settings/contract.no-supertypes.json")
+        val allSettings = readSettingsFromResource("/settings/com.example.settings.json")
         val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
         val contract = "com.example.contract.NoSupertypeContractCommand"
         val setting = allSettings.toMutable().getContract(contract)
@@ -49,7 +49,7 @@ class ContractImplementationMainGeneratorTest  : TestSuite() {
 
     @Test
     fun `testGenerate OneSupertypeContract`() {
-        val allSettings = readSettingsFromResource("/settings/contract.one-supertype.json")
+        val allSettings = readSettingsFromResource("/settings/com.example.settings.json")
         val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
         val contract = "com.example.contract.OneSupertypeContract"
         val setting = allSettings.toMutable().getContract(contract)
@@ -62,7 +62,7 @@ class ContractImplementationMainGeneratorTest  : TestSuite() {
 
     @Test
     fun `testGenerate OneSupertypeOverrideContract`() {
-        val allSettings = readSettingsFromResource("/settings/contract.one-supertype-override.json")
+        val allSettings = readSettingsFromResource("/settings/com.example.settings.json")
         val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
         val contract = "com.example.contract.OneSupertypeOverrideContract"
         val setting = allSettings.toMutable().getContract(contract)
@@ -73,5 +73,19 @@ class ContractImplementationMainGeneratorTest  : TestSuite() {
         assertGeneratedFileMatched(result, "/ContractImplementation/OneSupertypeOverrideContract.txt")
     }
 
+    @Test
+    fun `testGenerate DefaultValueContract`() {
+        val allSettings = readSettingsFromResource("/settings/com.example.settings.json")
+        val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
+        val contract = "com.example.contract.DefaultValueContract"
+        val setting = allSettings.toMutable().getContract(contract)
+        val properties = reader.findPropertiesOfContract(contract)
+
+        val result = ContractImplementationMainGenerator.generate(setting!!, properties!!)
+        println(result.content)
+        // assertGeneratedFileMatched(result, "/ContractImplementation/OneSupertypeOverrideContract.txt")
+    }
+
+    // Bookmark: Add new test case when adding new contract settings
     // TODO: Add multiple supertypes cases
 }

@@ -1,0 +1,1713 @@
+{
+  "description": "",
+  "processorVersion": "0.3.x",
+  "globalDirectory": "",
+  "annotationProcessorRunInfo": [
+    {
+      "annotations": [
+        "net.ntworld.foundation.Implementation",
+        "net.ntworld.foundation.Faked",
+        "net.ntworld.foundation.eventSourcing.EventSourced",
+        "net.ntworld.foundation.eventSourcing.EventSourcing.Metadata",
+        "net.ntworld.foundation.eventSourcing.EventSourcing.Encrypted",
+        "net.ntworld.foundation.eventSourcing.EventSourcing",
+        "net.ntworld.foundation.Handler"
+      ],
+      "startedAt": 1567761080013,
+      "finishedAt": 1567761080317,
+      "duration": 304
+    }
+  ],
+  "aggregateFactories": [
+    {
+      "aggregate": {
+        "className": "TodoA",
+        "packageName": "com.example.aggregate"
+      },
+      "state": {
+        "className": "TodoState",
+        "packageName": "com.example.aggregate"
+      },
+      "implementation": {
+        "className": "TodoAImpl",
+        "packageName": "com.example.aggregate"
+      },
+      "isAbstract": true,
+      "isEventSourced": false,
+      "name": "com.example.aggregate.TodoAImpl"
+    },
+    {
+      "aggregate": {
+        "className": "TodoB",
+        "packageName": "com.example.aggregate"
+      },
+      "state": {
+        "className": "TodoState",
+        "packageName": "com.example.aggregate"
+      },
+      "implementation": {
+        "className": "TodoBImplEsWrapper",
+        "packageName": "com.example.aggregate"
+      },
+      "isAbstract": false,
+      "isEventSourced": true,
+      "name": "com.example.aggregate.TodoBImplEsWrapper"
+    }
+  ],
+  "eventSourcings": [
+    {
+      "event": {
+        "className": "TodoDeletedEventImpl",
+        "packageName": "event"
+      },
+      "implementation": {
+        "className": "TodoDeletedEventImpl",
+        "packageName": "event"
+      },
+      "fields": [
+        {
+          "name": "id",
+          "metadata": false,
+          "encrypted": false,
+          "faked": ""
+        }
+      ],
+      "type": "deleted",
+      "variant": 0,
+      "hasSecondConstructor": false,
+      "name": "event.TodoDeletedEventImpl"
+    },
+    {
+      "event": {
+        "className": "TodoUpdatedEvent",
+        "packageName": "com.example.event"
+      },
+      "implementation": {
+        "className": "TodoUpdatedEvent",
+        "packageName": "com.example.event"
+      },
+      "fields": [
+        {
+          "name": "id",
+          "metadata": false,
+          "encrypted": false,
+          "faked": ""
+        },
+        {
+          "name": "companyId",
+          "metadata": true,
+          "encrypted": false,
+          "faked": ""
+        },
+        {
+          "name": "task",
+          "metadata": false,
+          "encrypted": true,
+          "faked": "gameOfThrones.character"
+        }
+      ],
+      "type": "todo:updated",
+      "variant": 0,
+      "hasSecondConstructor": false,
+      "name": "com.example.event.TodoUpdatedEvent"
+    },
+    {
+      "event": {
+        "className": "TodoCreatedEvent",
+        "packageName": "com.example.event"
+      },
+      "implementation": {
+        "className": "TodoCreatedEvent",
+        "packageName": "com.example.event"
+      },
+      "fields": [
+        {
+          "name": "id",
+          "metadata": false,
+          "encrypted": false,
+          "faked": ""
+        },
+        {
+          "name": "companyId",
+          "metadata": true,
+          "encrypted": false,
+          "faked": ""
+        },
+        {
+          "name": "task",
+          "metadata": false,
+          "encrypted": true,
+          "faked": "gameOfThrones.character"
+        },
+        {
+          "name": "money",
+          "metadata": false,
+          "encrypted": true,
+          "faked": "number.randomNumber"
+        }
+      ],
+      "type": "todo:created",
+      "variant": 1,
+      "hasSecondConstructor": false,
+      "name": "com.example.event.TodoCreatedEvent"
+    }
+  ],
+  "eventHandlers": [
+    {
+      "event": {
+        "className": "TodoDeletedEvent",
+        "packageName": "com.example.event"
+      },
+      "handler": {
+        "className": "TodoDeletedEventHandler",
+        "packageName": "com.example.eventHandler"
+      },
+      "makeByFactory": true,
+      "name": "com.example.eventHandler.TodoDeletedEventHandler"
+    },
+    {
+      "event": {
+        "className": "TodoCreatedEvent",
+        "packageName": "com.example.event"
+      },
+      "handler": {
+        "className": "TodoCreatedEventHandler",
+        "packageName": "com.example.eventHandler"
+      },
+      "makeByFactory": false,
+      "name": "com.example.eventHandler.TodoCreatedEventHandler"
+    }
+  ],
+  "commandHandlers": [
+    {
+      "command": {
+        "className": "BasicTypeContract",
+        "packageName": "com.example.contract"
+      },
+      "version": 0,
+      "handler": {
+        "className": "BasicTypeContractCommandHandler",
+        "packageName": "com.example.contract"
+      },
+      "makeByFactory": true,
+      "name": "com.example.contract.BasicTypeContractCommandHandler"
+    },
+    {
+      "command": {
+        "className": "OneSupertypeOverrideContract",
+        "packageName": "com.example.contract"
+      },
+      "version": 0,
+      "handler": {
+        "className": "OneSupertypeOverrideContractHandler",
+        "packageName": "com.example.contract"
+      },
+      "makeByFactory": true,
+      "name": "com.example.contract.OneSupertypeOverrideContractHandler"
+    },
+    {
+      "command": {
+        "className": "OneSupertypeContract",
+        "packageName": "com.example.contract"
+      },
+      "version": 0,
+      "handler": {
+        "className": "OneSupertypeContractHandler",
+        "packageName": "com.example.contract"
+      },
+      "makeByFactory": true,
+      "name": "com.example.contract.OneSupertypeContractHandler"
+    },
+    {
+      "command": {
+        "className": "ListTypeContract",
+        "packageName": "com.example.contract"
+      },
+      "version": 0,
+      "handler": {
+        "className": "ListTypeContractHandler",
+        "packageName": "com.example.contract"
+      },
+      "makeByFactory": true,
+      "name": "com.example.contract.ListTypeContractHandler"
+    },
+    {
+      "command": {
+        "className": "NoSupertypeContractCommand",
+        "packageName": "com.example.contract"
+      },
+      "version": 0,
+      "handler": {
+        "className": "NoSupertypeContractCommandHandler",
+        "packageName": "com.example.contract"
+      },
+      "makeByFactory": true,
+      "name": "com.example.contract.NoSupertypeContractCommandHandler"
+    },
+    {
+      "command": {
+        "className": "CreateTodoCommand",
+        "packageName": "com.example.contract"
+      },
+      "version": 0,
+      "handler": {
+        "className": "CreateTodoCommandHandler",
+        "packageName": "com.example.commandHandler"
+      },
+      "makeByFactory": false,
+      "name": "com.example.commandHandler.CreateTodoCommandHandler"
+    },
+    {
+      "command": {
+        "className": "CreateTodoCommand",
+        "packageName": "com.example.contract"
+      },
+      "version": 1,
+      "handler": {
+        "className": "CreateTodoCommandHandlerV1",
+        "packageName": "com.example.commandHandler"
+      },
+      "makeByFactory": true,
+      "name": "com.example.commandHandler.CreateTodoCommandHandlerV1"
+    }
+  ],
+  "queryHandlers": [
+    {
+      "query": {
+        "className": "GetAllTodoQuery",
+        "packageName": "com.example.contract"
+      },
+      "version": 1,
+      "handler": {
+        "className": "GetAllTodoQueryHandlerV1",
+        "packageName": "queryHandler"
+      },
+      "makeByFactory": true,
+      "name": "queryHandler.GetAllTodoQueryHandlerV1"
+    },
+    {
+      "query": {
+        "className": "GetAllTodoQuery",
+        "packageName": "com.example.contract"
+      },
+      "version": 0,
+      "handler": {
+        "className": "GetAllTodoQueryHandler",
+        "packageName": "queryHandler"
+      },
+      "makeByFactory": true,
+      "name": "queryHandler.GetAllTodoQueryHandler"
+    }
+  ],
+  "implementations": [
+    {
+      "implementation": {
+        "className": "TodoDeletedEventImpl",
+        "packageName": "event"
+      },
+      "contract": {
+        "className": "TodoDeletedEvent",
+        "packageName": "com.example.event"
+      },
+      "type": "Event",
+      "isGenerated": false,
+      "name": "event.TodoDeletedEventImpl"
+    },
+    {
+      "implementation": {
+        "className": "TodoException",
+        "packageName": "com.example.contract"
+      },
+      "contract": {
+        "className": "DefaultValueContract",
+        "packageName": "com.example.contract"
+      },
+      "type": "Error",
+      "isGenerated": false,
+      "name": "com.example.contract.TodoException"
+    }
+  ],
+  "messages": [
+  ],
+  "contracts": [
+    {
+      "contract": {
+        "className": "Event",
+        "packageName": "net.ntworld.foundation"
+      },
+      "metadata": {
+        "kind": 1,
+        "packageName": "",
+        "metadataVersion": [
+          1,
+          1,
+          15
+        ],
+        "bytecodeVersion": [
+          1,
+          0,
+          3
+        ],
+        "data1": [
+          "\u0000\n\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\bf\u0018\u00002\u00020\u0001¨\u0006\u0002"
+        ],
+        "data2": [
+          "Lnet/ntworld/foundation/Event;",
+          "Lnet/ntworld/foundation/Contract;",
+          "foundation"
+        ],
+        "extraString": "",
+        "extraInt": 0
+      },
+      "supertypes": [
+      ],
+      "properties": {
+      },
+      "collectedBy": "kapt-supertype",
+      "name": "net.ntworld.foundation.Event"
+    },
+    {
+      "contract": {
+        "className": "TodoDeletedEvent",
+        "packageName": "com.example.event"
+      },
+      "metadata": {
+        "kind": 1,
+        "packageName": "",
+        "metadataVersion": [
+          1,
+          1,
+          15
+        ],
+        "bytecodeVersion": [
+          1,
+          0,
+          3
+        ],
+        "data1": [
+          "\u0000\u0012\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010\u000e\n\u0002\b\u0003\bg\u0018\u00002\u00020\u0001R\u0012\u0010\u0002\u001a\u00020\u0003X¦\u0004¢\u0006\u0006\u001a\u0004\b\u0004\u0010\u0005¨\u0006\u0006"
+        ],
+        "data2": [
+          "Lcom/example/event/TodoDeletedEvent;",
+          "Lnet/ntworld/foundation/Event;",
+          "id",
+          "",
+          "getId",
+          "()Ljava/lang/String;",
+          "example-jvm"
+        ],
+        "extraString": "",
+        "extraInt": 0
+      },
+      "supertypes": [
+        "net.ntworld.foundation.Event"
+      ],
+      "properties": {
+        "id": {
+          "name": "id",
+          "order": 1,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        }
+      },
+      "collectedBy": "kapt",
+      "name": "com.example.event.TodoDeletedEvent"
+    },
+    {
+      "contract": {
+        "className": "Error",
+        "packageName": "net.ntworld.foundation"
+      },
+      "metadata": {
+        "kind": 1,
+        "packageName": "",
+        "metadataVersion": [
+          1,
+          1,
+          15
+        ],
+        "bytecodeVersion": [
+          1,
+          0,
+          3
+        ],
+        "data1": [
+          "\u0000\u001a\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010\b\n\u0002\b\u0003\n\u0002\u0010\u000e\n\u0002\b\u0005\bf\u0018\u00002\u00020\u0001R\u0012\u0010\u0002\u001a\u00020\u0003X¦\u0004¢\u0006\u0006\u001a\u0004\b\u0004\u0010\u0005R\u0012\u0010\u0006\u001a\u00020\u0007X¦\u0004¢\u0006\u0006\u001a\u0004\b\b\u0010\tR\u0012\u0010\n\u001a\u00020\u0007X¦\u0004¢\u0006\u0006\u001a\u0004\b\u000b\u0010\t¨\u0006\f"
+        ],
+        "data2": [
+          "Lnet/ntworld/foundation/Error;",
+          "Lnet/ntworld/foundation/Contract;",
+          "code",
+          "",
+          "getCode",
+          "()I",
+          "message",
+          "",
+          "getMessage",
+          "()Ljava/lang/String;",
+          "type",
+          "getType",
+          "foundation"
+        ],
+        "extraString": "",
+        "extraInt": 0
+      },
+      "supertypes": [
+      ],
+      "properties": {
+        "type": {
+          "name": "type",
+          "order": 1,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "message": {
+          "name": "message",
+          "order": 2,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "code": {
+          "name": "code",
+          "order": 3,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": false,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        }
+      },
+      "collectedBy": "kapt-supertype",
+      "name": "net.ntworld.foundation.Error"
+    },
+    {
+      "contract": {
+        "className": "DefaultValueContract",
+        "packageName": "com.example.contract"
+      },
+      "metadata": {
+        "kind": 1,
+        "packageName": "",
+        "metadataVersion": [
+          1,
+          1,
+          15
+        ],
+        "bytecodeVersion": [
+          1,
+          0,
+          3
+        ],
+        "data1": [
+          "\u0000\u001a\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010\b\n\u0002\b\u0003\n\u0002\u0010\u000e\n\u0002\b\u0004\bf\u0018\u0000 \n2\u00020\u0001:\u0001\nR\u0014\u0010\u0002\u001a\u00020\u00038gX¦\u0004¢\u0006\u0006\u001a\u0004\b\u0004\u0010\u0005R\u0014\u0010\u0006\u001a\u00020\u00078VX\u0004¢\u0006\u0006\u001a\u0004\b\b\u0010\t¨\u0006\u000b"
+        ],
+        "data2": [
+          "Lcom/example/contract/DefaultValueContract;",
+          "Lnet/ntworld/foundation/Error;",
+          "code",
+          "",
+          "getCode",
+          "()I",
+          "type",
+          "",
+          "getType",
+          "()Ljava/lang/String;",
+          "Companion",
+          "example-jvm"
+        ],
+        "extraString": "",
+        "extraInt": 0
+      },
+      "supertypes": [
+        "net.ntworld.foundation.Error"
+      ],
+      "properties": {
+        "code": {
+          "name": "code",
+          "order": 1,
+          "unknownAnnotations": [
+            "java.lang.Override"
+          ],
+          "hasNotNullAnnotation": false,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": true,
+          "fakedType": "number.randomNumber"
+        },
+        "type": {
+          "name": "type",
+          "order": 2,
+          "unknownAnnotations": [
+            "java.lang.Override"
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        }
+      },
+      "collectedBy": "kapt",
+      "name": "com.example.contract.DefaultValueContract"
+    },
+    {
+      "contract": {
+        "className": "Command",
+        "packageName": "net.ntworld.foundation.cqrs"
+      },
+      "metadata": {
+        "kind": 1,
+        "packageName": "",
+        "metadataVersion": [
+          1,
+          1,
+          15
+        ],
+        "bytecodeVersion": [
+          1,
+          0,
+          3
+        ],
+        "data1": [
+          "\u0000\n\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\bf\u0018\u00002\u00020\u0001¨\u0006\u0002"
+        ],
+        "data2": [
+          "Lnet/ntworld/foundation/cqrs/Command;",
+          "Lnet/ntworld/foundation/Contract;",
+          "foundation"
+        ],
+        "extraString": "",
+        "extraInt": 0
+      },
+      "supertypes": [
+      ],
+      "properties": {
+      },
+      "collectedBy": "kapt-supertype",
+      "name": "net.ntworld.foundation.cqrs.Command"
+    },
+    {
+      "contract": {
+        "className": "BasicTypeContract",
+        "packageName": "com.example.contract"
+      },
+      "metadata": {
+        "kind": 1,
+        "packageName": "",
+        "metadataVersion": [
+          1,
+          1,
+          15
+        ],
+        "bytecodeVersion": [
+          1,
+          0,
+          3
+        ],
+        "data1": [
+          "\u0000R\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010\u000b\n\u0002\b\u0006\n\u0002\u0010\u0005\n\u0002\b\u0006\n\u0002\u0010\f\n\u0002\b\u0006\n\u0002\u0010\u0006\n\u0002\b\u0006\n\u0002\u0010\u0007\n\u0002\b\u0006\n\u0002\u0010\b\n\u0002\b\u0006\n\u0002\u0010\t\n\u0002\b\u0006\n\u0002\u0010\n\n\u0002\b\u0006\n\u0002\u0010\u000e\n\u0002\b\u0005\bf\u0018\u00002\u00020\u0001R\u0012\u0010\u0002\u001a\u00020\u0003X¦\u0004¢\u0006\u0006\u001a\u0004\b\u0004\u0010\u0005R\u0014\u0010\u0006\u001a\u0004\u0018\u00010\u0003X¦\u0004¢\u0006\u0006\u001a\u0004\b\u0007\u0010\bR\u0012\u0010\t\u001a\u00020\nX¦\u0004¢\u0006\u0006\u001a\u0004\b\u000b\u0010\fR\u0014\u0010\r\u001a\u0004\u0018\u00010\nX¦\u0004¢\u0006\u0006\u001a\u0004\b\u000e\u0010\u000fR\u0012\u0010\u0010\u001a\u00020\u0011X¦\u0004¢\u0006\u0006\u001a\u0004\b\u0012\u0010\u0013R\u0014\u0010\u0014\u001a\u0004\u0018\u00010\u0011X¦\u0004¢\u0006\u0006\u001a\u0004\b\u0015\u0010\u0016R\u0012\u0010\u0017\u001a\u00020\u0018X¦\u0004¢\u0006\u0006\u001a\u0004\b\u0019\u0010\u001aR\u0014\u0010\u001b\u001a\u0004\u0018\u00010\u0018X¦\u0004¢\u0006\u0006\u001a\u0004\b\u001c\u0010\u001dR\u0012\u0010\u001e\u001a\u00020\u001fX¦\u0004¢\u0006\u0006\u001a\u0004\b \u0010!R\u0014\u0010\"\u001a\u0004\u0018\u00010\u001fX¦\u0004¢\u0006\u0006\u001a\u0004\b#\u0010$R\u0012\u0010%\u001a\u00020&X¦\u0004¢\u0006\u0006\u001a\u0004\b'\u0010(R\u0014\u0010)\u001a\u0004\u0018\u00010&X¦\u0004¢\u0006\u0006\u001a\u0004\b*\u0010+R\u0012\u0010,\u001a\u00020-X¦\u0004¢\u0006\u0006\u001a\u0004\b.\u0010/R\u0014\u00100\u001a\u0004\u0018\u00010-X¦\u0004¢\u0006\u0006\u001a\u0004\b1\u00102R\u0012\u00103\u001a\u000204X¦\u0004¢\u0006\u0006\u001a\u0004\b5\u00106R\u0014\u00107\u001a\u0004\u0018\u000104X¦\u0004¢\u0006\u0006\u001a\u0004\b8\u00109R\u0012\u0010:\u001a\u00020;X¦\u0004¢\u0006\u0006\u001a\u0004\b<\u0010=R\u0014\u0010>\u001a\u0004\u0018\u00010;X¦\u0004¢\u0006\u0006\u001a\u0004\b?\u0010=¨\u0006@"
+        ],
+        "data2": [
+          "Lcom/example/contract/BasicTypeContract;",
+          "Lnet/ntworld/foundation/cqrs/Command;",
+          "boolean",
+          "",
+          "getBoolean",
+          "()Z",
+          "booleanNullable",
+          "getBooleanNullable",
+          "()Ljava/lang/Boolean;",
+          "byte",
+          "",
+          "getByte",
+          "()B",
+          "byteNullable",
+          "getByteNullable",
+          "()Ljava/lang/Byte;",
+          "char",
+          "",
+          "getChar",
+          "()C",
+          "charNullable",
+          "getCharNullable",
+          "()Ljava/lang/Character;",
+          "double",
+          "",
+          "getDouble",
+          "()D",
+          "doubleNullable",
+          "getDoubleNullable",
+          "()Ljava/lang/Double;",
+          "float",
+          "",
+          "getFloat",
+          "()F",
+          "floatNullable",
+          "getFloatNullable",
+          "()Ljava/lang/Float;",
+          "int",
+          "",
+          "getInt",
+          "()I",
+          "intNullable",
+          "getIntNullable",
+          "()Ljava/lang/Integer;",
+          "long",
+          "",
+          "getLong",
+          "()J",
+          "longNullable",
+          "getLongNullable",
+          "()Ljava/lang/Long;",
+          "short",
+          "",
+          "getShort",
+          "()S",
+          "shortNullable",
+          "getShortNullable",
+          "()Ljava/lang/Short;",
+          "string",
+          "",
+          "getString",
+          "()Ljava/lang/String;",
+          "stringNullable",
+          "getStringNullable",
+          "example-jvm"
+        ],
+        "extraString": "",
+        "extraInt": 0
+      },
+      "supertypes": [
+        "net.ntworld.foundation.cqrs.Command"
+      ],
+      "properties": {
+        "byte": {
+          "name": "byte",
+          "order": 1,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": false,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "short": {
+          "name": "short",
+          "order": 2,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": false,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "int": {
+          "name": "int",
+          "order": 3,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": false,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "long": {
+          "name": "long",
+          "order": 4,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": false,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "float": {
+          "name": "float",
+          "order": 5,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": false,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "double": {
+          "name": "double",
+          "order": 6,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": false,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "string": {
+          "name": "string",
+          "order": 7,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "char": {
+          "name": "char",
+          "order": 8,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": false,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "boolean": {
+          "name": "boolean",
+          "order": 9,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": false,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "byteNullable": {
+          "name": "byteNullable",
+          "order": 10,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": false,
+          "hasNullableAnnotation": true,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "shortNullable": {
+          "name": "shortNullable",
+          "order": 11,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": false,
+          "hasNullableAnnotation": true,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "intNullable": {
+          "name": "intNullable",
+          "order": 12,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": false,
+          "hasNullableAnnotation": true,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "longNullable": {
+          "name": "longNullable",
+          "order": 13,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": false,
+          "hasNullableAnnotation": true,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "floatNullable": {
+          "name": "floatNullable",
+          "order": 14,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": false,
+          "hasNullableAnnotation": true,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "doubleNullable": {
+          "name": "doubleNullable",
+          "order": 15,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": false,
+          "hasNullableAnnotation": true,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "stringNullable": {
+          "name": "stringNullable",
+          "order": 16,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": false,
+          "hasNullableAnnotation": true,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "charNullable": {
+          "name": "charNullable",
+          "order": 17,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": false,
+          "hasNullableAnnotation": true,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "booleanNullable": {
+          "name": "booleanNullable",
+          "order": 18,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": false,
+          "hasNullableAnnotation": true,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        }
+      },
+      "collectedBy": "kapt",
+      "name": "com.example.contract.BasicTypeContract"
+    },
+    {
+      "contract": {
+        "className": "OneSupertypeOverrideContractParent",
+        "packageName": "com.example.contract"
+      },
+      "metadata": {
+        "kind": 1,
+        "packageName": "",
+        "metadataVersion": [
+          1,
+          1,
+          15
+        ],
+        "bytecodeVersion": [
+          1,
+          0,
+          3
+        ],
+        "data1": [
+          "\u0000\u0012\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0000\n\u0002\u0010\u000e\n\u0002\b\n\bf\u0018\u00002\u00020\u0001R\u001a\u0010\u0002\u001a\u00020\u00038&X§\u0004¢\u0006\f\u0012\u0004\b\u0004\u0010\u0005\u001a\u0004\b\u0006\u0010\u0007R\u001a\u0010\b\u001a\u00020\u00038&X§\u0004¢\u0006\f\u0012\u0004\b\t\u0010\u0005\u001a\u0004\b\n\u0010\u0007R\u0014\u0010\u000b\u001a\u00020\u00038gX¦\u0004¢\u0006\u0006\u001a\u0004\b\f\u0010\u0007¨\u0006\r"
+        ],
+        "data2": [
+          "Lcom/example/contract/OneSupertypeOverrideContractParent;",
+          "",
+          "firstName",
+          "",
+          "firstName$annotations",
+          "()V",
+          "getFirstName",
+          "()Ljava/lang/String;",
+          "lastName",
+          "lastName$annotations",
+          "getLastName",
+          "zelda",
+          "getZelda",
+          "example-jvm"
+        ],
+        "extraString": "",
+        "extraInt": 0
+      },
+      "supertypes": [
+      ],
+      "properties": {
+        "zelda": {
+          "name": "zelda",
+          "order": 1,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": true,
+          "fakedType": "zelda.character"
+        },
+        "firstName": {
+          "name": "firstName",
+          "order": 2,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": true,
+          "fakedType": "name.firstName"
+        },
+        "lastName": {
+          "name": "lastName",
+          "order": 3,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": true,
+          "fakedType": "name.lastName"
+        }
+      },
+      "collectedBy": "kapt-supertype",
+      "name": "com.example.contract.OneSupertypeOverrideContractParent"
+    },
+    {
+      "contract": {
+        "className": "OneSupertypeOverrideContract",
+        "packageName": "com.example.contract"
+      },
+      "metadata": {
+        "kind": 1,
+        "packageName": "",
+        "metadataVersion": [
+          1,
+          1,
+          15
+        ],
+        "bytecodeVersion": [
+          1,
+          0,
+          3
+        ],
+        "data1": [
+          "\u0000\u0016\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010\u000e\n\u0002\b\n\bf\u0018\u0000 \r2\u00020\u00012\u00020\u0002:\u0001\rR\u001a\u0010\u0003\u001a\u00020\u00048&X§\u0004¢\u0006\f\u0012\u0004\b\u0005\u0010\u0006\u001a\u0004\b\u0007\u0010\bR\u0012\u0010\t\u001a\u00020\u0004X¦\u0004¢\u0006\u0006\u001a\u0004\b\n\u0010\bR\u0012\u0010\u000b\u001a\u00020\u0004X¦\u0004¢\u0006\u0006\u001a\u0004\b\f\u0010\b¨\u0006\u000e"
+        ],
+        "data2": [
+          "Lcom/example/contract/OneSupertypeOverrideContract;",
+          "Lcom/example/contract/OneSupertypeOverrideContractParent;",
+          "Lnet/ntworld/foundation/cqrs/Command;",
+          "email",
+          "",
+          "email$annotations",
+          "()V",
+          "getEmail",
+          "()Ljava/lang/String;",
+          "firstName",
+          "getFirstName",
+          "lastName",
+          "getLastName",
+          "Companion",
+          "example-jvm"
+        ],
+        "extraString": "",
+        "extraInt": 0
+      },
+      "supertypes": [
+        "com.example.contract.OneSupertypeOverrideContractParent",
+        "net.ntworld.foundation.cqrs.Command"
+      ],
+      "properties": {
+        "email": {
+          "name": "email",
+          "order": 1,
+          "unknownAnnotations": [
+            "com.example.contract.EmailFaked"
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "firstName": {
+          "name": "firstName",
+          "order": 2,
+          "unknownAnnotations": [
+            "java.lang.Override"
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "lastName": {
+          "name": "lastName",
+          "order": 3,
+          "unknownAnnotations": [
+            "java.lang.Override"
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        }
+      },
+      "collectedBy": "kapt",
+      "name": "com.example.contract.OneSupertypeOverrideContract"
+    },
+    {
+      "contract": {
+        "className": "OneSupertypeContractParent",
+        "packageName": "com.example.contract"
+      },
+      "metadata": {
+        "kind": 1,
+        "packageName": "",
+        "metadataVersion": [
+          1,
+          1,
+          15
+        ],
+        "bytecodeVersion": [
+          1,
+          0,
+          3
+        ],
+        "data1": [
+          "\u0000\u0012\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0000\n\u0002\u0010\u000e\n\u0002\b\n\bf\u0018\u00002\u00020\u0001R\u001a\u0010\u0002\u001a\u00020\u00038&X§\u0004¢\u0006\f\u0012\u0004\b\u0004\u0010\u0005\u001a\u0004\b\u0006\u0010\u0007R\u001a\u0010\b\u001a\u00020\u00038&X§\u0004¢\u0006\f\u0012\u0004\b\t\u0010\u0005\u001a\u0004\b\n\u0010\u0007R\u0014\u0010\u000b\u001a\u00020\u00038gX¦\u0004¢\u0006\u0006\u001a\u0004\b\f\u0010\u0007¨\u0006\r"
+        ],
+        "data2": [
+          "Lcom/example/contract/OneSupertypeContractParent;",
+          "",
+          "firstName",
+          "",
+          "firstName$annotations",
+          "()V",
+          "getFirstName",
+          "()Ljava/lang/String;",
+          "lastName",
+          "lastName$annotations",
+          "getLastName",
+          "zelda",
+          "getZelda",
+          "example-jvm"
+        ],
+        "extraString": "",
+        "extraInt": 0
+      },
+      "supertypes": [
+      ],
+      "properties": {
+        "zelda": {
+          "name": "zelda",
+          "order": 1,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": true,
+          "fakedType": "zelda.character"
+        },
+        "firstName": {
+          "name": "firstName",
+          "order": 2,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": true,
+          "fakedType": "name.firstName"
+        },
+        "lastName": {
+          "name": "lastName",
+          "order": 3,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": true,
+          "fakedType": "name.lastName"
+        }
+      },
+      "collectedBy": "kapt-supertype",
+      "name": "com.example.contract.OneSupertypeContractParent"
+    },
+    {
+      "contract": {
+        "className": "OneSupertypeContract",
+        "packageName": "com.example.contract"
+      },
+      "metadata": {
+        "kind": 1,
+        "packageName": "",
+        "metadataVersion": [
+          1,
+          1,
+          15
+        ],
+        "bytecodeVersion": [
+          1,
+          0,
+          3
+        ],
+        "data1": [
+          "\u0000\u0016\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010\u000e\n\u0002\b\u0006\bf\u0018\u0000 \t2\u00020\u00012\u00020\u0002:\u0001\tR\u001a\u0010\u0003\u001a\u00020\u00048&X§\u0004¢\u0006\f\u0012\u0004\b\u0005\u0010\u0006\u001a\u0004\b\u0007\u0010\b¨\u0006\n"
+        ],
+        "data2": [
+          "Lcom/example/contract/OneSupertypeContract;",
+          "Lcom/example/contract/OneSupertypeContractParent;",
+          "Lnet/ntworld/foundation/cqrs/Command;",
+          "email",
+          "",
+          "email$annotations",
+          "()V",
+          "getEmail",
+          "()Ljava/lang/String;",
+          "Companion",
+          "example-jvm"
+        ],
+        "extraString": "",
+        "extraInt": 0
+      },
+      "supertypes": [
+        "com.example.contract.OneSupertypeContractParent",
+        "net.ntworld.foundation.cqrs.Command"
+      ],
+      "properties": {
+        "email": {
+          "name": "email",
+          "order": 1,
+          "unknownAnnotations": [
+            "com.example.contract.EmailFaked"
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        }
+      },
+      "collectedBy": "kapt",
+      "name": "com.example.contract.OneSupertypeContract"
+    },
+    {
+      "contract": {
+        "className": "ListTypeContract",
+        "packageName": "com.example.contract"
+      },
+      "metadata": {
+        "kind": 1,
+        "packageName": "",
+        "metadataVersion": [
+          1,
+          1,
+          15
+        ],
+        "bytecodeVersion": [
+          1,
+          0,
+          3
+        ],
+        "data1": [
+          "\u0000\u001e\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010 \n\u0002\u0010\u0005\n\u0002\b\u0005\n\u0002\u0010\u000e\n\u0002\b\r\bf\u0018\u0000 \u00162\u00020\u0001:\u0001\u0016R\u0018\u0010\u0002\u001a\b\u0012\u0004\u0012\u00020\u00040\u0003X¦\u0004¢\u0006\u0006\u001a\u0004\b\u0005\u0010\u0006R\u001a\u0010\u0007\u001a\n\u0012\u0006\u0012\u0004\u0018\u00010\u00040\u0003X¦\u0004¢\u0006\u0006\u001a\u0004\b\b\u0010\u0006R\u001a\u0010\t\u001a\n\u0012\u0006\u0012\u0004\u0018\u00010\n0\u0003X¦\u0004¢\u0006\u0006\u001a\u0004\b\u000b\u0010\u0006R\u0018\u0010\f\u001a\b\u0012\u0004\u0012\u00020\n0\u0003X¦\u0004¢\u0006\u0006\u001a\u0004\b\r\u0010\u0006R\u001a\u0010\u000e\u001a\n\u0012\u0004\u0012\u00020\u0004\u0018\u00010\u0003X¦\u0004¢\u0006\u0006\u001a\u0004\b\u000f\u0010\u0006R\u001c\u0010\u0010\u001a\f\u0012\u0006\u0012\u0004\u0018\u00010\u0004\u0018\u00010\u0003X¦\u0004¢\u0006\u0006\u001a\u0004\b\u0011\u0010\u0006R\u001c\u0010\u0012\u001a\f\u0012\u0006\u0012\u0004\u0018\u00010\n\u0018\u00010\u0003X¦\u0004¢\u0006\u0006\u001a\u0004\b\u0013\u0010\u0006R\u001a\u0010\u0014\u001a\n\u0012\u0004\u0012\u00020\n\u0018\u00010\u0003X¦\u0004¢\u0006\u0006\u001a\u0004\b\u0015\u0010\u0006¨\u0006\u0017"
+        ],
+        "data2": [
+          "Lcom/example/contract/ListTypeContract;",
+          "Lnet/ntworld/foundation/cqrs/Command;",
+          "listByte",
+          "",
+          "",
+          "getListByte",
+          "()Ljava/util/List;",
+          "listOfNullableByte",
+          "getListOfNullableByte",
+          "listOfNullableString",
+          "",
+          "getListOfNullableString",
+          "listString",
+          "getListString",
+          "nullableListOfByte",
+          "getNullableListOfByte",
+          "nullableListOfNullableByte",
+          "getNullableListOfNullableByte",
+          "nullableListOfNullableString",
+          "getNullableListOfNullableString",
+          "nullableListOfString",
+          "getNullableListOfString",
+          "Companion",
+          "example-jvm"
+        ],
+        "extraString": "",
+        "extraInt": 0
+      },
+      "supertypes": [
+        "net.ntworld.foundation.cqrs.Command"
+      ],
+      "properties": {
+        "listByte": {
+          "name": "listByte",
+          "order": 1,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "listOfNullableByte": {
+          "name": "listOfNullableByte",
+          "order": 2,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "nullableListOfByte": {
+          "name": "nullableListOfByte",
+          "order": 3,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": false,
+          "hasNullableAnnotation": true,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "nullableListOfNullableByte": {
+          "name": "nullableListOfNullableByte",
+          "order": 4,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": false,
+          "hasNullableAnnotation": true,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "listString": {
+          "name": "listString",
+          "order": 5,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "listOfNullableString": {
+          "name": "listOfNullableString",
+          "order": 6,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "nullableListOfString": {
+          "name": "nullableListOfString",
+          "order": 7,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": false,
+          "hasNullableAnnotation": true,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "nullableListOfNullableString": {
+          "name": "nullableListOfNullableString",
+          "order": 8,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": false,
+          "hasNullableAnnotation": true,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        }
+      },
+      "collectedBy": "kapt",
+      "name": "com.example.contract.ListTypeContract"
+    },
+    {
+      "contract": {
+        "className": "NoSupertypeContractCommand",
+        "packageName": "com.example.contract"
+      },
+      "metadata": {
+        "kind": 1,
+        "packageName": "",
+        "metadataVersion": [
+          1,
+          1,
+          15
+        ],
+        "bytecodeVersion": [
+          1,
+          0,
+          3
+        ],
+        "data1": [
+          "\u0000\"\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010\u000e\n\u0002\b\u0005\n\u0002\u0010 \n\u0002\b\u0007\n\u0002\u0010\b\n\u0002\b\u0005\bf\u0018\u0000 \u00152\u00020\u0001:\u0001\u0015R\u001c\u0010\u0002\u001a\u0004\u0018\u00010\u00038&X§\u0004¢\u0006\f\u0012\u0004\b\u0004\u0010\u0005\u001a\u0004\b\u0006\u0010\u0007R \u0010\b\u001a\b\u0012\u0004\u0012\u00020\u00030\t8&X§\u0004¢\u0006\f\u0012\u0004\b\n\u0010\u0005\u001a\u0004\b\u000b\u0010\fR\u001a\u0010\r\u001a\u00020\u00038&X§\u0004¢\u0006\f\u0012\u0004\b\u000e\u0010\u0005\u001a\u0004\b\u000f\u0010\u0007R\u0018\u0010\u0010\u001a\b\u0012\u0004\u0012\u00020\u00110\tX¦\u0004¢\u0006\u0006\u001a\u0004\b\u0012\u0010\fR\u0014\u0010\u0013\u001a\u00020\u00038gX¦\u0004¢\u0006\u0006\u001a\u0004\b\u0014\u0010\u0007¨\u0006\u0016"
+        ],
+        "data2": [
+          "Lcom/example/contract/NoSupertypeContractCommand;",
+          "Lnet/ntworld/foundation/cqrs/Command;",
+          "email",
+          "",
+          "email$annotations",
+          "()V",
+          "getEmail",
+          "()Ljava/lang/String;",
+          "list",
+          "",
+          "list$annotations",
+          "getList",
+          "()Ljava/util/List;",
+          "name",
+          "name$annotations",
+          "getName",
+          "phones",
+          "",
+          "getPhones",
+          "zelda",
+          "getZelda",
+          "Companion",
+          "example-jvm"
+        ],
+        "extraString": "",
+        "extraInt": 0
+      },
+      "supertypes": [
+        "net.ntworld.foundation.cqrs.Command"
+      ],
+      "properties": {
+        "zelda": {
+          "name": "zelda",
+          "order": 1,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": true,
+          "fakedType": "zelda.character"
+        },
+        "name": {
+          "name": "name",
+          "order": 2,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": true,
+          "fakedType": "starTrek.character"
+        },
+        "email": {
+          "name": "email",
+          "order": 3,
+          "unknownAnnotations": [
+            "com.example.contract.EmailFaked"
+          ],
+          "hasNotNullAnnotation": false,
+          "hasNullableAnnotation": true,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "list": {
+          "name": "list",
+          "order": 4,
+          "unknownAnnotations": [
+            "com.example.contract.NoAffectedFaked"
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "phones": {
+          "name": "phones",
+          "order": 5,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        }
+      },
+      "collectedBy": "kapt",
+      "name": "com.example.contract.NoSupertypeContractCommand"
+    },
+    {
+      "contract": {
+        "className": "CreateTodoCommand",
+        "packageName": "com.example.contract"
+      },
+      "metadata": {
+        "kind": 1,
+        "packageName": "",
+        "metadataVersion": [
+          1,
+          1,
+          15
+        ],
+        "bytecodeVersion": [
+          1,
+          0,
+          3
+        ],
+        "data1": [
+          "\u0000\u001a\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010\u000e\n\u0002\b\u0005\n\u0002\u0010 \n\u0002\b\u0007\bg\u0018\u00002\u00020\u0001R\u0014\u0010\u0002\u001a\u00020\u00038gX¦\u0004¢\u0006\u0006\u001a\u0004\b\u0004\u0010\u0005R\u0012\u0010\u0006\u001a\u00020\u0003X¦\u0004¢\u0006\u0006\u001a\u0004\b\u0007\u0010\u0005R \u0010\b\u001a\b\u0012\u0004\u0012\u00020\u00030\t8&X§\u0004¢\u0006\f\u0012\u0004\b\n\u0010\u000b\u001a\u0004\b\f\u0010\rR\u0014\u0010\u000e\u001a\u00020\u00038gX¦\u0004¢\u0006\u0006\u001a\u0004\b\u000f\u0010\u0005¨\u0006\u0010"
+        ],
+        "data2": [
+          "Lcom/example/contract/CreateTodoCommand;",
+          "Lnet/ntworld/foundation/cqrs/Command;",
+          "id",
+          "",
+          "getId",
+          "()Ljava/lang/String;",
+          "something",
+          "getSomething",
+          "task",
+          "",
+          "task$annotations",
+          "()V",
+          "getTask",
+          "()Ljava/util/List;",
+          "zebra",
+          "getZebra",
+          "example-jvm"
+        ],
+        "extraString": "",
+        "extraInt": 0
+      },
+      "supertypes": [
+        "net.ntworld.foundation.cqrs.Command"
+      ],
+      "properties": {
+        "task": {
+          "name": "task",
+          "order": 1,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": true,
+          "fakedType": "starTrek.specie"
+        },
+        "zebra": {
+          "name": "zebra",
+          "order": 2,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": true,
+          "fakedType": "starTrek.location"
+        },
+        "id": {
+          "name": "id",
+          "order": 3,
+          "unknownAnnotations": [
+            "com.example.contract.EmailFaked"
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "something": {
+          "name": "something",
+          "order": 4,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        }
+      },
+      "collectedBy": "kapt",
+      "name": "com.example.contract.CreateTodoCommand"
+    },
+    {
+      "contract": {
+        "className": "Query",
+        "packageName": "net.ntworld.foundation.cqrs"
+      },
+      "metadata": {
+        "kind": 1,
+        "packageName": "",
+        "metadataVersion": [
+          1,
+          1,
+          15
+        ],
+        "bytecodeVersion": [
+          1,
+          0,
+          3
+        ],
+        "data1": [
+          "\u0000\u0010\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\bf\u0018\u0000*\b\b\u0000\u0010\u0001*\u00020\u00022\u00020\u0003¨\u0006\u0004"
+        ],
+        "data2": [
+          "Lnet/ntworld/foundation/cqrs/Query;",
+          "R",
+          "Lnet/ntworld/foundation/cqrs/QueryResult;",
+          "Lnet/ntworld/foundation/Contract;",
+          "foundation"
+        ],
+        "extraString": "",
+        "extraInt": 0
+      },
+      "supertypes": [
+      ],
+      "properties": {
+      },
+      "collectedBy": "kapt-supertype",
+      "name": "net.ntworld.foundation.cqrs.Query"
+    },
+    {
+      "contract": {
+        "className": "GetAllTodoQuery",
+        "packageName": "com.example.contract"
+      },
+      "metadata": {
+        "kind": 1,
+        "packageName": "",
+        "metadataVersion": [
+          1,
+          1,
+          15
+        ],
+        "bytecodeVersion": [
+          1,
+          0,
+          3
+        ],
+        "data1": [
+          "\u0000\u000e\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\bg\u0018\u00002\b\u0012\u0004\u0012\u00020\u00020\u0001¨\u0006\u0003"
+        ],
+        "data2": [
+          "Lcom/example/contract/GetAllTodoQuery;",
+          "Lnet/ntworld/foundation/cqrs/Query;",
+          "Lcom/example/contract/GetAllTodoQueryResult;",
+          "example-jvm"
+        ],
+        "extraString": "",
+        "extraInt": 0
+      },
+      "supertypes": [
+        "net.ntworld.foundation.cqrs.Query"
+      ],
+      "properties": {
+      },
+      "collectedBy": "kapt",
+      "name": "com.example.contract.GetAllTodoQuery"
+    },
+    {
+      "contract": {
+        "className": "State",
+        "packageName": "net.ntworld.foundation"
+      },
+      "metadata": {
+        "kind": 1,
+        "packageName": "",
+        "metadataVersion": [
+          1,
+          1,
+          15
+        ],
+        "bytecodeVersion": [
+          1,
+          0,
+          3
+        ],
+        "data1": [
+          "\u0000\u001a\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010\u000e\n\u0002\b\u0003\n\u0002\u0010\u000b\n\u0002\b\u0002\bf\u0018\u00002\u00020\u0001R\u0012\u0010\u0002\u001a\u00020\u0003X¦\u0004¢\u0006\u0006\u001a\u0004\b\u0004\u0010\u0005R\u0012\u0010\u0006\u001a\u00020\u0007X¦\u0004¢\u0006\u0006\u001a\u0004\b\u0006\u0010\b¨\u0006\t"
+        ],
+        "data2": [
+          "Lnet/ntworld/foundation/State;",
+          "Lnet/ntworld/foundation/Contract;",
+          "id",
+          "",
+          "getId",
+          "()Ljava/lang/String;",
+          "isGenerated",
+          "",
+          "()Z",
+          "foundation"
+        ],
+        "extraString": "",
+        "extraInt": 0
+      },
+      "supertypes": [
+      ],
+      "properties": {
+        "id": {
+          "name": "id",
+          "order": 1,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        },
+        "isGenerated": {
+          "name": "isGenerated",
+          "order": 2,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": false,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        }
+      },
+      "collectedBy": "kapt-supertype",
+      "name": "net.ntworld.foundation.State"
+    },
+    {
+      "contract": {
+        "className": "TodoState",
+        "packageName": "com.example.aggregate"
+      },
+      "metadata": {
+        "kind": 1,
+        "packageName": "",
+        "metadataVersion": [
+          1,
+          1,
+          15
+        ],
+        "bytecodeVersion": [
+          1,
+          0,
+          3
+        ],
+        "data1": [
+          "\u0000\u0012\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010\u000e\n\u0002\b\u0003\bf\u0018\u00002\u00020\u0001R\u0012\u0010\u0002\u001a\u00020\u0003X¦\u0004¢\u0006\u0006\u001a\u0004\b\u0004\u0010\u0005¨\u0006\u0006"
+        ],
+        "data2": [
+          "Lcom/example/aggregate/TodoState;",
+          "Lnet/ntworld/foundation/State;",
+          "name",
+          "",
+          "getName",
+          "()Ljava/lang/String;",
+          "example-jvm"
+        ],
+        "extraString": "",
+        "extraInt": 0
+      },
+      "supertypes": [
+        "net.ntworld.foundation.State"
+      ],
+      "properties": {
+        "name": {
+          "name": "name",
+          "order": 1,
+          "unknownAnnotations": [
+          ],
+          "hasNotNullAnnotation": true,
+          "hasNullableAnnotation": false,
+          "hasFakedAnnotation": false,
+          "fakedType": null
+        }
+      },
+      "collectedBy": "kapt",
+      "name": "com.example.aggregate.TodoState"
+    }
+  ],
+  "fakedAnnotations": [
+    {
+      "annotation": {
+        "className": "EmailFaked",
+        "packageName": "com.example.contract"
+      },
+      "fakedType": "internet.emailAddress",
+      "name": "com.example.contract.EmailFaked"
+    }
+  ]
+}

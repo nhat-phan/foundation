@@ -7,6 +7,7 @@ import net.ntworld.foundation.generator.type.AnnotationProcessorRunInfo
 @Serializable
 data class GeneratorSettings(
     val description: String = "",
+    val processorVersion: String = "",
     val globalDirectory: String,
     val annotationProcessorRunInfo: List<AnnotationProcessorRunInfo>,
     val aggregateFactories: List<AggregateFactorySetting>,

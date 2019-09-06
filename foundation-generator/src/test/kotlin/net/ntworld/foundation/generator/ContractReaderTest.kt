@@ -1,18 +1,37 @@
 package net.ntworld.foundation.generator
 
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.fail
 
 class ContractReaderTest : TestSuite() {
     internal class ExpectedProperty(
         val order: Int,
         val type: String,
+        val hasBody: Boolean = false,
         val fakedType: String = ""
     )
 
     @Test
+    fun testHasCompanionObject() {
+        val allSettings = readSettingsFromResource("/settings/com.example.settings.json")
+        val exampleContractExpectations = mapOf(
+            "com.example.contract.BasicTypeContract" to false,
+            "com.example.contract.DefaultValueContract" to true,
+            "com.example.contract.ListTypeContract" to true,
+            "com.example.contract.NoSupertypeContractCommand" to true,
+            "com.example.contract.OneSupertypeContract" to true,
+            "com.example.contract.OneSupertypeOverrideContract" to true
+        )
+        val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
+        exampleContractExpectations.forEach { (name, expected) ->
+            assertEquals(expected, reader.hasCompanionObject(name), "failed with $name")
+        }
+    }
+
+    @Test
     fun `testFindPropertyFor BasicTypesContract`() {
-        val allSettings = readSettingsFromResource("/settings/contract.basic-types.json")
+        val allSettings = readSettingsFromResource("/settings/com.example.settings.json")
         val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
         assertMatchExpectations(
             mapOf(
@@ -41,7 +60,7 @@ class ContractReaderTest : TestSuite() {
 
     @Test
     fun `testFindPropertyFor ListTypeContract`() {
-        val allSettings = readSettingsFromResource("/settings/contract.list-type.json")
+        val allSettings = readSettingsFromResource("/settings/com.example.settings.json")
         val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
         assertMatchExpectations(
             mapOf(
@@ -84,7 +103,7 @@ class ContractReaderTest : TestSuite() {
 
     @Test
     fun `testFindPropertyFor NoSupertypeContract`() {
-        val allSettings = readSettingsFromResource("/settings/contract.no-supertypes.json")
+        val allSettings = readSettingsFromResource("/settings/com.example.settings.json")
         val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
         assertMatchExpectations(
             mapOf(
@@ -120,7 +139,7 @@ class ContractReaderTest : TestSuite() {
 
     @Test
     fun `testFindPropertyFor OneSupertypeContract`() {
-        val allSettings = readSettingsFromResource("/settings/contract.one-supertype.json")
+        val allSettings = readSettingsFromResource("/settings/com.example.settings.json")
         val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
         assertMatchExpectations(
             mapOf(
@@ -135,7 +154,7 @@ class ContractReaderTest : TestSuite() {
 
     @Test
     fun `testFindPropertyFor OneSupertypeOverrideContract`() {
-        val allSettings = readSettingsFromResource("/settings/contract.one-supertype-override.json")
+        val allSettings = readSettingsFromResource("/settings/com.example.settings.json")
         val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
         assertMatchExpectations(
             mapOf(
@@ -148,6 +167,21 @@ class ContractReaderTest : TestSuite() {
         )
     }
 
+    @Test
+    fun `testFindPropertyFor DefaultValueContract`() {
+        val allSettings = readSettingsFromResource("/settings/com.example.settings.json")
+        val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
+        assertMatchExpectations(
+            mapOf(
+                "message" to ExpectedProperty(order = 1, type = "kotlin.String"),
+                "code" to ExpectedProperty(order = 2, type = "kotlin.Int", fakedType = "number.randomNumber"),
+                "type" to ExpectedProperty(order = 3, type = "kotlin.String", hasBody = true)
+            ),
+            reader.findPropertiesOfContract("com.example.contract.DefaultValueContract")
+        )
+    }
+
+    // Bookmark: Add new test case when adding new contract settings
     // TODO: Add multiple supertypes cases
 
     private fun assertMatchExpectations(
@@ -183,6 +217,10 @@ class ContractReaderTest : TestSuite() {
 
             if (expectation.fakedType != actual.fakedType) {
                 fail("""Expect "fakedType" of property "${actual.name}" should be "${expectation.fakedType}" but actual value is "${actual.fakedType}"""")
+            }
+
+            if (expectation.hasBody != actual.hasBody) {
+                fail("""Expect "hasBody" of property "${actual.name}" should be "${expectation.hasBody}" but actual value is "${actual.hasBody}"""")
             }
 
             if (expectation.type != actual.type.toString()) {

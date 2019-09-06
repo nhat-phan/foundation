@@ -1,0 +1,15 @@
+import com.example.contract.OneSupertypeOverrideContract
+import com.example.contract.generated.OneSupertypeOverrideContractImpl
+import kotlin.String
+
+fun OneSupertypeOverrideContract.Companion.make(
+  zelda: String,
+  email: String,
+  firstName: String,
+  lastName: String
+): OneSupertypeOverrideContract = OneSupertypeOverrideContractImpl(
+  zelda = zelda,
+  email = email,
+  firstName = firstName,
+  lastName = lastName
+)

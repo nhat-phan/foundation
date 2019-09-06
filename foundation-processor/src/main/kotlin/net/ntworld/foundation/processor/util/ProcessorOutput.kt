@@ -9,6 +9,7 @@ import javax.annotation.processing.ProcessingEnvironment
 import javax.tools.Diagnostic
 
 internal object ProcessorOutput {
+    const val PROCESSOR_VERSION = "0.3.x"
     private var isTest: Boolean = false
 
     private val files: MutableMap<String, String> = mutableMapOf()
@@ -42,6 +43,7 @@ internal object ProcessorOutput {
         if (!files.contains(path)) {
             return GeneratorSettings(
                 description = "",
+                processorVersion = PROCESSOR_VERSION,
                 globalDirectory = "",
                 annotationProcessorRunInfo = listOf(),
                 eventSourcings = listOf(),
@@ -71,6 +73,7 @@ internal object ProcessorOutput {
         if (!file.exists()) {
             return GeneratorSettings(
                 description = "",
+                processorVersion = PROCESSOR_VERSION,
                 globalDirectory = "",
                 annotationProcessorRunInfo = listOf(),
                 eventSourcings = listOf(),

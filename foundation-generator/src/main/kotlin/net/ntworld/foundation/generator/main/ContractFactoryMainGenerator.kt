@@ -8,6 +8,7 @@ import net.ntworld.foundation.generator.Utility
 import net.ntworld.foundation.generator.type.ClassInfo
 import kotlin.reflect.KClass
 
+@Deprecated("No longer needed", level = DeprecationLevel.WARNING)
 class ContractFactoryMainGenerator {
     data class Item(
         val contract: ClassInfo,

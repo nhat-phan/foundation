@@ -1,22 +1,21 @@
 package net.ntworld.foundation.processor.internal
 
-import net.ntworld.foundation.Aggregate
-import net.ntworld.foundation.Event
-import net.ntworld.foundation.Implementation
-import net.ntworld.foundation.State
+import net.ntworld.foundation.*
 import net.ntworld.foundation.cqrs.Command
+import net.ntworld.foundation.cqrs.Query
+import net.ntworld.foundation.cqrs.QueryResult
 import net.ntworld.foundation.cqrs.ReceivedData
 import net.ntworld.foundation.generator.GeneratorSettings
 import net.ntworld.foundation.generator.setting.ImplementationSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 import net.ntworld.foundation.processor.util.CodeUtility
 import net.ntworld.foundation.processor.util.ContractCollector
+import net.ntworld.foundation.processor.util.FrameworkProcessor
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.DeclaredType
-import javax.management.Query
 
 class ImplementationProcessor : Processor {
     override val annotations: List<Class<out Annotation>> = listOf(
@@ -25,11 +24,16 @@ class ImplementationProcessor : Processor {
 
     val definedInterfaces = mapOf<String, ImplementationSetting.Type>(
         Aggregate::class.java.canonicalName to ImplementationSetting.Type.Aggregate,
+        Error::class.java.canonicalName to ImplementationSetting.Type.Error,
         State::class.java.canonicalName to ImplementationSetting.Type.State,
         ReceivedData::class.java.canonicalName to ImplementationSetting.Type.ReceivedData,
         Event::class.java.canonicalName to ImplementationSetting.Type.Event,
         Command::class.java.canonicalName to ImplementationSetting.Type.Command,
-        Query::class.java.canonicalName to ImplementationSetting.Type.Query
+        Query::class.java.canonicalName to ImplementationSetting.Type.Query,
+        QueryResult::class.java.canonicalName to ImplementationSetting.Type.QueryResult,
+        Request::class.java.canonicalName to ImplementationSetting.Type.Request,
+        Response::class.java.canonicalName to ImplementationSetting.Type.Response,
+        FrameworkProcessor.Contract to ImplementationSetting.Type.Unknown
     )
 
     private data class CollectedImplementation(
@@ -91,13 +95,12 @@ class ImplementationProcessor : Processor {
     ): Boolean {
         return when (annotation) {
             Implementation::class.java -> {
-                element.kind.isClass
-//                element.kind.isClass && !CodeUtility.isImplementInterface(
-//                    processingEnv,
-//                    element.asType(),
-//                    Aggregate::class.java.canonicalName,
-//                    true
-//                )
+                element.kind.isClass && CodeUtility.isImplementInterface(
+                    processingEnv,
+                    element.asType(),
+                    FrameworkProcessor.Contract,
+                    true
+                )
             }
 
             else -> false

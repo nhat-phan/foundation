@@ -1,3 +1,3 @@
 package net.ntworld.foundation
 
-interface Request<R : Response<*>>
+interface Request<R : Response<*>> : Contract

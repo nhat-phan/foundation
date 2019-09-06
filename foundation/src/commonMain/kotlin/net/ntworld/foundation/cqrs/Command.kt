@@ -1,3 +1,5 @@
 package net.ntworld.foundation.cqrs
 
-interface Command
+import net.ntworld.foundation.Contract
+
+interface Command : Contract

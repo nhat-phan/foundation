@@ -1,6 +1,6 @@
 package net.ntworld.foundation
 
-interface Response<T> {
+interface Response<T> : Contract {
     val error: Error?
 
     val value: T

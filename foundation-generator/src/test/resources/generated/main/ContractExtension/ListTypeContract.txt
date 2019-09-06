@@ -1,0 +1,25 @@
+import com.example.contract.ListTypeContract
+import com.example.contract.generated.ListTypeContractImpl
+import kotlin.Byte
+import kotlin.String
+import kotlin.collections.List
+
+fun ListTypeContract.Companion.make(
+  listByte: List<Byte>,
+  listOfNullableByte: List<Byte?>,
+  nullableListOfByte: List<Byte>?,
+  nullableListOfNullableByte: List<Byte?>?,
+  listString: List<String>,
+  listOfNullableString: List<String?>,
+  nullableListOfString: List<String>?,
+  nullableListOfNullableString: List<String?>?
+): ListTypeContract = ListTypeContractImpl(
+  listByte = listByte,
+  listOfNullableByte = listOfNullableByte,
+  nullableListOfByte = nullableListOfByte,
+  nullableListOfNullableByte = nullableListOfNullableByte,
+  listString = listString,
+  listOfNullableString = listOfNullableString,
+  nullableListOfString = nullableListOfString,
+  nullableListOfNullableString = nullableListOfNullableString
+)

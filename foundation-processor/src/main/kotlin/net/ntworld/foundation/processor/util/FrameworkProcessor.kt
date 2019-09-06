@@ -6,6 +6,7 @@ internal object FrameworkProcessor {
 
     const val KAPT_KOTLIN_GENERATED_OPTION_NAME = "kapt.kotlin.generated"
 
+    const val Contract = "net.ntworld.foundation.Contract"
     const val Aggregate = "net.ntworld.foundation.Aggregate"
     const val AbstractEventSourced = "net.ntworld.foundation.eventSourcing.AbstractEventSourced"
 

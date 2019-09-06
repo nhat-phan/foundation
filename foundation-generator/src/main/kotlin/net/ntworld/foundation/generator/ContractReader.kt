@@ -7,10 +7,8 @@ import com.squareup.kotlinpoet.asTypeName
 import kotlinx.metadata.*
 import kotlinx.metadata.jvm.KotlinClassHeader
 import kotlinx.metadata.jvm.KotlinClassMetadata
-import kotlinx.metadata.jvm.isRaw
 import net.ntworld.foundation.generator.setting.ContractSetting
 import net.ntworld.foundation.generator.setting.FakedAnnotationSetting
-import net.ntworld.foundation.generator.type.ContractProperty
 
 class ContractReader(
     contractSettings: List<ContractSetting>,
@@ -20,7 +18,8 @@ class ContractReader(
         val name: String,
         val order: Int,
         val type: TypeName,
-        val fakedType: String
+        val hasBody: Boolean = false,
+        val fakedType: String = ""
     )
 
     private val settings: Map<String, ContractSetting> = mutableMapOf()
@@ -33,6 +32,15 @@ class ContractReader(
         fakedAnnotationSettings.forEach {
             (fakedAnnotations as MutableMap)[it.name] = it
         }
+    }
+
+    fun hasCompanionObject(name: String): Boolean {
+        val setting: ContractSetting = settings[name] ?: return false
+        val kmClass = findKmClass(setting)
+        if (null === kmClass) {
+            return false
+        }
+        return null !== kmClass.companionObject && kmClass.companionObject == DEFAULT_COMPANION_OBJECT_NAME
     }
 
     fun findPropertiesOfContract(name: String): Map<String, Property>? {
@@ -51,6 +59,7 @@ class ContractReader(
 
     private fun readPropertyOfSetting(setting: ContractSetting, bucket: MutableMap<String, Property>) {
         val orderOffset = bucket.size
+        val kmClass = findKmClass(setting)
         setting.properties.forEach {
             val contractProperty = it.value
             val previousItemInBucket = bucket[contractProperty.name]
@@ -68,29 +77,54 @@ class ContractReader(
                 fakedType = contractProperty.fakedType
             }
 
+            val kmProperty = findKmProperty(kmClass, it.key)
             bucket[contractProperty.name] = Property(
                 name = contractProperty.name,
                 order = order,
-                type = findTypeOfProperty(setting, it.key),
+                type = findTypeOfProperty(kmProperty),
+                hasBody = isPropertyHasBody(kmProperty),
                 fakedType = fakedType
             )
         }
     }
 
-    private fun findTypeOfProperty(setting: ContractSetting, name: String): TypeName {
+    private fun findKmClass(setting: ContractSetting): KmClass? {
         val header = makeKotlinMetadataHeader(setting)
         val metadata = KotlinClassMetadata.read(header)
         if (null === metadata || metadata !is KotlinClassMetadata.Class) {
-            return Any::class.asTypeName().copy(nullable = true)
+            return null
         }
 
         val kmClass = metadata.toKmClass()
-        val kmProperty = findProperty(kmClass, name)
+//        println("=============")
+//        println(kmClass.companionObject)
+//        println("=============")
+        return kmClass
+    }
 
+    private fun findKmProperty(kmClass: KmClass?, name: String): KmProperty? {
+        if (null === kmClass) {
+            return null
+        }
+
+        return kmClass.properties.find {
+            it.name == name
+        }
+    }
+
+    private fun isPropertyHasBody(kmProperty: KmProperty?): Boolean {
+        if (null === kmProperty) {
+            return false
+        }
+
+        return Flag.PropertyAccessor.IS_NOT_DEFAULT(kmProperty.getterFlags) &&
+            !Flag.Common.HAS_ANNOTATIONS(kmProperty.getterFlags)
+    }
+
+    private fun findTypeOfProperty(kmProperty: KmProperty?): TypeName {
         if (null === kmProperty) {
             return Any::class.asTypeName().copy(nullable = true)
         }
-
         return convertKmType(kmProperty.returnType)
     }
 
@@ -136,12 +170,6 @@ class ContractReader(
             packageParts.add(parts[i])
         }
         return ClassName(packageParts.joinToString("."), parts[parts.lastIndex])
-    }
-
-    private fun findProperty(kmClass: KmClass, name: String): KmProperty? {
-        return kmClass.properties.find {
-            it.name == name
-        }
     }
 
     private fun makeKotlinMetadataHeader(setting: ContractSetting): KotlinClassHeader {

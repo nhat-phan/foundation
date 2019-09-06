@@ -7,6 +7,7 @@ import net.ntworld.foundation.generator.Utility
 import net.ntworld.foundation.generator.setting.ContractSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 
+@Deprecated("No longer needed", level = DeprecationLevel.WARNING)
 object ContractImplementationFactoryTestGenerator {
     fun generate(
         setting: ContractSetting,
