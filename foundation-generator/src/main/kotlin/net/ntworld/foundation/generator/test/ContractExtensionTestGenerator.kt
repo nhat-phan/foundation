@@ -14,7 +14,7 @@ internal object ContractExtensionTestGenerator {
         implementation: ClassInfo,
         file: FileSpec.Builder
     ) {
-        val propertiesList = properties.values.toList()
+        val propertiesList = properties.filter { !it.value.hasBody }.values.toList()
         val requiredProperties = (propertiesList.filter { it.fakedType.isEmpty() }).toMutableList()
         val optionalProperties = (propertiesList.filter { it.fakedType.isNotEmpty() }).toMutableList()
         while (optionalProperties.isNotEmpty()) {

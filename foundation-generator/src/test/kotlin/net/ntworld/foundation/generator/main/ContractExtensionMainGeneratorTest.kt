@@ -2,6 +2,7 @@ package net.ntworld.foundation.generator.main
 
 import com.squareup.kotlinpoet.FileSpec
 import net.ntworld.foundation.generator.ContractReader
+import net.ntworld.foundation.generator.GeneratorTest
 import net.ntworld.foundation.generator.TestSuite
 import net.ntworld.foundation.generator.type.ClassInfo
 import kotlin.test.Test
@@ -33,6 +34,17 @@ class ContractExtensionMainGeneratorTest : TestSuite() {
         runTestForContract("OneSupertypeOverrideContract")
     }
 
+    @Test
+    fun `testGenerate DefaultValueContract`() {
+        runTestForContract("DefaultValueContract")
+    }
+
+    @Test
+    fun `testGenerate CustomTypeContract`() {
+        runTestForContract("CustomTypeContractAddress")
+        runTestForContract("CustomTypeContract")
+    }
+
     // Bookmark: Add new test case when adding new contract settings
     // TODO: Add multiple supertypes cases
 
@@ -43,7 +55,7 @@ class ContractExtensionMainGeneratorTest : TestSuite() {
     private fun runTestForContract(name: String) {
         val allSettings = readSettings()
         val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
-        val contract = "com.generator.contract.$name"
+        val contract = GeneratorTest.Contract.namespace(name)
         val setting = allSettings.toMutable().getContract(contract)!!
         val properties = reader.findPropertiesOfContract(contract)!!
         val implementation = ClassInfo(

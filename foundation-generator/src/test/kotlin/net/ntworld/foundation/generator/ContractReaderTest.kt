@@ -16,12 +16,14 @@ class ContractReaderTest : TestSuite() {
     fun testHasCompanionObject() {
         val allSettings = readSettings()
         val testContractExpectations = mapOf(
-            "com.generator.contract.BasicTypeContract" to false,
-            "com.generator.contract.DefaultValueContract" to true,
-            "com.generator.contract.ListTypeContract" to true,
-            "com.generator.contract.NoSupertypeContract" to true,
-            "com.generator.contract.OneSupertypeContract" to true,
-            "com.generator.contract.OneSupertypeOverrideContract" to true
+            GeneratorTest.Contract.namespace(GeneratorTest.Contract.BasicTypeContract) to false,
+            GeneratorTest.Contract.namespace(GeneratorTest.Contract.DefaultValueContract) to true,
+            GeneratorTest.Contract.namespace(GeneratorTest.Contract.ListTypeContract) to true,
+            GeneratorTest.Contract.namespace(GeneratorTest.Contract.NoSupertypeContract) to true,
+            GeneratorTest.Contract.namespace(GeneratorTest.Contract.OneSupertypeContract) to true,
+            GeneratorTest.Contract.namespace(GeneratorTest.Contract.OneSupertypeOverrideContract) to true,
+            GeneratorTest.Contract.namespace(GeneratorTest.Contract.CustomTypeContract) to false,
+            GeneratorTest.Contract.namespace(GeneratorTest.Contract.CustomTypeContractAddress) to false
         )
         val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
         testContractExpectations.forEach { (name, expected) ->
@@ -54,7 +56,7 @@ class ContractReaderTest : TestSuite() {
                 "charNullable" to ExpectedProperty(order = 17, type = "kotlin.Char?"),
                 "booleanNullable" to ExpectedProperty(order = 18, type = "kotlin.Boolean?")
             ),
-            reader.findPropertiesOfContract("com.generator.contract.BasicTypeContract")
+            reader.findPropertiesOfContract(GeneratorTest.Contract.namespace(GeneratorTest.Contract.BasicTypeContract))
         )
     }
 
@@ -97,7 +99,7 @@ class ContractReaderTest : TestSuite() {
                     type = "kotlin.collections.List<kotlin.String?>?"
                 )
             ),
-            reader.findPropertiesOfContract("com.generator.contract.ListTypeContract")
+            reader.findPropertiesOfContract(GeneratorTest.Contract.namespace(GeneratorTest.Contract.ListTypeContract))
         )
     }
 
@@ -133,7 +135,7 @@ class ContractReaderTest : TestSuite() {
                     fakedType = ""
                 )
             ),
-            reader.findPropertiesOfContract("com.generator.contract.NoSupertypeContract")
+            reader.findPropertiesOfContract(GeneratorTest.Contract.namespace(GeneratorTest.Contract.NoSupertypeContract))
         )
     }
 
@@ -148,7 +150,7 @@ class ContractReaderTest : TestSuite() {
                 "lastName" to ExpectedProperty(order = 3, type = "kotlin.String", fakedType = "name.lastName"),
                 "email" to ExpectedProperty(order = 4, type = "kotlin.String", fakedType = "internet.emailAddress")
             ),
-            reader.findPropertiesOfContract("com.generator.contract.OneSupertypeContract")
+            reader.findPropertiesOfContract(GeneratorTest.Contract.namespace(GeneratorTest.Contract.OneSupertypeContract))
         )
     }
 
@@ -163,7 +165,7 @@ class ContractReaderTest : TestSuite() {
                 "firstName" to ExpectedProperty(order = 3, type = "kotlin.String", fakedType = "name.firstName"),
                 "lastName" to ExpectedProperty(order = 4, type = "kotlin.String", fakedType = "name.lastName")
             ),
-            reader.findPropertiesOfContract("com.generator.contract.OneSupertypeOverrideContract")
+            reader.findPropertiesOfContract(GeneratorTest.Contract.namespace(GeneratorTest.Contract.OneSupertypeOverrideContract))
         )
     }
 
@@ -177,7 +179,30 @@ class ContractReaderTest : TestSuite() {
                 "code" to ExpectedProperty(order = 2, type = "kotlin.Int", fakedType = "number.randomNumber"),
                 "type" to ExpectedProperty(order = 3, type = "kotlin.String", hasBody = true)
             ),
-            reader.findPropertiesOfContract("com.generator.contract.DefaultValueContract")
+            reader.findPropertiesOfContract(GeneratorTest.Contract.namespace(GeneratorTest.Contract.DefaultValueContract))
+        )
+    }
+
+    @Test
+    fun `testFindPropertyFor CustomTypeContract`() {
+        val allSettings = readSettings()
+        val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
+        assertMatchExpectations(
+            mapOf(
+                "name" to ExpectedProperty(order = 1, type = "kotlin.String"),
+                "address" to ExpectedProperty(
+                    order = 2,
+                    type = GeneratorTest.Contract.namespace(GeneratorTest.Contract.CustomTypeContractAddress)
+                )
+            ),
+            reader.findPropertiesOfContract(GeneratorTest.Contract.namespace(GeneratorTest.Contract.CustomTypeContract))
+        )
+        assertMatchExpectations(
+            mapOf(
+                "number" to ExpectedProperty(order = 1, type = "kotlin.Int"),
+                "street" to ExpectedProperty(order = 2, type = "kotlin.String")
+            ),
+            reader.findPropertiesOfContract(GeneratorTest.Contract.namespace(GeneratorTest.Contract.CustomTypeContractAddress))
         )
     }
 

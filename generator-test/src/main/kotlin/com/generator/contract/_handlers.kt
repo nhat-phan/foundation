@@ -42,3 +42,15 @@ class OneSupertypeOverrideContractHandler : CommandHandler<OneSupertypeOverrideC
     override fun handle(command: OneSupertypeOverrideContract) {
     }
 }
+
+@Handler
+class CustomTypeContractHandler : CommandHandler<CustomTypeContract> {
+    override fun handle(command: CustomTypeContract) {
+    }
+}
+
+@Handler
+class CustomTypeListContractHandler : CommandHandler<CustomTypeListContract> {
+    override fun handle(command: CustomTypeListContract) {
+    }
+}

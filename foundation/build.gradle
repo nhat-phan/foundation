@@ -79,3 +79,15 @@ kotlin {
         }
     }
 }
+
+//publishing {
+//    publications {
+//        jvm {
+//            artifactId = "foundation"
+//        }
+//
+//        kotlinMultiplatform {
+//            artifactId = "foundation-common"
+//        }
+//    }
+//}

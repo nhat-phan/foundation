@@ -25,7 +25,8 @@ class AggregateFactoryMainGeneratorTest: TestSuite() {
             isEventSourced = false
         )
         val file = AggregateFactoryMainGenerator.generate(settings)
-        println(file.content)
+        // TODO: Rewrite generator and test
+        // println(file.content)
     }
 
     @Test
@@ -47,7 +48,8 @@ class AggregateFactoryMainGeneratorTest: TestSuite() {
             isEventSourced = true
         )
         val file = AggregateFactoryMainGenerator.generate(settings)
-        println(file.content)
+        // TODO: Rewrite generator and test
+        // println(file.content)
     }
 
     @Test
@@ -69,6 +71,7 @@ class AggregateFactoryMainGeneratorTest: TestSuite() {
             isEventSourced = true
         )
         val file = AggregateFactoryMainGenerator.generate(settings)
-        println(file.content)
+        // TODO: Rewrite generator and test
+        // println(file.content)
     }
 }

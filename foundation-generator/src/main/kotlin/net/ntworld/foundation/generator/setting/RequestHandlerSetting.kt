@@ -7,10 +7,10 @@ import net.ntworld.foundation.generator.type.KotlinMetadata
 @Serializable
 data class RequestHandlerSetting(
     val request: ClassInfo,
-    val version: Int,
+    override val version: Int,
     override val handler: ClassInfo,
     override val metadata: KotlinMetadata,
     override val makeByFactory: Boolean
-) : HandlerSetting {
+) : VersionedHandlerSetting {
     override val name: String = "${handler.packageName}.${handler.className}"
 }

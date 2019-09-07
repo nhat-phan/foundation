@@ -1,9 +1,7 @@
 package net.ntworld.foundation
 
-interface Response<T> : Contract {
+interface Response : Contract {
     val error: Error?
-
-    val value: T
 
     val isSuccess: Boolean get() = null === error
 

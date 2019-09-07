@@ -1,0 +1,12 @@
+package com.generator.contract.generated
+
+import com.generator.contract.CustomTypeContract
+import com.generator.contract.CustomTypeContractAddress
+import kotlin.String
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class CustomTypeContractImpl(
+  override val name: String,
+  override val address: CustomTypeContractAddress
+) : CustomTypeContract

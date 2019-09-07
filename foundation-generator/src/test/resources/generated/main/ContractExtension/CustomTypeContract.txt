@@ -1,0 +1,10 @@
+import com.generator.contract.CustomTypeContract
+import com.generator.contract.CustomTypeContractAddress
+import com.generator.contract.generated.CustomTypeContractImpl
+import kotlin.String
+
+fun CustomTypeContract.Companion.make(name: String, address: CustomTypeContractAddress):
+    CustomTypeContract = CustomTypeContractImpl(
+  name = name,
+  address = address
+)

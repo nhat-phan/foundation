@@ -19,7 +19,9 @@ internal object ContractExtensionMainGenerator {
             .receiver(setting.contract.toCompanionClassName())
             .returns(setting.contract.toClassName())
 
-        properties.forEach { (name, property) ->
+        val notImplementedProperties = properties.filter { !it.value.hasBody }
+
+        notImplementedProperties.forEach { (name, property) ->
             make.addParameter(name, property.type)
         }
 
@@ -27,8 +29,8 @@ internal object ContractExtensionMainGenerator {
         code.add("return %T(\n", implementation.toClassName())
         code.indent()
 
-        val lastIndex = properties.values.size - 1
-        properties.values.forEachIndexed { index, property ->
+        val lastIndex = notImplementedProperties.values.size - 1
+        notImplementedProperties.values.forEachIndexed { index, property ->
             code.add("%L = %L", property.name, property.name)
             if (index != lastIndex) {
                 code.add(",")

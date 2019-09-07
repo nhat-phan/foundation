@@ -1,13 +1,12 @@
 package net.ntworld.foundation.generator.main
 
 import net.ntworld.foundation.generator.ContractReader
+import net.ntworld.foundation.generator.GeneratorTest
 import net.ntworld.foundation.generator.TestSuite
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ContractImplementationMainGeneratorTest  : TestSuite() {
-    // TODO: Add default value case
-
     @Test
     fun `testGenerate BasicTypeContract`() {
         runTestForContract("BasicTypeContract")
@@ -35,15 +34,13 @@ class ContractImplementationMainGeneratorTest  : TestSuite() {
 
     @Test
     fun `testGenerate DefaultValueContract`() {
-        val allSettings = readSettingsFromResource("/settings/generator-test.settings.json")
-        val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
-        val contract = "com.generator.contract.DefaultValueContract"
-        val setting = allSettings.toMutable().getContract(contract)
-        val properties = reader.findPropertiesOfContract(contract)
+        runTestForContract("DefaultValueContract")
+    }
 
-        val result = ContractImplementationMainGenerator.generate(setting!!, properties!!)
-        println(result.content)
-        // assertGeneratedFileMatched(result, "/ContractImplementation/OneSupertypeOverrideContract.txt")
+    @Test
+    fun `testGenerate CustomTypeContract`() {
+        runTestForContract("CustomTypeContract")
+        runTestForContract("CustomTypeContractAddress")
     }
 
     // Bookmark: Add new test case when adding new contract settings
@@ -52,7 +49,7 @@ class ContractImplementationMainGeneratorTest  : TestSuite() {
     private fun runTestForContract(name: String) {
         val allSettings = readSettingsFromResource("/settings/generator-test.settings.json")
         val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
-        val contract = "com.generator.contract.$name"
+        val contract = GeneratorTest.Contract.namespace(name)
         val setting = allSettings.toMutable().getContract(contract)
         val properties = reader.findPropertiesOfContract(contract)
 

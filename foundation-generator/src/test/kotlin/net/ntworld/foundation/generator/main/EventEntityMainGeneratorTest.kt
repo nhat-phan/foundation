@@ -27,6 +27,7 @@ class EventEntityMainGeneratorTest : TestSuite() {
         val result = EventEntityMainGenerator.generate(settings)
         val expected = readResource("/EventEntity.no-impl.txt")
 
+        // TODO: Rewrite generator and test
         assertEquals(expected, result.content)
     }
 
@@ -50,6 +51,7 @@ class EventEntityMainGeneratorTest : TestSuite() {
         val result = EventEntityMainGenerator.generate(settings)
         val expected = readResource("/EventEntity.impl.txt")
 
+        // TODO: Rewrite generator and test
         assertEquals(expected, result.content)
     }
 }

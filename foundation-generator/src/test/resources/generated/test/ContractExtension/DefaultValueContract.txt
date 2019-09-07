@@ -1,0 +1,9 @@
+import com.generator.contract.DefaultValueContract
+import com.generator.contract.generated.DefaultValueContractImpl
+import kotlin.String
+
+fun DefaultValueContract.Companion.make(message: String): DefaultValueContract =
+    DefaultValueContractImpl(
+  message = message,
+  code = createFakedData("number.randomNumber")
+)

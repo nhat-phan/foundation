@@ -7,8 +7,8 @@ plugins {
     `maven-publish`
 }
 
-group = "$artifactGroup"
-version = "$artifactVersion"
+group = artifactGroup
+version = artifactVersion
 
 repositories {
     jcenter()

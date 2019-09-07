@@ -150,11 +150,11 @@ class FoundationProcessor : AbstractProcessor() {
             LocalEventBusMainGenerator().generate(settings.eventHandlers, global.packageName)
         )
 
-//        ProcessorOutput.writeGlobalFile(
-//            processingEnv,
-//            settings,
-//            LocalServiceBusMainGenerator().generate(settings.requestHandlers, global.packageName)
-//        )
+        ProcessorOutput.writeGlobalFile(
+            processingEnv,
+            settings,
+            LocalServiceBusMainGenerator().generate(settings.requestHandlers, global.packageName)
+        )
 
         ProcessorOutput.writeGlobalFile(
             processingEnv,

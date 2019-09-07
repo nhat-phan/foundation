@@ -58,6 +58,10 @@ object ContractImplementationMainGenerator {
         val primaryConstructor = FunSpec.constructorBuilder()
 
         properties.forEach { (name, property) ->
+            if (property.hasBody) {
+                return@forEach
+            }
+
             primaryConstructor
                 .addParameter(name, property.type)
 

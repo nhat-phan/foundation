@@ -37,6 +37,7 @@ class EventConverterMainGeneratorTest: TestSuite() {
         val expected = EventConverterMainGeneratorTest::class.java
             .getResource("/EventConverter.no-impl.txt").readText()
 
+        // TODO: Rewrite generator and test
         assertEquals(expected, result.content)
     }
 
@@ -68,6 +69,7 @@ class EventConverterMainGeneratorTest: TestSuite() {
         val result = EventConverterMainGenerator.generate(settings)
         val expected = readResource("/EventConverter.impl.txt")
 
+        // TODO: Rewrite generator and test
         assertEquals(expected, result.content)
     }
 }

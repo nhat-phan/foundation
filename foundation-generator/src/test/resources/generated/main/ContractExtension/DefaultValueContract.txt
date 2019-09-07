@@ -1,0 +1,10 @@
+import com.generator.contract.DefaultValueContract
+import com.generator.contract.generated.DefaultValueContractImpl
+import kotlin.Int
+import kotlin.String
+
+fun DefaultValueContract.Companion.make(message: String, code: Int): DefaultValueContract =
+    DefaultValueContractImpl(
+  message = message,
+  code = code
+)

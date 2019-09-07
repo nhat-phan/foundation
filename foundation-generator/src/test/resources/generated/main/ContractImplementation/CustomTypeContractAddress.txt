@@ -1,0 +1,12 @@
+package com.generator.contract.generated
+
+import com.generator.contract.CustomTypeContractAddress
+import kotlin.Int
+import kotlin.String
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class CustomTypeContractAddressImpl(
+  override val number: Int,
+  override val street: String
+) : CustomTypeContractAddress

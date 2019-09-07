@@ -1,0 +1,12 @@
+package com.generator.contract.generated
+
+import com.generator.contract.DefaultValueContract
+import kotlin.Int
+import kotlin.String
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class DefaultValueContractImpl(
+  override val message: String,
+  override val code: Int
+) : DefaultValueContract

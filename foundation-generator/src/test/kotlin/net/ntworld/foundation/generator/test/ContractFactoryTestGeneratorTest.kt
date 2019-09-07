@@ -1,5 +1,6 @@
 package net.ntworld.foundation.generator.test
 
+import net.ntworld.foundation.generator.GeneratorTest
 import net.ntworld.foundation.generator.Platform
 import net.ntworld.foundation.generator.TestSuite
 import net.ntworld.foundation.generator.test.ContractFactoryTestGenerator
@@ -11,7 +12,7 @@ class ContractFactoryTestGeneratorTest : TestSuite() {
     fun `testGenerate Jvm-Empty`() {
         val allSettings = readSettings()
         val contractFactoryGenerator = ContractFactoryTestGenerator(Platform.Jvm)
-        val result = contractFactoryGenerator.generate(allSettings, "com.generator")
+        val result = contractFactoryGenerator.generate(allSettings, GeneratorTest.namespace())
         assertGeneratedFileMatched(result, "ContractFactory/Jvm-Empty.txt")
     }
 
@@ -19,8 +20,9 @@ class ContractFactoryTestGeneratorTest : TestSuite() {
     fun `testGenerate Jvm-NotEmpty`() {
         val allSettings = readSettings()
         val contractFactoryGenerator = ContractFactoryTestGenerator(Platform.Jvm)
+        val basePackageName = GeneratorTest.Contract.namespace()
         contractFactoryGenerator.add(
-            contract = ClassInfo(className = "BasicTypeContract", packageName = "com.generator.contract"),
+            contract = ClassInfo(className = "BasicTypeContract", packageName = basePackageName),
             implementation = ClassInfo(
                 className = "BasicTypeContractImpl",
                 packageName = "com.generator.contract.generated"
@@ -28,16 +30,19 @@ class ContractFactoryTestGeneratorTest : TestSuite() {
         )
 
         contractFactoryGenerator.add(
-            contract = ClassInfo(className = "ListTypeContract", packageName = "com.generator.contract"),
-            implementation = ClassInfo(className = "ListTypeContractImpl", packageName = "com.generator.contract.generated")
+            contract = ClassInfo(className = "ListTypeContract", packageName = basePackageName),
+            implementation = ClassInfo(className = "ListTypeContractImpl", packageName = "$basePackageName.generated")
         )
 
         contractFactoryGenerator.add(
-            contract = ClassInfo(className = "OneSupertypeContract", packageName = "com.generator.contract"),
-            implementation = ClassInfo(className = "OneSupertypeContractImpl", packageName = "com.generator.contract.generated")
+            contract = ClassInfo(className = "OneSupertypeContract", packageName = basePackageName),
+            implementation = ClassInfo(
+                className = "OneSupertypeContractImpl",
+                packageName = "$basePackageName.generated"
+            )
         )
 
-        val result = contractFactoryGenerator.generate(allSettings, "com.generator")
+        val result = contractFactoryGenerator.generate(allSettings, GeneratorTest.namespace())
         assertGeneratedFileMatched(result, "ContractFactory/Jvm-NotEmpty.txt")
     }
 }

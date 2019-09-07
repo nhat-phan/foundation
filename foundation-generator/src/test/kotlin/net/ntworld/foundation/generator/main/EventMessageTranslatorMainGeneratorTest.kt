@@ -36,6 +36,7 @@ class EventMessageTranslatorMainGeneratorTest: TestSuite() {
         val result = EventMessageTranslatorMainGenerator.generate(settings)
         val expected = readResource("/EventMessageTranslator.no-impl.txt")
 
+        // TODO: Rewrite generator and test
         assertEquals(expected, result.content)
     }
 
@@ -67,6 +68,7 @@ class EventMessageTranslatorMainGeneratorTest: TestSuite() {
         val result = EventMessageTranslatorMainGenerator.generate(settings)
         val expected = readResource("/EventMessageTranslator.impl.no-2nd-ctor.txt")
 
+        // TODO: Rewrite generator and test
         assertEquals(expected, result.content)
     }
 
@@ -98,6 +100,7 @@ class EventMessageTranslatorMainGeneratorTest: TestSuite() {
         val result = EventMessageTranslatorMainGenerator.generate(settings)
         val expected = readResource("/EventMessageTranslator.impl.2nd-ctor.txt")
 
+        // TODO: Rewrite generator and test
         assertEquals(expected, result.content)
     }
 }

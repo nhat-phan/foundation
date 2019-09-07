@@ -68,6 +68,8 @@ class InfrastructureProviderMainGeneratorTest : TestSuite() {
         )
 
         val result = InfrastructureProviderMainGenerator().generate(settings)
-        println(result.content)
+
+        // TODO: Rewrite generator and test
+        // println(result.content)
     }
 }
