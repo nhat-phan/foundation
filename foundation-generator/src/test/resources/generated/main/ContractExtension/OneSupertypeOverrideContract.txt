@@ -1,5 +1,5 @@
-import com.example.contract.OneSupertypeOverrideContract
-import com.example.contract.generated.OneSupertypeOverrideContractImpl
+import com.generator.contract.OneSupertypeOverrideContract
+import com.generator.contract.generated.OneSupertypeOverrideContractImpl
 import kotlin.String
 
 fun OneSupertypeOverrideContract.Companion.make(

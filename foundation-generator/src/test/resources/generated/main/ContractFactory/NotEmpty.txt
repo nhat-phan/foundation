@@ -1,9 +1,9 @@
-package com.example
+package com.generator
 
-import com.example.contract.ListTypeContract
-import com.example.contract.OneSupertypeContract
-import com.example.generated.ListTypeContractImpl
-import com.example.generated.OneSupertypeContractImpl
+import com.generator.contract.ListTypeContract
+import com.generator.contract.OneSupertypeContract
+import com.generator.contract.generated.ListTypeContractImpl
+import com.generator.contract.generated.OneSupertypeContractImpl
 import kotlin.Byte
 import kotlin.String
 import kotlin.collections.List

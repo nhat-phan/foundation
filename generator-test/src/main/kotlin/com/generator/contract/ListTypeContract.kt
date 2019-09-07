@@ -1,9 +1,6 @@
-package com.example.contract
+package com.generator.contract
 
-import net.ntworld.foundation.Handler
 import net.ntworld.foundation.cqrs.Command
-import net.ntworld.foundation.cqrs.CommandHandler
-
 
 interface ListTypeContract : Command {
     val listByte: List<Byte>
@@ -16,10 +13,4 @@ interface ListTypeContract : Command {
     val nullableListOfNullableString: List<String?>?
 
     companion object
-}
-
-@Handler
-class ListTypeContractHandler : CommandHandler<ListTypeContract> {
-    override fun handle(command: ListTypeContract) {
-    }
 }

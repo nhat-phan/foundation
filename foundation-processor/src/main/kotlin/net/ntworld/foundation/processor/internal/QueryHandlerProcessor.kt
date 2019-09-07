@@ -5,6 +5,7 @@ import net.ntworld.foundation.cqrs.QueryHandler
 import net.ntworld.foundation.generator.GeneratorSettings
 import net.ntworld.foundation.generator.setting.QueryHandlerSetting
 import net.ntworld.foundation.generator.type.ClassInfo
+import net.ntworld.foundation.generator.type.KotlinMetadata
 import net.ntworld.foundation.processor.util.CodeUtility
 import net.ntworld.foundation.processor.util.ContractCollector
 import net.ntworld.foundation.processor.FoundationProcessorException
@@ -26,6 +27,7 @@ internal class QueryHandlerProcessor() : Processor {
         val queryClassName: String,
         val handlerPackageName: String,
         val handlerClassName: String,
+        val metadata: KotlinMetadata,
         val makeByFactory: Boolean,
         val version: Int
     )
@@ -40,6 +42,7 @@ internal class QueryHandlerProcessor() : Processor {
                 queryClassName = item.query.className,
                 handlerPackageName = item.handler.packageName,
                 handlerClassName = item.handler.className,
+                metadata = item.metadata,
                 makeByFactory = item.makeByFactory,
                 version = item.version
             )
@@ -58,6 +61,7 @@ internal class QueryHandlerProcessor() : Processor {
                     packageName = it.handlerPackageName,
                     className = it.handlerClassName
                 ),
+                metadata = it.metadata,
                 makeByFactory = it.makeByFactory
             )
         }
@@ -91,7 +95,7 @@ internal class QueryHandlerProcessor() : Processor {
             val packageName = this.getPackageNameOfClass(element)
             val className = element.simpleName.toString()
             val key = "$packageName.$className"
-            initCollectedQueryHandlerIfNeeded(packageName, className)
+            initCollectedQueryHandlerIfNeeded(element, packageName, className)
 
             // If the Handler is provided enough information, then no need to find data
             if (processAnnotationProperties(processingEnv, key, element, element.getAnnotation(Handler::class.java))) {
@@ -178,7 +182,7 @@ internal class QueryHandlerProcessor() : Processor {
         return upperElement.qualifiedName.toString()
     }
 
-    private fun initCollectedQueryHandlerIfNeeded(packageName: String, className: String) {
+    private fun initCollectedQueryHandlerIfNeeded(element: Element, packageName: String, className: String) {
         val key = "$packageName.$className"
         if (!data.containsKey(key)) {
             data[key] = CollectedQueryHandler(
@@ -187,6 +191,7 @@ internal class QueryHandlerProcessor() : Processor {
                 version = 0,
                 handlerPackageName = packageName,
                 handlerClassName = className,
+                metadata = KotlinMetadata.fromElement(element),
                 makeByFactory = false
             )
         }

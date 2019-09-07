@@ -15,7 +15,6 @@ interface CreateTodoCommand : Command {
     @get:Faked(type = FakedData.StarTrek.location)
     val zebra: String
 
-    @get:EmailFaked
     val id: String
 
     val something: String

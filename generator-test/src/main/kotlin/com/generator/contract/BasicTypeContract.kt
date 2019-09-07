@@ -1,15 +1,6 @@
-package com.example.contract
+package com.generator.contract
 
-import net.ntworld.foundation.Faked
-import net.ntworld.foundation.FakedData
-import net.ntworld.foundation.Handler
 import net.ntworld.foundation.cqrs.Command
-import net.ntworld.foundation.cqrs.CommandHandler
-
-@Faked(type = FakedData.Internet.emailAddress)
-annotation class EmailFaked
-
-annotation class NoAffectedFaked
 
 interface BasicTypeContract : Command {
     val byte: Byte
@@ -30,10 +21,4 @@ interface BasicTypeContract : Command {
     val stringNullable: String?
     val charNullable: Char?
     val booleanNullable: Boolean?
-}
-
-@Handler
-class BasicTypeContractCommandHandler : CommandHandler<BasicTypeContract> {
-    override fun handle(command: BasicTypeContract) {
-    }
 }

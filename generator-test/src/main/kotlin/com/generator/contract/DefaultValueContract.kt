@@ -1,9 +1,8 @@
-package com.example.contract
+package com.generator.contract
 
 import net.ntworld.foundation.Error
 import net.ntworld.foundation.Faked
 import net.ntworld.foundation.FakedData
-import net.ntworld.foundation.Implementation
 
 interface DefaultValueContract : Error {
     @get:Faked(FakedData.Number.randomNumber)
@@ -14,6 +13,3 @@ interface DefaultValueContract : Error {
 
     companion object
 }
-
-@Implementation
-class TodoException(override val message: String, override val code: Int = 0) : Exception(), DefaultValueContract

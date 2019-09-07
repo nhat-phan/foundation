@@ -1,6 +1,6 @@
-package com.example.contract.generated
+package com.generator.contract.generated
 
-import com.example.contract.OneSupertypeOverrideContract
+import com.generator.contract.OneSupertypeOverrideContract
 import kotlin.String
 import kotlinx.serialization.Serializable
 

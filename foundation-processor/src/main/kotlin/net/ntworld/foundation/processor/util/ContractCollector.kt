@@ -65,7 +65,7 @@ object ContractCollector {
         )
         val metadata = KotlinClassMetadata.read(header) as? KotlinClassMetadata.Class ?: return null
         val kmClass = metadata.toKmClass()
-        val supertypes = findSupertypes(element, kmClass)
+        val supertypes = findSupertypes(kmClass)
         val properties = findProperties(element, kmClass)
 
         return buildSetting(
@@ -80,7 +80,7 @@ object ContractCollector {
         )
     }
 
-    private fun findSupertypes(element: TypeElement, kmClass: KmClass): List<String> {
+    private fun findSupertypes(kmClass: KmClass): List<String> {
         val result = mutableListOf<String>()
         for (supertype in kmClass.supertypes) {
             if (supertype.classifier !is KmClassifier.Class) {
@@ -246,16 +246,7 @@ object ContractCollector {
     ): ContractSetting {
         val result = ContractSetting(
             contract = ClassInfo(packageName = packageName, className = className),
-            metadata = KotlinMetadata(
-                kind = header.kind,
-                packageName = header.packageName,
-                metadataVersion = header.metadataVersion.toList(),
-                bytecodeVersion = header.bytecodeVersion.toList(),
-                data1 = header.data1.toList(),
-                data2 = header.data2.toList(),
-                extraString = header.extraString,
-                extraInt = header.extraInt
-            ),
+            metadata = KotlinMetadata.fromKotlinClassHeader(header),
             supertypes = supertypes,
             properties = sortProperties(properties),
             collectedBy = collectedBy

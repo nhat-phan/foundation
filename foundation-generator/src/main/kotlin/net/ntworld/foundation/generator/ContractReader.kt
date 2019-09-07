@@ -9,6 +9,7 @@ import kotlinx.metadata.jvm.KotlinClassHeader
 import kotlinx.metadata.jvm.KotlinClassMetadata
 import net.ntworld.foundation.generator.setting.ContractSetting
 import net.ntworld.foundation.generator.setting.FakedAnnotationSetting
+import net.ntworld.foundation.generator.type.KotlinMetadata
 
 class ContractReader(
     contractSettings: List<ContractSetting>,
@@ -89,7 +90,7 @@ class ContractReader(
     }
 
     private fun findKmClass(setting: ContractSetting): KmClass? {
-        val header = makeKotlinMetadataHeader(setting)
+        val header = KotlinMetadata.toKotlinClassHeader(setting.metadata)
         val metadata = KotlinClassMetadata.read(header)
         if (null === metadata || metadata !is KotlinClassMetadata.Class) {
             return null
@@ -170,51 +171,6 @@ class ContractReader(
             packageParts.add(parts[i])
         }
         return ClassName(packageParts.joinToString("."), parts[parts.lastIndex])
-    }
-
-    private fun makeKotlinMetadataHeader(setting: ContractSetting): KotlinClassHeader {
-        var metadataVersion: IntArray? = null
-        if (null !== setting.metadata.metadataVersion) {
-            metadataVersion = IntArray(setting.metadata.metadataVersion.size) { 0 }
-            setting.metadata.metadataVersion.forEachIndexed { index, item ->
-                metadataVersion[index] = item
-            }
-        }
-
-        var bytecodeVersion: IntArray? = null
-        if (null !== setting.metadata.bytecodeVersion) {
-            bytecodeVersion = IntArray(setting.metadata.bytecodeVersion.size) { 0 }
-            setting.metadata.bytecodeVersion.forEachIndexed { index, item ->
-                bytecodeVersion[index] = item
-            }
-        }
-
-        var data1: Array<String>? = null
-        if (null !== setting.metadata.data1) {
-            data1 = Array(setting.metadata.data1.size) { "" }
-            setting.metadata.data1.forEachIndexed { index, item ->
-                data1[index] = item
-            }
-        }
-
-        var data2: Array<String>? = null
-        if (null !== setting.metadata.data2) {
-            data2 = Array(setting.metadata.data2.size) { "" }
-            setting.metadata.data2.forEachIndexed { index, item ->
-                data2[index] = item
-            }
-        }
-
-        return KotlinClassHeader(
-            data1 = data1,
-            data2 = data2,
-            bytecodeVersion = bytecodeVersion,
-            extraInt = setting.metadata.extraInt,
-            extraString = setting.metadata.extraString,
-            kind = setting.metadata.kind,
-            metadataVersion = metadataVersion,
-            packageName = setting.metadata.packageName
-        )
     }
 
     private fun findSupertypeSettingsRecursively(

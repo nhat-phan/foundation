@@ -1,6 +1,6 @@
-package com.example.contract.generated
+package com.generator.contract.generated
 
-import com.example.contract.ListTypeContract
+import com.generator.contract.ListTypeContract
 import kotlin.Byte
 import kotlin.String
 import kotlin.collections.List

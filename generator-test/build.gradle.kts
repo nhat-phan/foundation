@@ -11,7 +11,7 @@ plugins {
     idea
 }
 
-group = "$artifactGroup.example-jvm"
+group = "$artifactGroup.integration-test"
 version = artifactVersion
 
 repositories {
@@ -22,7 +22,6 @@ repositories {
 }
 
 dependencies {
-    // ------- Dependencies for development
     implementation(kotlin("stdlib"))
     implementation(project(":foundation"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
@@ -31,13 +30,6 @@ dependencies {
 
     kapt(project(":foundation-processor"))
     kaptTest(project(":foundation-processor"))
-
-    // ------- Dependencies for testing with published artifact
-    // implementation(kotlin("stdlib"))
-    // implementation("com.github.nhat-phan.foundation:foundation-jvm:$artifactVersion")
-    // compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinxSerializationRuntimeVersion")
-
-    // kapt("com.github.nhat-phan.foundation:foundation-processor:$artifactVersion")
 
     testImplementation(kotlin("test"))
     testImplementation(kotlin("test-junit"))

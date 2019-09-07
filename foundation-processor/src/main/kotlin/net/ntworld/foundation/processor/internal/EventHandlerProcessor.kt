@@ -5,6 +5,7 @@ import net.ntworld.foundation.Handler
 import net.ntworld.foundation.generator.GeneratorSettings
 import net.ntworld.foundation.generator.setting.EventHandlerSetting
 import net.ntworld.foundation.generator.type.ClassInfo
+import net.ntworld.foundation.generator.type.KotlinMetadata
 import net.ntworld.foundation.processor.util.CodeUtility
 import net.ntworld.foundation.processor.util.ContractCollector
 import net.ntworld.foundation.processor.FoundationProcessorException
@@ -26,6 +27,7 @@ internal class EventHandlerProcessor : Processor {
         val eventClassName: String,
         val handlerPackageName: String,
         val handlerClassName: String,
+        val metadata: KotlinMetadata,
         val makeByFactory: Boolean
     )
 
@@ -39,6 +41,7 @@ internal class EventHandlerProcessor : Processor {
                 eventClassName = item.event.className,
                 handlerPackageName = item.handler.packageName,
                 handlerClassName = item.handler.className,
+                metadata = item.metadata,
                 makeByFactory = item.makeByFactory
             )
         }
@@ -55,6 +58,7 @@ internal class EventHandlerProcessor : Processor {
                     packageName = it.handlerPackageName,
                     className = it.handlerClassName
                 ),
+                metadata = it.metadata,
                 makeByFactory = it.makeByFactory
             )
         }
@@ -88,7 +92,7 @@ internal class EventHandlerProcessor : Processor {
             val packageName = this.getPackageNameOfClass(element)
             val className = element.simpleName.toString()
             val key = "$packageName.$className"
-            initCollectedEventHandlerIfNeeded(packageName, className)
+            initCollectedEventHandlerIfNeeded(element, packageName, className)
 
             // If the Handler is provided enough information, then no need to find data
             if (processAnnotationProperties(processingEnv, key, element, element.getAnnotation(Handler::class.java))) {
@@ -173,7 +177,7 @@ internal class EventHandlerProcessor : Processor {
         return upperElement.qualifiedName.toString()
     }
 
-    private fun initCollectedEventHandlerIfNeeded(packageName: String, className: String) {
+    private fun initCollectedEventHandlerIfNeeded(element: Element, packageName: String, className: String) {
         val key = "$packageName.$className"
         if (!data.containsKey(key)) {
             data[key] = CollectedEventHandler(
@@ -181,6 +185,7 @@ internal class EventHandlerProcessor : Processor {
                 eventClassName = "",
                 handlerPackageName = packageName,
                 handlerClassName = className,
+                metadata = KotlinMetadata.fromElement(element),
                 makeByFactory = false
             )
         }

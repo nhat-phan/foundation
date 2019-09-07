@@ -4,6 +4,8 @@ val kotlinxCoroutinesVersion: String by project
 val kotlinxSerializationRuntimeVersion: String by project
 val javaFakerVersion: String by project
 
+val testVersion: String = "0.3.2"
+
 plugins {
     kotlin("jvm") version "1.3.31"
     kotlin("kapt") version "1.3.31"
@@ -11,8 +13,8 @@ plugins {
     idea
 }
 
-group = "$artifactGroup.example-jvm"
-version = artifactVersion
+group = "$artifactGroup.integration-test"
+version = "$artifactVersion"
 
 repositories {
     jcenter()
@@ -22,22 +24,13 @@ repositories {
 }
 
 dependencies {
-    // ------- Dependencies for development
     implementation(kotlin("stdlib"))
-    implementation(project(":foundation"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
     compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinxSerializationRuntimeVersion")
     compile("com.github.javafaker:javafaker:$javaFakerVersion")
 
-    kapt(project(":foundation-processor"))
-    kaptTest(project(":foundation-processor"))
-
-    // ------- Dependencies for testing with published artifact
-    // implementation(kotlin("stdlib"))
-    // implementation("com.github.nhat-phan.foundation:foundation-jvm:$artifactVersion")
-    // compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinxSerializationRuntimeVersion")
-
-    // kapt("com.github.nhat-phan.foundation:foundation-processor:$artifactVersion")
+    implementation("com.github.nhat-phan.foundation:foundation-jvm:$testVersion")
+    kapt("com.github.nhat-phan.foundation:foundation-processor:$testVersion")
+    kaptTest("com.github.nhat-phan.foundation:foundation-processor:$testVersion")
 
     testImplementation(kotlin("test"))
     testImplementation(kotlin("test-junit"))

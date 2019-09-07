@@ -1,5 +1,5 @@
-import com.example.contract.BasicTypeContract
-import com.example.contract.generated.BasicTypeContractImpl
+import com.generator.contract.BasicTypeContract
+import com.generator.contract.generated.BasicTypeContractImpl
 import kotlin.Boolean
 import kotlin.Byte
 import kotlin.Char

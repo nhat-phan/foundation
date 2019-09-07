@@ -9,32 +9,35 @@ import kotlin.test.Test
 class ContractFactoryTestGeneratorTest : TestSuite() {
     @Test
     fun `testGenerate Jvm-Empty`() {
-        val allSettings = readSettingsFromResource("/settings/com.example.settings.json")
+        val allSettings = readSettings()
         val contractFactoryGenerator = ContractFactoryTestGenerator(Platform.Jvm)
-        val result = contractFactoryGenerator.generate(allSettings, "com.example")
+        val result = contractFactoryGenerator.generate(allSettings, "com.generator")
         assertGeneratedFileMatched(result, "ContractFactory/Jvm-Empty.txt")
     }
 
     @Test
     fun `testGenerate Jvm-NotEmpty`() {
-        val allSettings = readSettingsFromResource("/settings/com.example.settings.json")
+        val allSettings = readSettings()
         val contractFactoryGenerator = ContractFactoryTestGenerator(Platform.Jvm)
         contractFactoryGenerator.add(
-            contract = ClassInfo(className = "BasicTypeContract", packageName = "com.example.contract"),
-            implementation = ClassInfo(className = "BasicTypeContractImpl", packageName = "com.example.generated")
+            contract = ClassInfo(className = "BasicTypeContract", packageName = "com.generator.contract"),
+            implementation = ClassInfo(
+                className = "BasicTypeContractImpl",
+                packageName = "com.generator.contract.generated"
+            )
         )
 
         contractFactoryGenerator.add(
-            contract = ClassInfo(className = "ListTypeContract", packageName = "com.example.contract"),
-            implementation = ClassInfo(className = "ListTypeContractImpl", packageName = "com.example.generated")
+            contract = ClassInfo(className = "ListTypeContract", packageName = "com.generator.contract"),
+            implementation = ClassInfo(className = "ListTypeContractImpl", packageName = "com.generator.contract.generated")
         )
 
         contractFactoryGenerator.add(
-            contract = ClassInfo(className = "OneSupertypeContract", packageName = "com.example.contract"),
-            implementation = ClassInfo(className = "OneSupertypeContractImpl", packageName = "com.example.generated")
+            contract = ClassInfo(className = "OneSupertypeContract", packageName = "com.generator.contract"),
+            implementation = ClassInfo(className = "OneSupertypeContractImpl", packageName = "com.generator.contract.generated")
         )
 
-        val result = contractFactoryGenerator.generate(allSettings, "com.example")
+        val result = contractFactoryGenerator.generate(allSettings, "com.generator")
         assertGeneratedFileMatched(result, "ContractFactory/Jvm-NotEmpty.txt")
     }
 }

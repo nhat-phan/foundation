@@ -19,8 +19,8 @@ class ContractExtensionMainGeneratorTest : TestSuite() {
     }
 
     @Test
-    fun `testGenerate NoSupertypeContractCommand`() {
-        runTestForContract("NoSupertypeContractCommand")
+    fun `testGenerate NoSupertypeContract`() {
+        runTestForContract("NoSupertypeContract")
     }
 
     @Test
@@ -41,9 +41,9 @@ class ContractExtensionMainGeneratorTest : TestSuite() {
     }
 
     private fun runTestForContract(name: String) {
-        val allSettings = readSettingsFromResource("/settings/com.example.settings.json")
+        val allSettings = readSettings()
         val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
-        val contract = "com.example.contract.$name"
+        val contract = "com.generator.contract.$name"
         val setting = allSettings.toMutable().getContract(contract)!!
         val properties = reader.findPropertiesOfContract(contract)!!
         val implementation = ClassInfo(

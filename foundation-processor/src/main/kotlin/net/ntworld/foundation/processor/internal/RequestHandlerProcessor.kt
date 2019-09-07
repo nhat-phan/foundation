@@ -5,9 +5,11 @@ import net.ntworld.foundation.RequestHandler
 import net.ntworld.foundation.generator.GeneratorSettings
 import net.ntworld.foundation.generator.setting.RequestHandlerSetting
 import net.ntworld.foundation.generator.type.ClassInfo
+import net.ntworld.foundation.generator.type.KotlinMetadata
 import net.ntworld.foundation.processor.FoundationProcessorException
 import net.ntworld.foundation.processor.util.CodeUtility
 import net.ntworld.foundation.processor.util.ContractCollector
+import net.ntworld.foundation.processor.util.FrameworkProcessor
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.Element
@@ -25,6 +27,7 @@ internal class RequestHandlerProcessor : Processor {
         val requestClassName: String,
         val handlerPackageName: String,
         val handlerClassName: String,
+        val metadata: KotlinMetadata,
         val makeByFactory: Boolean,
         val version: Int
     )
@@ -39,6 +42,7 @@ internal class RequestHandlerProcessor : Processor {
                 requestClassName = item.request.className,
                 handlerPackageName = item.handler.packageName,
                 handlerClassName = item.handler.className,
+                metadata = item.metadata,
                 makeByFactory = item.makeByFactory,
                 version = item.version
             )
@@ -57,6 +61,7 @@ internal class RequestHandlerProcessor : Processor {
                     packageName = it.handlerPackageName,
                     className = it.handlerClassName
                 ),
+                metadata = it.metadata,
                 makeByFactory = it.makeByFactory
             )
         }
@@ -90,12 +95,12 @@ internal class RequestHandlerProcessor : Processor {
             val packageName = this.getPackageNameOfClass(element)
             val className = element.simpleName.toString()
             val key = "$packageName.$className"
-            initCollectedRequestHandlerIfNeeded(packageName, className)
+            initCollectedRequestHandlerIfNeeded(element, packageName, className)
 
             // If the Handler is provided enough information, then no need to find data
-//            if (processAnnotationProperties(processingEnv, key, element, element.getAnnotation(Handler::class.java))) {
-//                return@forEach
-//            }
+            if (processAnnotationProperties(processingEnv, key, element, element.getAnnotation(Handler::class.java))) {
+                return@forEach
+            }
 
             val implementedInterface = (element as TypeElement).interfaces
                 .firstOrNull {
@@ -117,44 +122,44 @@ internal class RequestHandlerProcessor : Processor {
         }
     }
 
-//    private fun processAnnotationProperties(
-//        processingEnv: ProcessingEnvironment,
-//        key: String,
-//        element: Element,
-//        annotation: Handler
-//    ): Boolean {
-//        if (annotation.type !== Handler.Type.Request) {
-//            return false
-//        }
-//
-//        var inputTypeName = ""
-//        val mirrors = element.annotationMirrors
-//        mirrors.forEach {
-//            if (it.annotationType.toString() == FrameworkProcessor.Handler) {
-//                it.elementValues.forEach {
-//                    if (it.key.simpleName.toString() == "input" &&
-//                        it.value.value.toString() != java.lang.Object::class.java.canonicalName
-//                    ) {
-//                        inputTypeName = it.value.value.toString()
-//                    }
-//                }
-//            }
-//        }
-//
-//        if (inputTypeName.isEmpty()) {
-//            return false
-//        }
-//
-//        val inputElement = processingEnv.elementUtils.getTypeElement(inputTypeName)
-//        ContractCollector.collect(processingEnv, inputElement)
-//        data[key] = data[key]!!.copy(
-//            requestPackageName = getPackageNameOfClass(inputElement),
-//            requestClassName = inputElement.simpleName.toString(),
-//            version = annotation.version,
-//            makeByFactory = annotation.factory
-//        )
-//        return true
-//    }
+    private fun processAnnotationProperties(
+        processingEnv: ProcessingEnvironment,
+        key: String,
+        element: Element,
+        annotation: Handler
+    ): Boolean {
+        if (annotation.type !== Handler.Type.Request) {
+            return false
+        }
+
+        var inputTypeName = ""
+        val mirrors = element.annotationMirrors
+        mirrors.forEach {
+            if (it.annotationType.toString() == FrameworkProcessor.Handler) {
+                it.elementValues.forEach {
+                    if (it.key.simpleName.toString() == "input" &&
+                        it.value.value.toString() != java.lang.Object::class.java.canonicalName
+                    ) {
+                        inputTypeName = it.value.value.toString()
+                    }
+                }
+            }
+        }
+
+        if (inputTypeName.isEmpty()) {
+            return false
+        }
+
+        val inputElement = processingEnv.elementUtils.getTypeElement(inputTypeName)
+        ContractCollector.collect(processingEnv, inputElement)
+        data[key] = data[key]!!.copy(
+            requestPackageName = getPackageNameOfClass(inputElement),
+            requestClassName = inputElement.simpleName.toString(),
+            version = annotation.version,
+            makeByFactory = annotation.factory
+        )
+        return true
+    }
 
     private fun findImplementedRequest(processingEnv: ProcessingEnvironment, key: String, type: DeclaredType) {
         if (type.typeArguments.size != 2) {
@@ -177,7 +182,7 @@ internal class RequestHandlerProcessor : Processor {
         return upperElement.qualifiedName.toString()
     }
 
-    private fun initCollectedRequestHandlerIfNeeded(packageName: String, className: String) {
+    private fun initCollectedRequestHandlerIfNeeded(element: Element, packageName: String, className: String) {
         val key = "$packageName.$className"
         if (!data.containsKey(key)) {
             data[key] = CollectedRequestHandler(
@@ -186,6 +191,7 @@ internal class RequestHandlerProcessor : Processor {
                 version = 0,
                 handlerPackageName = packageName,
                 handlerClassName = className,
+                metadata = KotlinMetadata.fromElement(element),
                 makeByFactory = false
             )
         }

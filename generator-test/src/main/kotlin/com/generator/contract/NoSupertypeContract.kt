@@ -1,13 +1,12 @@
-package com.example.contract
+package com.generator.contract
 
+import com.generator.annotation.EmailFaked
+import com.generator.annotation.NoAffectedFaked
 import net.ntworld.foundation.Faked
 import net.ntworld.foundation.FakedData
-import net.ntworld.foundation.Handler
 import net.ntworld.foundation.cqrs.Command
-import net.ntworld.foundation.cqrs.CommandHandler
 
-
-interface NoSupertypeContractCommand : Command {
+interface NoSupertypeContract : Command {
     @get:Faked(type = FakedData.Zelda.character)
     val zelda: String
 
@@ -24,10 +23,3 @@ interface NoSupertypeContractCommand : Command {
 
     companion object
 }
-
-@Handler
-class NoSupertypeContractCommandHandler : CommandHandler<NoSupertypeContractCommand> {
-    override fun handle(command: NoSupertypeContractCommand) {
-    }
-}
-

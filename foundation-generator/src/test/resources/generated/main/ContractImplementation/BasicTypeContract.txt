@@ -1,6 +1,6 @@
-package com.example.contract.generated
+package com.generator.contract.generated
 
-import com.example.contract.BasicTypeContract
+import com.generator.contract.BasicTypeContract
 import kotlin.Boolean
 import kotlin.Byte
 import kotlin.Char

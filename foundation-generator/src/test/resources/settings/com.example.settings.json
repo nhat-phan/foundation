@@ -13,9 +13,9 @@
         "net.ntworld.foundation.eventSourcing.EventSourcing",
         "net.ntworld.foundation.Handler"
       ],
-      "startedAt": 1567795888203,
-      "finishedAt": 1567795888497,
-      "duration": 294
+      "startedAt": 1567843318436,
+      "finishedAt": 1567843318731,
+      "duration": 295
     }
   ],
   "aggregateFactories": [
@@ -162,6 +162,35 @@
         "className": "TodoDeletedEventHandler",
         "packageName": "com.example.eventHandler"
       },
+      "metadata": {
+        "kind": 1,
+        "packageName": "",
+        "metadataVersion": [
+          1,
+          1,
+          15
+        ],
+        "bytecodeVersion": [
+          1,
+          0,
+          3
+        ],
+        "data1": [
+          "\u0000\u0018\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0010\u0002\n\u0002\b\u0002\b\u0007\u0018\u00002\b\u0012\u0004\u0012\u00020\u00020\u0001B\u0005¢\u0006\u0002\u0010\u0003J\u0010\u0010\u0004\u001a\u00020\u00052\u0006\u0010\u0006\u001a\u00020\u0002H\u0016¨\u0006\u0007"
+        ],
+        "data2": [
+          "Lcom/example/eventHandler/TodoDeletedEventHandler;",
+          "Lnet/ntworld/foundation/EventHandler;",
+          "Lcom/example/event/TodoDeletedEvent;",
+          "()V",
+          "handle",
+          "",
+          "event",
+          "example-jvm"
+        ],
+        "extraString": "",
+        "extraInt": 0
+      },
       "makeByFactory": true,
       "name": "com.example.eventHandler.TodoDeletedEventHandler"
     },
@@ -173,6 +202,37 @@
       "handler": {
         "className": "TodoCreatedEventHandler",
         "packageName": "com.example.eventHandler"
+      },
+      "metadata": {
+        "kind": 1,
+        "packageName": "",
+        "metadataVersion": [
+          1,
+          1,
+          15
+        ],
+        "bytecodeVersion": [
+          1,
+          0,
+          3
+        ],
+        "data1": [
+          "\u0000\u001e\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0010\u0002\n\u0002\b\u0002\b\u0007\u0018\u00002\b\u0012\u0004\u0012\u00020\u00020\u0001B\r\u0012\u0006\u0010\u0003\u001a\u00020\u0004¢\u0006\u0002\u0010\u0005J\u0010\u0010\u0006\u001a\u00020\u00072\u0006\u0010\b\u001a\u00020\u0002H\u0016¨\u0006\t"
+        ],
+        "data2": [
+          "Lcom/example/eventHandler/TodoCreatedEventHandler;",
+          "Lnet/ntworld/foundation/EventHandler;",
+          "Lcom/example/event/TodoCreatedEvent;",
+          "infrastructure",
+          "Lnet/ntworld/foundation/Infrastructure;",
+          "(Lnet/ntworld/foundation/Infrastructure;)V",
+          "handle",
+          "",
+          "event",
+          "example-jvm"
+        ],
+        "extraString": "",
+        "extraInt": 0
       },
       "makeByFactory": false,
       "name": "com.example.eventHandler.TodoCreatedEventHandler"
@@ -189,6 +249,35 @@
         "className": "BasicTypeContractCommandHandler",
         "packageName": "com.example.contract"
       },
+      "metadata": {
+        "kind": 1,
+        "packageName": "",
+        "metadataVersion": [
+          1,
+          1,
+          15
+        ],
+        "bytecodeVersion": [
+          1,
+          0,
+          3
+        ],
+        "data1": [
+          "\u0000\u0018\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0010\u0002\n\u0002\b\u0002\b\u0007\u0018\u00002\b\u0012\u0004\u0012\u00020\u00020\u0001B\u0005¢\u0006\u0002\u0010\u0003J\u0010\u0010\u0004\u001a\u00020\u00052\u0006\u0010\u0006\u001a\u00020\u0002H\u0016¨\u0006\u0007"
+        ],
+        "data2": [
+          "Lcom/example/contract/BasicTypeContractCommandHandler;",
+          "Lnet/ntworld/foundation/cqrs/CommandHandler;",
+          "Lcom/example/contract/BasicTypeContract;",
+          "()V",
+          "handle",
+          "",
+          "command",
+          "example-jvm"
+        ],
+        "extraString": "",
+        "extraInt": 0
+      },
       "makeByFactory": true,
       "name": "com.example.contract.BasicTypeContractCommandHandler"
     },
@@ -201,6 +290,35 @@
       "handler": {
         "className": "OneSupertypeOverrideContractHandler",
         "packageName": "com.example.contract"
+      },
+      "metadata": {
+        "kind": 1,
+        "packageName": "",
+        "metadataVersion": [
+          1,
+          1,
+          15
+        ],
+        "bytecodeVersion": [
+          1,
+          0,
+          3
+        ],
+        "data1": [
+          "\u0000\u0018\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0010\u0002\n\u0002\b\u0002\b\u0007\u0018\u00002\b\u0012\u0004\u0012\u00020\u00020\u0001B\u0005¢\u0006\u0002\u0010\u0003J\u0010\u0010\u0004\u001a\u00020\u00052\u0006\u0010\u0006\u001a\u00020\u0002H\u0016¨\u0006\u0007"
+        ],
+        "data2": [
+          "Lcom/example/contract/OneSupertypeOverrideContractHandler;",
+          "Lnet/ntworld/foundation/cqrs/CommandHandler;",
+          "Lcom/example/contract/OneSupertypeOverrideContract;",
+          "()V",
+          "handle",
+          "",
+          "command",
+          "example-jvm"
+        ],
+        "extraString": "",
+        "extraInt": 0
       },
       "makeByFactory": true,
       "name": "com.example.contract.OneSupertypeOverrideContractHandler"
@@ -215,6 +333,35 @@
         "className": "OneSupertypeContractHandler",
         "packageName": "com.example.contract"
       },
+      "metadata": {
+        "kind": 1,
+        "packageName": "",
+        "metadataVersion": [
+          1,
+          1,
+          15
+        ],
+        "bytecodeVersion": [
+          1,
+          0,
+          3
+        ],
+        "data1": [
+          "\u0000\u0018\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0010\u0002\n\u0002\b\u0002\b\u0007\u0018\u00002\b\u0012\u0004\u0012\u00020\u00020\u0001B\u0005¢\u0006\u0002\u0010\u0003J\u0010\u0010\u0004\u001a\u00020\u00052\u0006\u0010\u0006\u001a\u00020\u0002H\u0016¨\u0006\u0007"
+        ],
+        "data2": [
+          "Lcom/example/contract/OneSupertypeContractHandler;",
+          "Lnet/ntworld/foundation/cqrs/CommandHandler;",
+          "Lcom/example/contract/OneSupertypeContract;",
+          "()V",
+          "handle",
+          "",
+          "command",
+          "example-jvm"
+        ],
+        "extraString": "",
+        "extraInt": 0
+      },
       "makeByFactory": true,
       "name": "com.example.contract.OneSupertypeContractHandler"
     },
@@ -228,7 +375,38 @@
         "className": "ListTypeContractHandler",
         "packageName": "com.example.contract"
       },
-      "makeByFactory": true,
+      "metadata": {
+        "kind": 1,
+        "packageName": "",
+        "metadataVersion": [
+          1,
+          1,
+          15
+        ],
+        "bytecodeVersion": [
+          1,
+          0,
+          3
+        ],
+        "data1": [
+          "\u0000\u001e\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0010\u0002\n\u0002\b\u0002\b\u0007\u0018\u00002\b\u0012\u0004\u0012\u00020\u00020\u0001B\r\u0012\u0006\u0010\u0003\u001a\u00020\u0004¢\u0006\u0002\u0010\u0005J\u0010\u0010\u0006\u001a\u00020\u00072\u0006\u0010\b\u001a\u00020\u0002H\u0016¨\u0006\t"
+        ],
+        "data2": [
+          "Lcom/example/contract/ListTypeContractHandler;",
+          "Lnet/ntworld/foundation/cqrs/CommandHandler;",
+          "Lcom/example/contract/ListTypeContract;",
+          "infrastructure",
+          "Lnet/ntworld/foundation/Infrastructure;",
+          "(Lnet/ntworld/foundation/Infrastructure;)V",
+          "handle",
+          "",
+          "command",
+          "example-jvm"
+        ],
+        "extraString": "",
+        "extraInt": 0
+      },
+      "makeByFactory": false,
       "name": "com.example.contract.ListTypeContractHandler"
     },
     {
@@ -240,6 +418,35 @@
       "handler": {
         "className": "NoSupertypeContractCommandHandler",
         "packageName": "com.example.contract"
+      },
+      "metadata": {
+        "kind": 1,
+        "packageName": "",
+        "metadataVersion": [
+          1,
+          1,
+          15
+        ],
+        "bytecodeVersion": [
+          1,
+          0,
+          3
+        ],
+        "data1": [
+          "\u0000\u0018\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0010\u0002\n\u0002\b\u0002\b\u0007\u0018\u00002\b\u0012\u0004\u0012\u00020\u00020\u0001B\u0005¢\u0006\u0002\u0010\u0003J\u0010\u0010\u0004\u001a\u00020\u00052\u0006\u0010\u0006\u001a\u00020\u0002H\u0016¨\u0006\u0007"
+        ],
+        "data2": [
+          "Lcom/example/contract/NoSupertypeContractCommandHandler;",
+          "Lnet/ntworld/foundation/cqrs/CommandHandler;",
+          "Lcom/example/contract/NoSupertypeContractCommand;",
+          "()V",
+          "handle",
+          "",
+          "command",
+          "example-jvm"
+        ],
+        "extraString": "",
+        "extraInt": 0
       },
       "makeByFactory": true,
       "name": "com.example.contract.NoSupertypeContractCommandHandler"
@@ -254,6 +461,37 @@
         "className": "CreateTodoCommandHandler",
         "packageName": "com.example.commandHandler"
       },
+      "metadata": {
+        "kind": 1,
+        "packageName": "",
+        "metadataVersion": [
+          1,
+          1,
+          15
+        ],
+        "bytecodeVersion": [
+          1,
+          0,
+          3
+        ],
+        "data1": [
+          "\u0000\u001e\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0010\u0002\n\u0002\b\u0002\b\u0007\u0018\u00002\b\u0012\u0004\u0012\u00020\u00020\u0001B\r\u0012\u0006\u0010\u0003\u001a\u00020\u0004¢\u0006\u0002\u0010\u0005J\u0010\u0010\u0006\u001a\u00020\u00072\u0006\u0010\b\u001a\u00020\u0002H\u0016R\u000e\u0010\u0003\u001a\u00020\u0004X\u0004¢\u0006\u0002\n\u0000¨\u0006\t"
+        ],
+        "data2": [
+          "Lcom/example/commandHandler/CreateTodoCommandHandler;",
+          "Lnet/ntworld/foundation/cqrs/CommandHandler;",
+          "Lcom/example/contract/CreateTodoCommand;",
+          "infrastructure",
+          "Lnet/ntworld/foundation/Infrastructure;",
+          "(Lnet/ntworld/foundation/Infrastructure;)V",
+          "handle",
+          "",
+          "command",
+          "example-jvm"
+        ],
+        "extraString": "",
+        "extraInt": 0
+      },
       "makeByFactory": false,
       "name": "com.example.commandHandler.CreateTodoCommandHandler"
     },
@@ -266,6 +504,35 @@
       "handler": {
         "className": "CreateTodoCommandHandlerV1",
         "packageName": "com.example.commandHandler"
+      },
+      "metadata": {
+        "kind": 1,
+        "packageName": "",
+        "metadataVersion": [
+          1,
+          1,
+          15
+        ],
+        "bytecodeVersion": [
+          1,
+          0,
+          3
+        ],
+        "data1": [
+          "\u0000\u0018\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0010\u0002\n\u0002\b\u0002\b\u0007\u0018\u00002\b\u0012\u0004\u0012\u00020\u00020\u0001B\u0005¢\u0006\u0002\u0010\u0003J\u0010\u0010\u0004\u001a\u00020\u00052\u0006\u0010\u0006\u001a\u00020\u0002H\u0016¨\u0006\u0007"
+        ],
+        "data2": [
+          "Lcom/example/commandHandler/CreateTodoCommandHandlerV1;",
+          "Lnet/ntworld/foundation/cqrs/CommandHandler;",
+          "Lcom/example/contract/CreateTodoCommand;",
+          "()V",
+          "handle",
+          "",
+          "command",
+          "example-jvm"
+        ],
+        "extraString": "",
+        "extraInt": 0
       },
       "makeByFactory": true,
       "name": "com.example.commandHandler.CreateTodoCommandHandlerV1"
@@ -282,6 +549,35 @@
         "className": "GetAllTodoQueryHandlerV1",
         "packageName": "queryHandler"
       },
+      "metadata": {
+        "kind": 1,
+        "packageName": "",
+        "metadataVersion": [
+          1,
+          1,
+          15
+        ],
+        "bytecodeVersion": [
+          1,
+          0,
+          3
+        ],
+        "data1": [
+          "\u0000\u0014\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\b\u0004\b\u0007\u0018\u00002\u000e\u0012\u0004\u0012\u00020\u0002\u0012\u0004\u0012\u00020\u00030\u0001B\u0005¢\u0006\u0002\u0010\u0004J\u0010\u0010\u0005\u001a\u00020\u00032\u0006\u0010\u0006\u001a\u00020\u0002H\u0016¨\u0006\u0007"
+        ],
+        "data2": [
+          "LqueryHandler/GetAllTodoQueryHandlerV1;",
+          "Lnet/ntworld/foundation/cqrs/QueryHandler;",
+          "Lcom/example/contract/GetAllTodoQuery;",
+          "Lcom/example/contract/GetAllTodoQueryResult;",
+          "()V",
+          "handle",
+          "query",
+          "example-jvm"
+        ],
+        "extraString": "",
+        "extraInt": 0
+      },
       "makeByFactory": true,
       "name": "queryHandler.GetAllTodoQueryHandlerV1"
     },
@@ -294,6 +590,35 @@
       "handler": {
         "className": "GetAllTodoQueryHandler",
         "packageName": "queryHandler"
+      },
+      "metadata": {
+        "kind": 1,
+        "packageName": "",
+        "metadataVersion": [
+          1,
+          1,
+          15
+        ],
+        "bytecodeVersion": [
+          1,
+          0,
+          3
+        ],
+        "data1": [
+          "\u0000\u0014\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\b\u0004\b\u0007\u0018\u00002\u000e\u0012\u0004\u0012\u00020\u0002\u0012\u0004\u0012\u00020\u00030\u0001B\u0005¢\u0006\u0002\u0010\u0004J\u0010\u0010\u0005\u001a\u00020\u00032\u0006\u0010\u0006\u001a\u00020\u0002H\u0016¨\u0006\u0007"
+        ],
+        "data2": [
+          "LqueryHandler/GetAllTodoQueryHandler;",
+          "Lnet/ntworld/foundation/cqrs/QueryHandler;",
+          "Lcom/example/contract/GetAllTodoQuery;",
+          "Lcom/example/contract/GetAllTodoQueryResult;",
+          "()V",
+          "handle",
+          "query",
+          "example-jvm"
+        ],
+        "extraString": "",
+        "extraInt": 0
       },
       "makeByFactory": true,
       "name": "queryHandler.GetAllTodoQueryHandler"

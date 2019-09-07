@@ -19,8 +19,8 @@ class ContractImplementationMainGeneratorTest  : TestSuite() {
     }
 
     @Test
-    fun `testGenerate NoSupertypeContractCommand`() {
-        runTestForContract("NoSupertypeContractCommand")
+    fun `testGenerate NoSupertypeContract`() {
+        runTestForContract("NoSupertypeContract")
     }
 
     @Test
@@ -35,9 +35,9 @@ class ContractImplementationMainGeneratorTest  : TestSuite() {
 
     @Test
     fun `testGenerate DefaultValueContract`() {
-        val allSettings = readSettingsFromResource("/settings/com.example.settings.json")
+        val allSettings = readSettingsFromResource("/settings/generator-test.settings.json")
         val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
-        val contract = "com.example.contract.DefaultValueContract"
+        val contract = "com.generator.contract.DefaultValueContract"
         val setting = allSettings.toMutable().getContract(contract)
         val properties = reader.findPropertiesOfContract(contract)
 
@@ -50,9 +50,9 @@ class ContractImplementationMainGeneratorTest  : TestSuite() {
     // TODO: Add multiple supertypes cases
 
     private fun runTestForContract(name: String) {
-        val allSettings = readSettingsFromResource("/settings/com.example.settings.json")
+        val allSettings = readSettingsFromResource("/settings/generator-test.settings.json")
         val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
-        val contract = "com.example.contract.$name"
+        val contract = "com.generator.contract.$name"
         val setting = allSettings.toMutable().getContract(contract)
         val properties = reader.findPropertiesOfContract(contract)
 

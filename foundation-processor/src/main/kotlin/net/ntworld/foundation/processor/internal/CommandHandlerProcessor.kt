@@ -5,6 +5,7 @@ import net.ntworld.foundation.cqrs.CommandHandler
 import net.ntworld.foundation.generator.GeneratorSettings
 import net.ntworld.foundation.generator.setting.CommandHandlerSetting
 import net.ntworld.foundation.generator.type.ClassInfo
+import net.ntworld.foundation.generator.type.KotlinMetadata
 import net.ntworld.foundation.processor.util.CodeUtility
 import net.ntworld.foundation.processor.util.ContractCollector
 import net.ntworld.foundation.processor.FoundationProcessorException
@@ -26,6 +27,7 @@ internal class CommandHandlerProcessor : Processor {
         val commandClassName: String,
         val handlerPackageName: String,
         val handlerClassName: String,
+        val metadata: KotlinMetadata,
         val makeByFactory: Boolean,
         val version: Int
     )
@@ -40,6 +42,7 @@ internal class CommandHandlerProcessor : Processor {
                 commandClassName = item.command.className,
                 handlerPackageName = item.handler.packageName,
                 handlerClassName = item.handler.className,
+                metadata = item.metadata,
                 makeByFactory = item.makeByFactory,
                 version = item.version
             )
@@ -58,6 +61,7 @@ internal class CommandHandlerProcessor : Processor {
                     packageName = it.handlerPackageName,
                     className = it.handlerClassName
                 ),
+                metadata = it.metadata,
                 makeByFactory = it.makeByFactory
             )
         }
@@ -91,7 +95,7 @@ internal class CommandHandlerProcessor : Processor {
             val packageName = this.getPackageNameOfClass(element)
             val className = element.simpleName.toString()
             val key = "$packageName.$className"
-            initCollectedCommandHandlerIfNeeded(packageName, className)
+            initCollectedCommandHandlerIfNeeded(element, packageName, className)
 
             // If the Handler is provided enough information, then no need to find data
             if (processAnnotationProperties(processingEnv, key, element, element.getAnnotation(Handler::class.java))) {
@@ -178,7 +182,7 @@ internal class CommandHandlerProcessor : Processor {
         return upperElement.qualifiedName.toString()
     }
 
-    private fun initCollectedCommandHandlerIfNeeded(packageName: String, className: String) {
+    private fun initCollectedCommandHandlerIfNeeded(element: Element, packageName: String, className: String) {
         val key = "$packageName.$className"
         if (!data.containsKey(key)) {
             data[key] = CollectedCommandHandler(
@@ -187,6 +191,7 @@ internal class CommandHandlerProcessor : Processor {
                 version = 0,
                 handlerPackageName = packageName,
                 handlerClassName = className,
+                metadata = KotlinMetadata.fromElement(element),
                 makeByFactory = false
             )
         }

@@ -1,10 +1,9 @@
-package com.example.contract
+package com.generator.contract
 
+import com.generator.annotation.EmailFaked
 import net.ntworld.foundation.Faked
 import net.ntworld.foundation.FakedData
-import net.ntworld.foundation.Handler
 import net.ntworld.foundation.cqrs.Command
-import net.ntworld.foundation.cqrs.CommandHandler
 
 interface OneSupertypeOverrideContractParent {
     @get:Faked(type = FakedData.Zelda.character)
@@ -26,10 +25,4 @@ interface OneSupertypeOverrideContract : OneSupertypeOverrideContractParent, Com
     override val lastName: String
 
     companion object
-}
-
-@Handler
-class OneSupertypeOverrideContractHandler : CommandHandler<OneSupertypeOverrideContract> {
-    override fun handle(command: OneSupertypeOverrideContract) {
-    }
 }

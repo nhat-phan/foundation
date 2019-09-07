@@ -1,5 +1,5 @@
-import com.example.contract.ListTypeContract
-import com.example.contract.generated.ListTypeContractImpl
+import com.generator.contract.ListTypeContract
+import com.generator.contract.generated.ListTypeContractImpl
 import kotlin.Byte
 import kotlin.String
 import kotlin.collections.List

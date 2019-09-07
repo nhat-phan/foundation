@@ -1,16 +1,16 @@
-import com.example.contract.NoSupertypeContractCommand
-import com.example.contract.generated.NoSupertypeContractCommandImpl
+import com.generator.contract.NoSupertypeContract
+import com.generator.contract.generated.NoSupertypeContractImpl
 import kotlin.Int
 import kotlin.String
 import kotlin.collections.List
 
-fun NoSupertypeContractCommand.Companion.make(
+fun NoSupertypeContract.Companion.make(
   zelda: String,
   name: String,
   email: String?,
   list: List<String>,
   phones: List<Int>
-): NoSupertypeContractCommand = NoSupertypeContractCommandImpl(
+): NoSupertypeContract = NoSupertypeContractImpl(
   zelda = zelda,
   name = name,
   email = email,

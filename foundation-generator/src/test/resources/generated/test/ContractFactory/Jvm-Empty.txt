@@ -1,4 +1,4 @@
-package com.example
+package com.generator
 
 import kotlin.String
 import kotlin.Suppress
