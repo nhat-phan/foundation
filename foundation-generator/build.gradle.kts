@@ -1,5 +1,5 @@
 val artifactGroup: String by project
-val artifactVersion: String by project
+val processorVersion: String by project
 val kotlinPoetVersion: String by project
 val kotlinxSerializationRuntimeVersion: String by project
 val javaFakerVersion: String by project
@@ -10,8 +10,8 @@ plugins {
     `maven-publish`
 }
 
-group = "$artifactGroup"
-version = "$artifactVersion"
+group = artifactGroup
+version = processorVersion
 
 repositories {
     jcenter()

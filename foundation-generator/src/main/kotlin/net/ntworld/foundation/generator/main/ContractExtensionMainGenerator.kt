@@ -3,14 +3,14 @@ package net.ntworld.foundation.generator.main
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
-import net.ntworld.foundation.generator.ContractReader
 import net.ntworld.foundation.generator.setting.ContractSetting
 import net.ntworld.foundation.generator.type.ClassInfo
+import net.ntworld.foundation.generator.type.Property
 
 internal object ContractExtensionMainGenerator {
     fun generate(
         setting: ContractSetting,
-        properties: Map<String, ContractReader.Property>,
+        properties: Map<String, Property>,
         implementation: ClassInfo,
         file: FileSpec.Builder
     ) {

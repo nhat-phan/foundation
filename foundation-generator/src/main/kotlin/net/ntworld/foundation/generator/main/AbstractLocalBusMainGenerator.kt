@@ -8,10 +8,15 @@ import net.ntworld.foundation.generator.Utility
 import net.ntworld.foundation.generator.setting.HandlerSetting
 import net.ntworld.foundation.generator.setting.VersionedHandlerSetting
 import net.ntworld.foundation.generator.type.ClassInfo
+import net.ntworld.foundation.generator.util.ConstructorComposer
+import net.ntworld.foundation.generator.util.HandlerReader
 
 abstract class AbstractLocalBusMainGenerator<T : HandlerSetting> {
-    protected val factoryFnMap = mutableMapOf<T, String>()
-    protected val factoryFnNames = mutableListOf<String>()
+    private val constructorComposer = ConstructorComposer()
+    private val factoryFnMap = mutableMapOf<T, String>()
+    private val factoryFnNames = mutableListOf<String>()
+    protected var isAbstract: Boolean = false
+        private set
 
     protected abstract fun findTarget(settings: List<T>, namespace: String?): ClassInfo
 
@@ -31,23 +36,10 @@ abstract class AbstractLocalBusMainGenerator<T : HandlerSetting> {
         GeneratorOutput.addHeader(file, this::class.qualifiedName)
 
         val type = buildClass(settings, target)
-        buildConstructor(type)
+        constructorComposer.generateComposedConstructor(type)
 
         file.addType(type.build())
         return file.build()
-    }
-
-    private fun buildConstructor(type: TypeSpec.Builder) {
-        type.primaryConstructor(
-            FunSpec.constructorBuilder()
-                .addParameter("infrastructure", Framework.Infrastructure)
-                .build()
-        )
-        type.addProperty(
-            PropertySpec.builder("infrastructure", Framework.Infrastructure)
-                .initializer("infrastructure")
-                .build()
-        )
     }
 
     protected fun makeGetVersioningStrategyFunctionBuilder(): FunSpec.Builder {
@@ -147,14 +139,20 @@ abstract class AbstractLocalBusMainGenerator<T : HandlerSetting> {
         code: CodeBlock.Builder,
         type: TypeSpec.Builder
     ) {
+        val (exist, factoryFnName) = this.findFactoryFunctionName(item)
         if (!item.makeByFactory) {
-            code.add("%T(infrastructure)", item.handler.toClassName())
+            val constructor = HandlerReader.findPrimaryConstructor(item)
+            if (null !== constructor) {
+                constructorComposer.add(factoryFnName, constructor)
+            }
+            code.add("%T", item.handler.toClassName())
+            code.add(constructorComposer.generateNewInstanceCodeBlockFor(factoryFnName))
             return
         }
 
-        val (exist, factoryFnName) = this.findFactoryFunctionName(item)
         val fnName = "make$factoryFnName"
         if (!exist) {
+            isAbstract = true
             type.addFunction(
                 FunSpec.builder(fnName)
                     .addModifiers(KModifier.PROTECTED, KModifier.ABSTRACT)
@@ -177,7 +175,7 @@ abstract class AbstractLocalBusMainGenerator<T : HandlerSetting> {
         return grouped
     }
 
-    protected fun findFactoryFunctionName(setting: T): Pair<Boolean, String> {
+    private fun findFactoryFunctionName(setting: T): Pair<Boolean, String> {
         if (factoryFnMap.contains(setting)) {
             return Pair(true, factoryFnMap[setting]!!)
         }

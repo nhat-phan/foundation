@@ -1,6 +1,8 @@
 package net.ntworld.foundation.generator
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
 import net.ntworld.foundation.generator.setting.*
 import net.ntworld.foundation.generator.type.AnnotationProcessorRunInfo
 
@@ -22,4 +24,16 @@ data class GeneratorSettings(
     val fakedAnnotations: List<FakedAnnotationSetting>
 ) {
     fun toMutable(): MutableGeneratorSettings = MutableGeneratorSettings(this)
+
+    companion object {
+        private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
+
+        fun stringify(data: GeneratorSettings): String {
+            return json.stringify(GeneratorSettings.serializer(), data)
+        }
+
+        fun parse(input: String): GeneratorSettings {
+            return json.parse(GeneratorSettings.serializer(), input)
+        }
+    }
 }

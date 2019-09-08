@@ -4,6 +4,7 @@ import net.ntworld.foundation.generator.*
 import net.ntworld.foundation.generator.main.*
 import net.ntworld.foundation.generator.type.AnnotationProcessorRunInfo
 import net.ntworld.foundation.generator.type.ClassInfo
+import net.ntworld.foundation.generator.util.ContractReader
 import net.ntworld.foundation.processor.internal.*
 import net.ntworld.foundation.processor.internal.AggregateFactoryProcessor
 import net.ntworld.foundation.processor.internal.CommandHandlerProcessor

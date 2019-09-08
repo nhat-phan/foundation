@@ -4,6 +4,7 @@ import com.squareup.kotlinpoet.FileSpec
 import net.ntworld.foundation.generator.*
 import net.ntworld.foundation.generator.Utility
 import net.ntworld.foundation.generator.type.ClassInfo
+import net.ntworld.foundation.generator.util.ContractReader
 
 class ContractFactoryMainGenerator {
     data class Item(

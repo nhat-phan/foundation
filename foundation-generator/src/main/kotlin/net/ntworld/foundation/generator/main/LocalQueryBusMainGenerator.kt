@@ -28,7 +28,7 @@ class LocalQueryBusMainGenerator : AbstractLocalBusMainGenerator<QueryHandlerSet
         buildProcessFunction(type)
         buildGetVersioningStrategyFunction(type)
         buildResolveFunction(settings, type)
-        if (factoryFnNames.isNotEmpty()) {
+        if (this.isAbstract) {
             type.addModifiers(KModifier.ABSTRACT)
         } else {
             type.addModifiers(KModifier.OPEN)

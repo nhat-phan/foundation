@@ -8,6 +8,7 @@ class MutableGeneratorSettings(private val settings: GeneratorSettings) {
     private val eventHandlers = toMutableMap(settings.eventHandlers)
     private val commandHandlers = toMutableMap(settings.commandHandlers)
     private val queryHandlers = toMutableMap(settings.queryHandlers)
+    private val requestHandlers = toMutableMap(settings.requestHandlers)
     private val implementations = toMutableMap(settings.implementations)
     private val messages = toMutableMap(settings.messages)
     private val contracts = toMutableMap(settings.contracts)
@@ -58,6 +59,10 @@ class MutableGeneratorSettings(private val settings: GeneratorSettings) {
         return queryHandlers.containsKey(name)
     }
 
+    fun hasRequestHandler(name: String): Boolean {
+        return requestHandlers.containsKey(name)
+    }
+
     fun hasImplementation(name: String): Boolean {
         return implementations.containsKey(name)
     }
@@ -92,6 +97,10 @@ class MutableGeneratorSettings(private val settings: GeneratorSettings) {
 
     fun getQueryHandler(name: String): QueryHandlerSetting? {
         return queryHandlers[name]
+    }
+
+    fun getRequestHandler(name: String): RequestHandlerSetting? {
+        return requestHandlers[name]
     }
 
     fun getImplementation(name: String): ImplementationSetting? {

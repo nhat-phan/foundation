@@ -1,5 +1,5 @@
 val artifactGroup: String by project
-val artifactVersion: String by project
+val foundationVersion: String by project
 val kotlinxCoroutinesVersion: String by project
 val kotlinxSerializationRuntimeVersion: String by project
 val javaFakerVersion: String by project
@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "$artifactGroup.example-jvm"
-version = artifactVersion
+version = foundationVersion
 
 repositories {
     jcenter()

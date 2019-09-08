@@ -1,5 +1,6 @@
 val artifactGroup: String by project
-val artifactVersion: String by project
+val foundationVersion: String by project
+val processorVersion: String by project
 val kotlinxCoroutinesVersion: String by project
 val kotlinxSerializationRuntimeVersion: String by project
 val javaFakerVersion: String by project
@@ -12,7 +13,7 @@ plugins {
 }
 
 group = "$artifactGroup.integration-test"
-version = artifactVersion
+version = processorVersion
 
 repositories {
     jcenter()
@@ -23,7 +24,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation(project(":foundation"))
+    implementation("com.github.nhat-phan.foundation:foundation-jvm:$foundationVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
     compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinxSerializationRuntimeVersion")
     compile("com.github.javafaker:javafaker:$javaFakerVersion")

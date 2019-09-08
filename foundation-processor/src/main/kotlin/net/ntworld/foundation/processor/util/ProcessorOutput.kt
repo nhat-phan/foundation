@@ -2,7 +2,6 @@ package net.ntworld.foundation.processor.util
 
 import net.ntworld.foundation.generator.GeneratedFile
 import net.ntworld.foundation.generator.GeneratorSettings
-import net.ntworld.foundation.generator.SettingsSerializer
 import net.ntworld.foundation.processor.FoundationProcessorException
 import java.nio.file.Paths
 import javax.annotation.processing.ProcessingEnvironment
@@ -61,7 +60,7 @@ internal object ProcessorOutput {
             if (!files.contains(path)) {
                 return initGeneratorSettings()
             }
-            return SettingsSerializer.parse(files[path]!!)
+            return GeneratorSettings.parse(files[path]!!)
         }
 
         var base = getKaptGeneratedDirectory(processingEnv)
@@ -77,7 +76,7 @@ internal object ProcessorOutput {
             return initGeneratorSettings()
         }
         val content = file.readText()
-        return SettingsSerializer.parse(content)
+        return GeneratorSettings.parse(content)
     }
 
     fun updateSettingsFile(processingEnv: ProcessingEnvironment, settings: GeneratorSettings) {
@@ -85,7 +84,7 @@ internal object ProcessorOutput {
             processingEnv,
             FrameworkProcessor.SETTINGS_PATH,
             FrameworkProcessor.SETTINGS_FILENAME,
-            SettingsSerializer.serialize(settings)
+            GeneratorSettings.stringify(settings)
         )
     }
 

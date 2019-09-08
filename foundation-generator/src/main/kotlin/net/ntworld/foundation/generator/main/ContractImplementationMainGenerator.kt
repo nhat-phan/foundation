@@ -2,17 +2,17 @@ package net.ntworld.foundation.generator.main
 
 import com.squareup.kotlinpoet.*
 import kotlinx.serialization.Serializable
-import net.ntworld.foundation.generator.ContractReader
 import net.ntworld.foundation.generator.GeneratedFile
 import net.ntworld.foundation.generator.GeneratorOutput
 import net.ntworld.foundation.generator.Utility
 import net.ntworld.foundation.generator.setting.ContractSetting
 import net.ntworld.foundation.generator.type.ClassInfo
+import net.ntworld.foundation.generator.type.Property
 
 object ContractImplementationMainGenerator {
     fun findImplementationTarget(setting: ContractSetting) = Utility.findContractImplementationTarget(setting)
 
-    fun generate(setting: ContractSetting, properties: Map<String, ContractReader.Property>): GeneratedFile {
+    fun generate(setting: ContractSetting, properties: Map<String, Property>): GeneratedFile {
         val target = findImplementationTarget(setting)
         val file =
             buildFile(setting, target, properties)
@@ -25,7 +25,7 @@ object ContractImplementationMainGenerator {
     private fun buildFile(
         setting: ContractSetting,
         target: ClassInfo,
-        properties: Map<String, ContractReader.Property>
+        properties: Map<String, Property>
     ): FileSpec {
         val file = FileSpec.builder(target.packageName, target.className)
         GeneratorOutput.addHeader(file, this::class.qualifiedName)
@@ -43,7 +43,7 @@ object ContractImplementationMainGenerator {
     private fun buildClass(
         setting: ContractSetting,
         target: ClassInfo,
-        properties: Map<String, ContractReader.Property>
+        properties: Map<String, Property>
     ): TypeSpec {
         val type = TypeSpec.classBuilder(target.className)
             .addAnnotation(

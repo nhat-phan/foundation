@@ -1,6 +1,6 @@
 buildscript {
     ext.artifactGroup = project.findProperty("artifactGroup").toString()
-    ext.artifactVersion = project.findProperty("artifactVersion").toString()
+    ext.foundationVersion = project.findProperty("foundationVersion").toString()
     ext.kotlinxCoroutinesVersion = project.findProperty("kotlinxCoroutinesVersion").toString()
     ext.kotlinxSerializationRuntimeVersion = project.findProperty("kotlinxSerializationRuntimeVersion").toString()
     ext.kotlinPoetVersion = project.findProperty("javaFakerVersion").toString()
@@ -14,7 +14,7 @@ plugins {
 }
 
 group "$artifactGroup"
-version "$artifactVersion"
+version "$foundationVersion"
 
 repositories {
     jcenter()

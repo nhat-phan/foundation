@@ -1,5 +1,8 @@
-package net.ntworld.foundation.generator
+package net.ntworld.foundation.generator.util
 
+import net.ntworld.foundation.generator.GeneratorTest
+import net.ntworld.foundation.generator.TestSuite
+import net.ntworld.foundation.generator.type.Property
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
@@ -211,7 +214,7 @@ class ContractReaderTest : TestSuite() {
 
     private fun assertMatchExpectations(
         expectations: Map<String, ExpectedProperty>?,
-        properties: Map<String, ContractReader.Property>?
+        properties: Map<String, Property>?
     ) {
         if (null !== expectations && null !== properties) {
             return assertPropertiesListMatchExpectations(expectations, properties)
@@ -228,7 +231,7 @@ class ContractReaderTest : TestSuite() {
 
     private fun assertPropertiesListMatchExpectations(
         expectations: Map<String, ExpectedProperty>,
-        properties: Map<String, ContractReader.Property>
+        properties: Map<String, Property>
     ) {
         properties.forEach {
             val expectation = expectations[it.key]

@@ -5,6 +5,7 @@ import kotlinx.serialization.json.JsonConfiguration
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
+import kotlin.test.fail
 
 open class TestSuite {
     @BeforeTest
@@ -39,5 +40,14 @@ open class TestSuite {
             readResource("$base/$path"),
             file.content
         )
+    }
+
+    protected fun <K, V> assertMapEquals(expected: Map<K, V>, actual: Map<K, V>, message: String? = null) {
+        if (expected.size != actual.size) {
+            fail(message ?: "Expected and actual not contains same amount of keys")
+        }
+        expected.forEach {
+            assertEquals(expected[it.key], actual[it.key], message)
+        }
     }
 }

@@ -1,6 +1,6 @@
 package net.ntworld.foundation.processor
 
-import net.ntworld.foundation.generator.ContractReader
+import net.ntworld.foundation.generator.util.ContractReader
 import net.ntworld.foundation.generator.GeneratorSettings
 import net.ntworld.foundation.generator.Platform
 import net.ntworld.foundation.generator.main.ContractImplementationMainGenerator

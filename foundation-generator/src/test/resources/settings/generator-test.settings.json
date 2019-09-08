@@ -9,9 +9,9 @@
                 "net.ntworld.foundation.Faked",
                 "net.ntworld.foundation.Handler"
             ],
-            "startedAt": 1567872303438,
-            "finishedAt": 1567872303688,
-            "duration": 250
+            "startedAt": 1567945988284,
+            "finishedAt": 1567945988588,
+            "duration": 304
         }
     ],
     "aggregateFactories": [
@@ -60,7 +60,7 @@
                 "extraString": "",
                 "extraInt": 0
             },
-            "makeByFactory": true,
+            "makeByFactory": false,
             "name": "com.generator.contract.CustomTypeContractHandler"
         },
         {
@@ -102,7 +102,7 @@
                 "extraString": "",
                 "extraInt": 0
             },
-            "makeByFactory": true,
+            "makeByFactory": false,
             "name": "com.generator.contract.BasicTypeContractHandler"
         },
         {
@@ -144,7 +144,7 @@
                 "extraString": "",
                 "extraInt": 0
             },
-            "makeByFactory": true,
+            "makeByFactory": false,
             "name": "com.generator.contract.OneSupertypeOverrideContractHandler"
         },
         {
@@ -186,7 +186,7 @@
                 "extraString": "",
                 "extraInt": 0
             },
-            "makeByFactory": true,
+            "makeByFactory": false,
             "name": "com.generator.contract.CustomTypeListContractHandler"
         },
         {
@@ -228,7 +228,7 @@
                 "extraString": "",
                 "extraInt": 0
             },
-            "makeByFactory": true,
+            "makeByFactory": false,
             "name": "com.generator.contract.OneSupertypeContractHandler"
         },
         {
@@ -314,7 +314,7 @@
                 "extraString": "",
                 "extraInt": 0
             },
-            "makeByFactory": true,
+            "makeByFactory": false,
             "name": "com.generator.contract.NoSupertypeContractCommandHandler"
         }
     ],
@@ -360,7 +360,7 @@
                 "extraString": "",
                 "extraInt": 0
             },
-            "makeByFactory": true,
+            "makeByFactory": false,
             "name": "com.generator.queryHandler.GetUserByIdQueryHandler"
         }
     ],
@@ -406,8 +406,52 @@
                 "extraString": "",
                 "extraInt": 0
             },
-            "makeByFactory": true,
+            "makeByFactory": false,
             "name": "com.generator.requestHandler.CreateUserRequestHandler"
+        },
+        {
+            "request": {
+                "className": "GetUserByIdRequest",
+                "packageName": "com.generator.contract"
+            },
+            "version": 0,
+            "handler": {
+                "className": "GetUserByIdRequestHandler",
+                "packageName": "com.generator.requestHandler"
+            },
+            "metadata": {
+                "kind": 1,
+                "packageName": "",
+                "metadataVersion": [
+                    1,
+                    1,
+                    15
+                ],
+                "bytecodeVersion": [
+                    1,
+                    0,
+                    3
+                ],
+                "data1": [
+                    "\u0000\u001a\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0004\b\u0007\u0018\u00002\u000e\u0012\u0004\u0012\u00020\u0002\u0012\u0004\u0012\u00020\u00030\u0001B\r\u0012\u0006\u0010\u0004\u001a\u00020\u0005¢\u0006\u0002\u0010\u0006J\u0010\u0010\u0007\u001a\u00020\u00032\u0006\u0010\b\u001a\u00020\u0002H\u0016R\u000e\u0010\u0004\u001a\u00020\u0005X\u0004¢\u0006\u0002\n\u0000¨\u0006\t"
+                ],
+                "data2": [
+                    "Lcom/generator/requestHandler/GetUserByIdRequestHandler;",
+                    "Lnet/ntworld/foundation/RequestHandler;",
+                    "Lcom/generator/contract/GetUserByIdRequest;",
+                    "Lcom/generator/contract/GetUserByIdResponse;",
+                    "infrastructure",
+                    "Lcom/generator/UserInfrastructure;",
+                    "(Lcom/generator/UserInfrastructure;)V",
+                    "handle",
+                    "request",
+                    "generator-test"
+                ],
+                "extraString": "",
+                "extraInt": 0
+            },
+            "makeByFactory": false,
+            "name": "com.generator.requestHandler.GetUserByIdRequestHandler"
         }
     ],
     "implementations": [
@@ -1967,11 +2011,10 @@
                     3
                 ],
                 "data1": [
-                    "\u0000\u001c\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0003\n\u0002\u0010\u000b\n\u0002\b\u0006\bf\u0018\u0000*\u0004\b\u0000\u0010\u00012\u00020\u0002R\u0014\u0010\u0003\u001a\u0004\u0018\u00010\u0004X¦\u0004¢\u0006\u0006\u001a\u0004\b\u0005\u0010\u0006R\u0014\u0010\u0007\u001a\u00020\b8VX\u0004¢\u0006\u0006\u001a\u0004\b\u0007\u0010\tR\u0014\u0010\n\u001a\u00020\b8VX\u0004¢\u0006\u0006\u001a\u0004\b\n\u0010\tR\u0012\u0010\u000b\u001a\u00028\u0000X¦\u0004¢\u0006\u0006\u001a\u0004\b\f\u0010\r¨\u0006\u000e"
+                    "\u0000\u001a\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0003\n\u0002\u0010\u000b\n\u0002\b\u0003\bf\u0018\u00002\u00020\u0001R\u0014\u0010\u0002\u001a\u0004\u0018\u00010\u0003X¦\u0004¢\u0006\u0006\u001a\u0004\b\u0004\u0010\u0005R\u0014\u0010\u0006\u001a\u00020\u00078VX\u0004¢\u0006\u0006\u001a\u0004\b\u0006\u0010\bR\u0014\u0010\t\u001a\u00020\u00078VX\u0004¢\u0006\u0006\u001a\u0004\b\t\u0010\b¨\u0006\n"
                 ],
                 "data2": [
                     "Lnet/ntworld/foundation/Response;",
-                    "T",
                     "Lnet/ntworld/foundation/Contract;",
                     "error",
                     "Lnet/ntworld/foundation/Error;",
@@ -1981,9 +2024,6 @@
                     "",
                     "()Z",
                     "isSuccess",
-                    "value",
-                    "getValue",
-                    "()Ljava/lang/Object;",
                     "foundation"
                 ],
                 "extraString": "",
@@ -2002,19 +2042,9 @@
                     "hasFakedAnnotation": false,
                     "fakedType": null
                 },
-                "value": {
-                    "name": "value",
-                    "order": 2,
-                    "unknownAnnotations": [
-                    ],
-                    "hasNotNullAnnotation": false,
-                    "hasNullableAnnotation": false,
-                    "hasFakedAnnotation": false,
-                    "fakedType": null
-                },
                 "isSuccess": {
                     "name": "isSuccess",
-                    "order": 3,
+                    "order": 2,
                     "unknownAnnotations": [
                     ],
                     "hasNotNullAnnotation": false,
@@ -2024,7 +2054,7 @@
                 },
                 "isFailure": {
                     "name": "isFailure",
-                    "order": 4,
+                    "order": 3,
                     "unknownAnnotations": [
                     ],
                     "hasNotNullAnnotation": false,
@@ -2055,14 +2085,14 @@
                     3
                 ],
                 "data1": [
-                    "\u0000\u0010\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\b\u0004\bf\u0018\u00002\n\u0012\u0006\u0012\u0004\u0018\u00010\u00020\u0001R\u0014\u0010\u0003\u001a\u0004\u0018\u00010\u0002X¦\u0004¢\u0006\u0006\u001a\u0004\b\u0004\u0010\u0005¨\u0006\u0006"
+                    "\u0000\u0012\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0003\bf\u0018\u00002\u00020\u0001R\u0012\u0010\u0002\u001a\u00020\u0003X¦\u0004¢\u0006\u0006\u001a\u0004\b\u0004\u0010\u0005¨\u0006\u0006"
                 ],
                 "data2": [
                     "Lcom/generator/contract/CreateUserResponse;",
                     "Lnet/ntworld/foundation/Response;",
+                    "data",
                     "Lcom/generator/contract/User;",
-                    "value",
-                    "getValue",
+                    "getData",
                     "()Lcom/generator/contract/User;",
                     "generator-test"
                 ],
@@ -2073,14 +2103,13 @@
                 "net.ntworld.foundation.Response"
             ],
             "properties": {
-                "value": {
-                    "name": "value",
+                "data": {
+                    "name": "data",
                     "order": 1,
                     "unknownAnnotations": [
-                        "java.lang.Override"
                     ],
-                    "hasNotNullAnnotation": false,
-                    "hasNullableAnnotation": true,
+                    "hasNotNullAnnotation": true,
+                    "hasNullableAnnotation": false,
                     "hasFakedAnnotation": false,
                     "fakedType": null
                 }
@@ -2107,7 +2136,7 @@
                     3
                 ],
                 "data1": [
-                    "\u0000\u0010\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\bf\u0018\u0000*\f\b\u0000\u0010\u0001*\u0006\u0012\u0002\b\u00030\u00022\u00020\u0003¨\u0006\u0004"
+                    "\u0000\u0010\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\bf\u0018\u0000*\b\b\u0000\u0010\u0001*\u00020\u00022\u00020\u0003¨\u0006\u0004"
                 ],
                 "data2": [
                     "Lnet/ntworld/foundation/Request;",
@@ -2205,6 +2234,95 @@
             },
             "collectedBy": "kapt",
             "name": "com.generator.contract.CreateUserRequest"
+        },
+        {
+            "contract": {
+                "className": "GetUserByIdResponse",
+                "packageName": "com.generator.contract"
+            },
+            "metadata": {
+                "kind": 1,
+                "packageName": "",
+                "metadataVersion": [
+                    1,
+                    1,
+                    15
+                ],
+                "bytecodeVersion": [
+                    1,
+                    0,
+                    3
+                ],
+                "data1": [
+                    "\u0000\n\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\bf\u0018\u00002\u00020\u0001¨\u0006\u0002"
+                ],
+                "data2": [
+                    "Lcom/generator/contract/GetUserByIdResponse;",
+                    "Lnet/ntworld/foundation/Response;",
+                    "generator-test"
+                ],
+                "extraString": "",
+                "extraInt": 0
+            },
+            "supertypes": [
+                "net.ntworld.foundation.Response"
+            ],
+            "properties": {
+            },
+            "collectedBy": "kapt",
+            "name": "com.generator.contract.GetUserByIdResponse"
+        },
+        {
+            "contract": {
+                "className": "GetUserByIdRequest",
+                "packageName": "com.generator.contract"
+            },
+            "metadata": {
+                "kind": 1,
+                "packageName": "",
+                "metadataVersion": [
+                    1,
+                    1,
+                    15
+                ],
+                "bytecodeVersion": [
+                    1,
+                    0,
+                    3
+                ],
+                "data1": [
+                    "\u0000\u0016\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010\u000e\n\u0002\b\u0003\bf\u0018\u00002\b\u0012\u0004\u0012\u00020\u00020\u0001R\u0012\u0010\u0003\u001a\u00020\u0004X¦\u0004¢\u0006\u0006\u001a\u0004\b\u0005\u0010\u0006¨\u0006\u0007"
+                ],
+                "data2": [
+                    "Lcom/generator/contract/GetUserByIdRequest;",
+                    "Lnet/ntworld/foundation/Request;",
+                    "Lcom/generator/contract/GetUserByIdResponse;",
+                    "id",
+                    "",
+                    "getId",
+                    "()Ljava/lang/String;",
+                    "generator-test"
+                ],
+                "extraString": "",
+                "extraInt": 0
+            },
+            "supertypes": [
+                "net.ntworld.foundation.Request"
+            ],
+            "properties": {
+                "id": {
+                    "name": "id",
+                    "order": 1,
+                    "unknownAnnotations": [
+                    ],
+                    "hasNotNullAnnotation": true,
+                    "hasNullableAnnotation": false,
+                    "hasFakedAnnotation": false,
+                    "fakedType": null
+                }
+            },
+            "collectedBy": "kapt",
+            "name": "com.generator.contract.GetUserByIdRequest"
         }
     ],
     "fakedAnnotations": [

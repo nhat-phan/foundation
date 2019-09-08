@@ -1,11 +1,11 @@
 package net.ntworld.foundation.generator.test
 
 import com.squareup.kotlinpoet.*
-import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import net.ntworld.foundation.generator.*
 import net.ntworld.foundation.generator.Framework
 import net.ntworld.foundation.generator.Utility
 import net.ntworld.foundation.generator.type.ClassInfo
+import net.ntworld.foundation.generator.util.ContractReader
 
 class ContractFactoryTestGenerator(private val platform: Platform) {
     data class Item(

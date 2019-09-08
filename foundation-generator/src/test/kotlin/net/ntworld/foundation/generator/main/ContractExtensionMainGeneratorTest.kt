@@ -1,7 +1,7 @@
 package net.ntworld.foundation.generator.main
 
 import com.squareup.kotlinpoet.FileSpec
-import net.ntworld.foundation.generator.ContractReader
+import net.ntworld.foundation.generator.util.ContractReader
 import net.ntworld.foundation.generator.GeneratorTest
 import net.ntworld.foundation.generator.TestSuite
 import net.ntworld.foundation.generator.type.ClassInfo
@@ -54,7 +54,8 @@ class ContractExtensionMainGeneratorTest : TestSuite() {
 
     private fun runTestForContract(name: String) {
         val allSettings = readSettings()
-        val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
+        val reader =
+            ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
         val contract = GeneratorTest.Contract.namespace(name)
         val setting = allSettings.toMutable().getContract(contract)!!
         val properties = reader.findPropertiesOfContract(contract)!!

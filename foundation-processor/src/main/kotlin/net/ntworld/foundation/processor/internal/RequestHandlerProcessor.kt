@@ -113,11 +113,7 @@ internal class RequestHandlerProcessor : Processor {
             }
 
             data[key] = data[key]!!.copy(
-                version = element.getAnnotation(Handler::class.java).version,
-                makeByFactory = !CodeUtility.canConstructedByInfrastructure(
-                    processingEnv,
-                    element
-                )
+                version = element.getAnnotation(Handler::class.java).version
             )
         }
     }

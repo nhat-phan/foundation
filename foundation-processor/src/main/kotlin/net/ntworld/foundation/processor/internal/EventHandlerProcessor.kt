@@ -108,13 +108,6 @@ internal class EventHandlerProcessor : Processor {
             if (null !== implementedInterface) {
                 findImplementedEvent(processingEnv, key, implementedInterface as DeclaredType)
             }
-
-            data[key] = data[key]!!.copy(
-                makeByFactory = !CodeUtility.canConstructedByInfrastructure(
-                    processingEnv,
-                    element
-                )
-            )
         }
     }
 

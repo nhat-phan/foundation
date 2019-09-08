@@ -1,10 +1,9 @@
 package net.ntworld.foundation.generator.main
 
-import net.ntworld.foundation.generator.ContractReader
+import net.ntworld.foundation.generator.util.ContractReader
 import net.ntworld.foundation.generator.GeneratorTest
 import net.ntworld.foundation.generator.TestSuite
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 class ContractImplementationMainGeneratorTest  : TestSuite() {
     @Test
@@ -48,7 +47,8 @@ class ContractImplementationMainGeneratorTest  : TestSuite() {
 
     private fun runTestForContract(name: String) {
         val allSettings = readSettingsFromResource("/settings/generator-test.settings.json")
-        val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
+        val reader =
+            ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
         val contract = GeneratorTest.Contract.namespace(name)
         val setting = allSettings.toMutable().getContract(contract)
         val properties = reader.findPropertiesOfContract(contract)

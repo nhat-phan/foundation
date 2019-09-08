@@ -1,0 +1,51 @@
+package com.generator.requestHandler
+
+import com.generator.UserInfrastructure
+import com.generator.contract.CreateUserRequest
+import com.generator.contract.GetUserByIdRequest
+import kotlin.Int
+import kotlin.Suppress
+import net.ntworld.foundation.HandlerVersioningStrategy
+import net.ntworld.foundation.LocalBusResolver
+import net.ntworld.foundation.Request
+import net.ntworld.foundation.RequestHandler
+import net.ntworld.foundation.ServiceBus
+import net.ntworld.foundation.ServiceBusProcessResult
+import net.ntworld.foundation.exception.RequestHandlerNotFoundException
+
+open class LocalServiceBus(
+  private val companyId: Int,
+  private val infrastructure: UserInfrastructure
+) : ServiceBus, LocalBusResolver<Request<*>, RequestHandler<*, *>> {
+  @Suppress("UNCHECKED_CAST")
+  override fun <R: net.ntworld.foundation.Response> process(request: Request<R>):
+      ServiceBusProcessResult<R> {
+    val handler = this.resolve(request)
+    if (null !== handler) {
+      return ServiceBusProcessResult.make(handler.execute(request = request, message = null) as R)
+    }
+    throw RequestHandlerNotFoundException(request.toString())
+  }
+
+  open fun getVersioningStrategy(request: Request<*>): HandlerVersioningStrategy =
+      HandlerVersioningStrategy.useLatestVersion
+
+  override fun resolve(instance: Request<*>): RequestHandler<*, *>? {
+    val strategy = getVersioningStrategy(instance)
+    if (strategy.skip()) {
+      return null
+    }
+
+    return when (instance) {
+      is CreateUserRequest -> CreateUserRequestHandler(
+        companyId = this.companyId
+      )
+
+      is GetUserByIdRequest -> GetUserByIdRequestHandler(
+        infrastructure = this.infrastructure
+      )
+
+      else -> null
+    }
+  }
+}

@@ -1,5 +1,6 @@
 val artifactGroup: String by project
-val artifactVersion: String by project
+val foundationVersion: String by project
+val processorVersion: String by project
 val kotlinPoetVersion: String by project
 
 plugins {
@@ -8,7 +9,7 @@ plugins {
 }
 
 group = artifactGroup
-version = artifactVersion
+version = processorVersion
 
 repositories {
     jcenter()
@@ -17,16 +18,10 @@ repositories {
 }
 
 dependencies {
-    // implementation(project(":foundation", "jvmDefault"))
+    implementation("com.github.nhat-phan.foundation:foundation-jvm:$foundationVersion")
     implementation(project(":foundation-generator"))
     implementation(kotlin("stdlib"))
     compile("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.1.0")
-
-    // We have a problem that if reference to the project :foundation
-    // the generated pom is pointed to wrong artifact. In fact, the processor
-    // can work with any version of foundation therefore let include them
-    // directly to dependency like this
-    implementation("com.github.nhat-phan.foundation:foundation-jvm:0.3+")
 
     testImplementation(kotlin("test"))
     testImplementation(kotlin("test-junit"))
