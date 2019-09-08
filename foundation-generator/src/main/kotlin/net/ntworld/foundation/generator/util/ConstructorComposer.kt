@@ -9,19 +9,26 @@ import net.ntworld.foundation.generator.type.Constructor
  * is composed item's constructor params, also contains some code generator utility.
  *
  * For example, if you have 2 items like:
- *      - First(userId: Int)
- *      - Second(infrastructure: Infrastructure)
+ *
+ * - First(userId: Int)
+ * - Second(infrastructure: Infrastructure)
+ *
  * This class will generate a composed constructor for a wrapper class:
  *
+ * ```
  *   class Wrapper(private val userId: Int, private val infrastructure: Infrastructure) {
  *     fun resolveFirst() = First(userId)
  *     fun resolveSecond() = Second(infrastructure)
  *   }
+ * ```
  *
  * In case there is any same parameter in item's constructor, the composed one can merged them
- * together. Please note that:
- *      - "same" parameter means they have same name and same type.
- *      - order of parameters in composed constructor is first come first served based on .add()
+ * together.
+ *
+ * Please note that:
+ *
+ * - "same" parameter means they have same name and same type.
+ * - order of parameters in composed constructor is first come first served based on .add()
  */
 internal class ConstructorComposer {
     /**

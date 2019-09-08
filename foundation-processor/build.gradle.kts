@@ -1,10 +1,13 @@
 val artifactGroup: String by project
 val foundationVersion: String by project
+val kotlinxMetadataJvmVersion: String by project
 val processorVersion: String by project
 val kotlinPoetVersion: String by project
+val guavaVersion: String by project
+val truthVersion: String by project
+val compileTestingVersion: String by project
 
 plugins {
-    kotlin("jvm") version "1.3.31"
     `maven-publish`
 }
 
@@ -21,13 +24,13 @@ dependencies {
     implementation("com.github.nhat-phan.foundation:foundation-jvm:$foundationVersion")
     implementation(project(":foundation-generator"))
     implementation(kotlin("stdlib"))
-    compile("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.1.0")
+    compile("org.jetbrains.kotlinx:kotlinx-metadata-jvm:$kotlinxMetadataJvmVersion")
 
     testImplementation(kotlin("test"))
     testImplementation(kotlin("test-junit"))
-    testCompile("com.google.guava:guava:28.0-jre")
-    testCompile("com.google.truth:truth:1.0")
-    testCompile("com.google.testing.compile:compile-testing:0.18")
+    testCompile("com.google.guava:guava:$guavaVersion")
+    testCompile("com.google.truth:truth:$truthVersion")
+    testCompile("com.google.testing.compile:compile-testing:$compileTestingVersion")
 }
 
 val sourcesJar by tasks.registering(Jar::class) {

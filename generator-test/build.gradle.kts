@@ -6,9 +6,6 @@ val kotlinxSerializationRuntimeVersion: String by project
 val javaFakerVersion: String by project
 
 plugins {
-    kotlin("jvm") version "1.3.31"
-    kotlin("kapt") version "1.3.31"
-    id("kotlinx-serialization") version "1.3.31"
     idea
 }
 
@@ -24,7 +21,9 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
+    implementation(project(":generator-test-contract"))
     implementation("com.github.nhat-phan.foundation:foundation-jvm:$foundationVersion")
+
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
     compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinxSerializationRuntimeVersion")
     compile("com.github.javafaker:javafaker:$javaFakerVersion")

@@ -5,9 +5,6 @@ val kotlinxSerializationRuntimeVersion: String by project
 val javaFakerVersion: String by project
 
 plugins {
-    kotlin("jvm") version "1.3.31"
-    kotlin("kapt") version "1.3.31"
-    id("kotlinx-serialization") version "1.3.31"
     idea
 }
 

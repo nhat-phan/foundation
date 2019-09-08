@@ -19,11 +19,13 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'foundation-workspace'
+rootProject.name = "foundation"
 
 include("foundation")
 include("foundation-processor")
 include("foundation-generator")
 include("example-jvm")
 include("generator-test")
-include("integration-test")
+include("generator-test-contract")
+include("integration-test-contract")
+include("integration-test-service")

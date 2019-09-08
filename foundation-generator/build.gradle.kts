@@ -1,12 +1,11 @@
 val artifactGroup: String by project
 val processorVersion: String by project
 val kotlinPoetVersion: String by project
+val kotlinxMetadataJvmVersion: String by project
 val kotlinxSerializationRuntimeVersion: String by project
 val javaFakerVersion: String by project
 
 plugins {
-    kotlin("jvm") version "1.3.31"
-    id("kotlinx-serialization") version "1.3.31"
     `maven-publish`
 }
 
@@ -23,7 +22,7 @@ dependencies {
     implementation(kotlin("reflect"))
     implementation("com.squareup:kotlinpoet:$kotlinPoetVersion")
     implementation("com.github.javafaker:javafaker:$javaFakerVersion")
-    compile("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.1.0")
+    compile("org.jetbrains.kotlinx:kotlinx-metadata-jvm:$kotlinxMetadataJvmVersion")
     compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinxSerializationRuntimeVersion")
 
     testImplementation(kotlin("test"))
