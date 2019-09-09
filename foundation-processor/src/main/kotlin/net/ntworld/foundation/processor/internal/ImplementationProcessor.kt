@@ -22,7 +22,7 @@ class ImplementationProcessor : Processor {
         Implementation::class.java
     )
 
-    val definedInterfaces = mapOf<String, ImplementationSetting.Type>(
+    private val definedInterfaces = mapOf<String, ImplementationSetting.Type>(
         Aggregate::class.java.canonicalName to ImplementationSetting.Type.Aggregate,
         Error::class.java.canonicalName to ImplementationSetting.Type.Error,
         State::class.java.canonicalName to ImplementationSetting.Type.State,
@@ -123,20 +123,17 @@ class ImplementationProcessor : Processor {
     private fun processElementsAnnotatedByImplementation(
         elements: List<Element>,
         processingEnv: ProcessingEnvironment
-    ) {
-        elements.forEach { element ->
-            val packageElement = processingEnv.elementUtils.getPackageOf(element)
-            val className = element.simpleName.toString()
-            val key = "${packageElement.qualifiedName}.$className"
-            initImplementationSettingIfNeeded(packageElement.qualifiedName.toString(), className)
+    ) = elements.forEach { element ->
+        val packageElement = processingEnv.elementUtils.getPackageOf(element)
+        val className = element.simpleName.toString()
+        val key = "${packageElement.qualifiedName}.$className"
+        initImplementationSettingIfNeeded(packageElement.qualifiedName.toString(), className)
 
-            val typeElement = element as? TypeElement ?: return@forEach
-            findImplementedInterface(processingEnv, key, typeElement)
-        }
+        val typeElement = element as? TypeElement ?: return@forEach
+        findImplementedInterface(processingEnv, key, typeElement)
     }
 
     private fun findImplementedInterface(processingEnv: ProcessingEnvironment, key: String, element: TypeElement) {
-        // TODO: Decide that should add Result in Query<Result> to defined interfaces
         element.interfaces.forEach { type ->
             if (type !is DeclaredType) {
                 return@forEach

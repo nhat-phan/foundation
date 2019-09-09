@@ -13,33 +13,12 @@ import net.ntworld.foundation.processor.internal.Processor
 import net.ntworld.foundation.processor.util.ContractCollector
 import net.ntworld.foundation.processor.util.FrameworkProcessor
 import net.ntworld.foundation.processor.util.ProcessorOutput
+import net.ntworld.foundation.processor.util.ProcessorSetting
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.RoundEnvironment
-import javax.annotation.processing.SupportedAnnotationTypes
-import javax.annotation.processing.SupportedOptions
 import javax.lang.model.element.TypeElement
 
-@SupportedAnnotationTypes(
-    FrameworkProcessor.Faked,
-    FrameworkProcessor.Implementation,
-    FrameworkProcessor.Handler,
-    FrameworkProcessor.EventSourced,
-    FrameworkProcessor.EventSourcing,
-    FrameworkProcessor.EventSourcingMetadata,
-    FrameworkProcessor.EventSourcingEncrypted
-)
-@SupportedOptions(FrameworkProcessor.KAPT_KOTLIN_GENERATED_OPTION_NAME)
 class FoundationProcessor : AbstractProcessor() {
-    private val annotationList = listOf(
-        FrameworkProcessor.Faked,
-        FrameworkProcessor.Implementation,
-        FrameworkProcessor.Handler,
-        FrameworkProcessor.EventSourced,
-        FrameworkProcessor.EventSourcing,
-        FrameworkProcessor.EventSourcingMetadata,
-        FrameworkProcessor.EventSourcingEncrypted
-    )
-
     private val processors: List<Processor> = listOf(
         ImplementationProcessor(),
         FakedAnnotationProcessor(),
@@ -48,60 +27,98 @@ class FoundationProcessor : AbstractProcessor() {
         QueryHandlerProcessor(),
         RequestHandlerProcessor(),
         EventSourcingProcessor(),
-        AggregateFactoryProcessor()
+        AggregateFactoryProcessor(),
+        FakedPropertyProcessor()
     )
 
-    override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment?): Boolean {
-        ContractCollector.reset()
+    override fun getSupportedAnnotationTypes(): MutableSet<String> {
+        return FrameworkProcessor.SUPPORTED_ANNOTATION_TYPES.toMutableSet()
+    }
 
+    override fun getSupportedOptions(): MutableSet<String> {
+        return FrameworkProcessor.SUPPORTED_OPTIONS.toMutableSet()
+    }
+
+    override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment?): Boolean {
         val start = System.currentTimeMillis()
         if (null === annotations || null === roundEnv || !shouldProcess(annotations)) {
             return true
         }
 
-        val processingAnnotations = mutableListOf<String>()
+        val processorSetting = ProcessorSetting.read(processingEnv)
         val currentSettings = ProcessorOutput.readSettingsFile(processingEnv)
         val lastRunInfo = currentSettings.annotationProcessorRunInfo.toMutableList()
-        annotations.forEach {
-            processingAnnotations.add(it.toString())
-        }
 
-        val processedSettings = processors.fold(currentSettings) { input, processor ->
-            this.runProcessor(roundEnv, input, processor)
+        val settings = collectSettingsByProcessors(currentSettings, roundEnv)
+        when (processorSetting.mode) {
+            ProcessorSetting.Mode.Default -> generateModeDefault(processorSetting, settings)
+            ProcessorSetting.Mode.ContractOnly -> generateModeContractOnly(processorSetting, settings)
         }
-
-        val mutableSettings = processedSettings.toMutable()
-        ContractCollector.getCollectedSettings().forEach {
-            mutableSettings.put(it)
-        }
-
-        val settings = mutableSettings.toGeneratorSettings()
-        generate(settings)
 
         val end = System.currentTimeMillis()
         lastRunInfo.add(
             AnnotationProcessorRunInfo(
-                annotations = processingAnnotations,
+                annotations = annotations.map { it.toString() },
                 startedAt = start,
                 finishedAt = end,
                 duration = (end - start)
             )
         )
-        ProcessorOutput.updateSettingsFile(processingEnv, settings.copy(annotationProcessorRunInfo = lastRunInfo))
+        ProcessorOutput.updateSettingsFile(
+            processingEnv,
+            if (processorSetting.isDev) settings.copy(annotationProcessorRunInfo = lastRunInfo) else settings,
+            processorSetting.isDev
+        )
 
         return true
     }
 
     private fun shouldProcess(annotations: MutableSet<out TypeElement>): Boolean {
         annotations.forEach {
-            if (annotationList.contains(it.qualifiedName.toString())) {
+            if (FrameworkProcessor.SUPPORTED_ANNOTATION_TYPES.contains(it.qualifiedName.toString())) {
                 return@shouldProcess true
             }
         }
         return false
     }
 
-    private fun generate(settings: GeneratorSettings) {
+    private fun collectSettingsByProcessors(
+        currentSettings: GeneratorSettings,
+        roundEnv: RoundEnvironment
+    ): GeneratorSettings {
+        ContractCollector.reset()
+        val processedSettings = processors.fold(currentSettings) { input, processor ->
+            this.runProcessor(roundEnv, input, processor)
+        }
+        val mutableSettings = processedSettings.toMutable()
+        ContractCollector.getCollectedSettings().forEach {
+            mutableSettings.put(it)
+        }
+
+        return mutableSettings.toGeneratorSettings()
+    }
+
+    private fun runProcessor(
+        roundEnv: RoundEnvironment,
+        settings: GeneratorSettings,
+        processor: Processor
+    ): GeneratorSettings {
+        processor.startProcess(settings)
+        processor.annotations.forEach { annotation ->
+            val annotatedElements = roundEnv.getElementsAnnotatedWith(annotation)
+            val elements = annotatedElements.filter {
+                processor.shouldProcess(annotation, it, processingEnv, roundEnv)
+            }
+            processor.process(annotation, elements, processingEnv, roundEnv)
+        }
+        return processor.applySettings(settings)
+    }
+
+    private fun generateModeContractOnly(processorSetting: ProcessorSetting, settings: GeneratorSettings) {
+
+    }
+
+    private fun generateModeDefault(processorSetting: ProcessorSetting, settings: GeneratorSettings) {
         settings.eventSourcings.forEach {
             ProcessorOutput.writeGeneratedFile(processingEnv, EventEntityMainGenerator.generate(it))
             ProcessorOutput.writeGeneratedFile(processingEnv, EventConverterMainGenerator.generate(it))
@@ -114,7 +131,7 @@ class FoundationProcessor : AbstractProcessor() {
 
         val globalTarget = InfrastructureProviderMainGenerator().findTarget(settings)
         generateUnimplementedContracts(settings, globalTarget)
-        generateProviderAndBuses(settings, globalTarget)
+        generateProviderAndBuses(processorSetting, settings, globalTarget)
     }
 
     private fun generateUnimplementedContracts(settings: GeneratorSettings, global: ClassInfo) {
@@ -145,29 +162,37 @@ class FoundationProcessor : AbstractProcessor() {
         ProcessorOutput.writeGeneratedFile(processingEnv, factoryMainGenerator.generate(settings, global.packageName))
     }
 
-    private fun generateProviderAndBuses(settings: GeneratorSettings, global: ClassInfo) {
+    private fun generateProviderAndBuses(
+        processorSetting: ProcessorSetting,
+        settings: GeneratorSettings,
+        global: ClassInfo
+    ) {
         ProcessorOutput.writeGlobalFile(
             processingEnv,
             settings,
-            LocalEventBusMainGenerator().generate(settings.eventHandlers, global.packageName)
+            LocalEventBusMainGenerator().generate(settings.eventHandlers, global.packageName),
+            processorSetting.isDev
         )
 
         ProcessorOutput.writeGlobalFile(
             processingEnv,
             settings,
-            LocalServiceBusMainGenerator().generate(settings.requestHandlers, global.packageName)
+            LocalServiceBusMainGenerator().generate(settings.requestHandlers, global.packageName),
+            processorSetting.isDev
         )
 
         ProcessorOutput.writeGlobalFile(
             processingEnv,
             settings,
-            LocalCommandBusMainGenerator().generate(settings.commandHandlers, global.packageName)
+            LocalCommandBusMainGenerator().generate(settings.commandHandlers, global.packageName),
+            processorSetting.isDev
         )
 
         ProcessorOutput.writeGlobalFile(
             processingEnv,
             settings,
-            LocalQueryBusMainGenerator().generate(settings.queryHandlers, global.packageName)
+            LocalQueryBusMainGenerator().generate(settings.queryHandlers, global.packageName),
+            processorSetting.isDev
         )
 
 //        ProcessorOutput.writeGlobalFile(
@@ -175,21 +200,5 @@ class FoundationProcessor : AbstractProcessor() {
 //            settings,
 //            InfrastructureProviderMainGenerator().generate(settings, global.packageName)
 //        )
-    }
-
-    private fun runProcessor(
-        roundEnv: RoundEnvironment,
-        settings: GeneratorSettings,
-        processor: Processor
-    ): GeneratorSettings {
-        processor.startProcess(settings)
-        processor.annotations.forEach { annotation ->
-            val annotatedElements = roundEnv.getElementsAnnotatedWith(annotation)
-            val elements = annotatedElements.filter {
-                processor.shouldProcess(annotation, it, processingEnv, roundEnv)
-            }
-            processor.process(annotation, elements, processingEnv, roundEnv)
-        }
-        return processor.applySettings(settings)
     }
 }

@@ -45,21 +45,11 @@ object ContractCollector {
         element: TypeElement,
         collectedBy: String
     ): ContractSetting? {
-        val metadataAnnotation = element.getAnnotation(Metadata::class.java)
-        if (null === metadataAnnotation) {
+        val header = KotlinMetadataUtil.getKotlinClassHeaderFromElement(element)
+        if (null === header) {
             return null
         }
 
-        val header = KotlinClassHeader(
-            data1 = metadataAnnotation.data1,
-            data2 = metadataAnnotation.data2,
-            bytecodeVersion = metadataAnnotation.bytecodeVersion,
-            extraInt = metadataAnnotation.extraInt,
-            extraString = metadataAnnotation.extraString,
-            kind = metadataAnnotation.kind,
-            metadataVersion = metadataAnnotation.metadataVersion,
-            packageName = metadataAnnotation.packageName
-        )
         val metadata = KotlinClassMetadata.read(header) as? KotlinClassMetadata.Class ?: return null
         val kmClass = metadata.toKmClass()
         val supertypes = findSupertypes(processingEnv, kmClass)

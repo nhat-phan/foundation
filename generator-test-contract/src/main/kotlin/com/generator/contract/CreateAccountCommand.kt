@@ -7,14 +7,14 @@ import net.ntworld.foundation.cqrs.Command
 interface CreateAccountCommand : Command {
     val jobPositionId: String
 
-    @get:Faked(type = FakedData.Internet.emailAddress)
+    @Faked(type = FakedData.Internet.emailAddress)
     val email: String
 
-    @get:FakedFirstName
+    @FakedFirstName
     val firstName: String
 
-    @get:Faked(type = FakedData.Name.lastName)
-    val parentFaked: String
+    @Faked(type = FakedData.Name.lastName)
+    val lastName: String
 
     companion object
 }

@@ -20,7 +20,10 @@ import javax.lang.model.element.TypeElement
     "kotlin.test.Test",
     "org.junit.Test"
 )
-@SupportedOptions(FrameworkProcessor.KAPT_KOTLIN_GENERATED_OPTION_NAME)
+@SupportedOptions(
+    FrameworkProcessor.KAPT_KOTLIN_GENERATED_OPTION_NAME,
+    FrameworkProcessor.MODE_OPTION_NAME
+)
 class FoundationTestProcessor : AbstractProcessor() {
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment?): Boolean {
         val settings = ProcessorOutput.readSettingsFile(processingEnv, true)

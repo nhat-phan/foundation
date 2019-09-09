@@ -4,7 +4,7 @@ package net.ntworld.foundation
  * Interface for classes which handle Event. You can create as many handlers for the same event
  * as you want.
  *
- * **Usage Example**
+ * **Usage**
  *
  * Given that you already have **MyEvent** interface which extends [Event]
  *
@@ -22,7 +22,7 @@ package net.ntworld.foundation
  * }
  * ```
  *
- * Thanks to @[Handler] the processor knows and will *generate*
+ * Thanks to [@Handler] the processor knows and will *generate*
  *
  * - **LocalEventBus** which wires your event handlers automatically
  *

@@ -8,7 +8,7 @@ import javax.annotation.processing.ProcessingEnvironment
 import javax.tools.Diagnostic
 
 internal object ProcessorOutput {
-    const val PROCESSOR_VERSION = "0.3.x"
+    const val PROCESSOR_VERSION = "0.3.4.2"
     private var isTest: Boolean = false
 
     private val files: MutableMap<String, String> = mutableMapOf()
@@ -80,12 +80,12 @@ internal object ProcessorOutput {
         return GeneratorSettings.parse(content)
     }
 
-    fun updateSettingsFile(processingEnv: ProcessingEnvironment, settings: GeneratorSettings) {
+    fun updateSettingsFile(processingEnv: ProcessingEnvironment, settings: GeneratorSettings, isDev: Boolean) {
         writeText(
             processingEnv,
             FrameworkProcessor.SETTINGS_PATH,
             FrameworkProcessor.SETTINGS_FILENAME,
-            GeneratorSettings.stringify(settings)
+            GeneratorSettings.stringify(settings, isDev)
         )
     }
 
@@ -115,7 +115,12 @@ internal object ProcessorOutput {
         }
     }
 
-    fun writeGlobalFile(processingEnv: ProcessingEnvironment, settings: GeneratorSettings, file: GeneratedFile) {
+    fun writeGlobalFile(
+        processingEnv: ProcessingEnvironment,
+        settings: GeneratorSettings,
+        file: GeneratedFile,
+        isDev: Boolean
+    ) {
         if (settings.globalDirectory.isNotEmpty()) {
             deleteFile(
                 processingEnv,
@@ -128,7 +133,7 @@ internal object ProcessorOutput {
 
         if (!file.empty) {
             writeText(processingEnv, file.directory, file.fileName, file.content)
-            updateSettingsFile(processingEnv, mergedSettings)
+            updateSettingsFile(processingEnv, mergedSettings, isDev)
         }
     }
 

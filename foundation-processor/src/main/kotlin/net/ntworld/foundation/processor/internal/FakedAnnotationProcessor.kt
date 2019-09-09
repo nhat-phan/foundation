@@ -72,23 +72,21 @@ internal class FakedAnnotationProcessor : Processor {
         elements: List<Element>,
         processingEnv: ProcessingEnvironment,
         roundEnv: RoundEnvironment
-    ) {
-        elements.forEach {
-            val packageElement = processingEnv.elementUtils.getPackageOf(it)
-            val className = it.simpleName.toString()
-            val key = "${packageElement.qualifiedName}.$className"
+    ) = elements.forEach {
+        val packageElement = processingEnv.elementUtils.getPackageOf(it)
+        val className = it.simpleName.toString()
+        val key = "${packageElement.qualifiedName}.$className"
 
-            val fakedAnnotation = it.getAnnotation(Faked::class.java)
-            if (null === fakedAnnotation) {
-                return@forEach
-            }
-
-            data[key] = CollectedFakedAnnotation(
-                packageName = packageElement.qualifiedName.toString(),
-                className = className,
-                fakedType = fakedAnnotation.type
-            )
+        val fakedAnnotation = it.getAnnotation(Faked::class.java)
+        if (null === fakedAnnotation) {
+            return@forEach
         }
+
+        data[key] = CollectedFakedAnnotation(
+            packageName = packageElement.qualifiedName.toString(),
+            className = className,
+            fakedType = fakedAnnotation.type
+        )
     }
 
 //    private fun getFakedType(element: Element): String? {

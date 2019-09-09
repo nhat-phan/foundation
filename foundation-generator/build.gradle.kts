@@ -1,5 +1,5 @@
 val artifactGroup: String by project
-val processorVersion: String by project
+val releasingProcessorVersion: String by project
 val kotlinPoetVersion: String by project
 val kotlinxMetadataJvmVersion: String by project
 val kotlinxSerializationRuntimeVersion: String by project
@@ -10,7 +10,7 @@ plugins {
 }
 
 group = artifactGroup
-version = processorVersion
+version = releasingProcessorVersion
 
 repositories {
     jcenter()

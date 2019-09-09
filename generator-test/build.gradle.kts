@@ -55,3 +55,9 @@ idea {
         )
     }
 }
+
+kapt {
+    arguments {
+        arg("foundation.processor.dev", "true")
+    }
+}

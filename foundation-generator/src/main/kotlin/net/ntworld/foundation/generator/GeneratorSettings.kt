@@ -27,14 +27,19 @@ data class GeneratorSettings(
     fun toMutable(): MutableGeneratorSettings = MutableGeneratorSettings(this)
 
     companion object {
-        private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
+        private val defaultJson = Json(JsonConfiguration.Stable)
+        private val devJson = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
 
-        fun stringify(data: GeneratorSettings): String {
-            return json.stringify(GeneratorSettings.serializer(), data)
+        private fun getJson(isDev: Boolean = false): Json {
+            return if (isDev) devJson else defaultJson
         }
 
-        fun parse(input: String): GeneratorSettings {
-            return json.parse(GeneratorSettings.serializer(), input)
+        fun stringify(data: GeneratorSettings, isDev: Boolean = false): String {
+            return getJson(isDev).stringify(serializer(), data)
+        }
+
+        fun parse(input: String, isDev: Boolean = false): GeneratorSettings {
+            return getJson(isDev).parse(serializer(), input)
         }
     }
 }

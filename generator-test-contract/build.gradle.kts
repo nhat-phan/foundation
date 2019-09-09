@@ -1,13 +1,13 @@
 val artifactGroup: String by project
 val foundationVersion: String by project
-val processorVersion: String by project
+val releasingProcessorVersion: String by project
 
 plugins {
     idea
 }
 
 group = "$artifactGroup.generator-test-contract"
-version = processorVersion
+version = releasingProcessorVersion
 
 repositories {
     jcenter()

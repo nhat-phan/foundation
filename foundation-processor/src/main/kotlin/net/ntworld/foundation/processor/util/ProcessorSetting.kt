@@ -1,0 +1,60 @@
+package net.ntworld.foundation.processor.util
+
+import javax.annotation.processing.ProcessingEnvironment
+
+internal class ProcessorSetting(
+    val mode: Mode,
+    val settingsClass: String?,
+    val isDev: Boolean
+) {
+    enum class Mode {
+        Default,
+        ContractOnly
+    }
+
+    companion object {
+        private val DEV_OPTION_NAME = listOf(
+            "1",
+            "true",
+            "yes"
+        )
+        private val CONTRACT_ONLY_MODE_VALUES = listOf(
+            "lib",
+            "library",
+            "shared-contract",
+            "shared-contracts",
+            "contract",
+            "contracts",
+            "contract-only",
+            "contracts-only"
+        )
+
+        fun read(processingEnv: ProcessingEnvironment): ProcessorSetting {
+            return ProcessorSetting(
+                mode = readMode(processingEnv),
+                settingsClass = readSettingsClass(processingEnv),
+                isDev = readIsDev(processingEnv)
+            )
+        }
+
+        private fun readMode(processingEnv: ProcessingEnvironment): Mode {
+            val mode = processingEnv.options[FrameworkProcessor.MODE_OPTION_NAME]
+            if (null !== mode && CONTRACT_ONLY_MODE_VALUES.contains(mode.toLowerCase().trim())) {
+                return Mode.ContractOnly
+            }
+            return Mode.Default
+        }
+
+        private fun readSettingsClass(processingEnv: ProcessingEnvironment): String? {
+            return processingEnv.options[FrameworkProcessor.SETTINGS_CLASS_OPTION_NAME]
+        }
+
+        private fun readIsDev(processingEnv: ProcessingEnvironment): Boolean {
+            val dev = processingEnv.options[FrameworkProcessor.DEV_OPTION_NAME]
+            if (null !== dev && DEV_OPTION_NAME.contains(dev.toLowerCase().trim())) {
+                return true
+            }
+            return false
+        }
+    }
+}

@@ -8,7 +8,7 @@ package net.ntworld.foundation
  * Only interfaces extend from [Event] can be handled by [EventHandler]
  *
  *
- * **Usage Example**
+ * **Usage**
  *
  * Create **MyEvent** interface which extends [Event] interface
  *
@@ -27,7 +27,7 @@ package net.ntworld.foundation
  * }
  * ```
  *
- * Thanks to @[Handler] the processor knows and will *generate*
+ * Thanks to [@Handler] the processor knows and will *generate*
  *
  * - An implementation for **MyEvent**
  * - **LocalEventBus** which wires your event handlers automatically

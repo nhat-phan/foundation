@@ -90,32 +90,30 @@ internal class QueryHandlerProcessor() : Processor {
         elements: List<Element>,
         processingEnv: ProcessingEnvironment,
         roundEnv: RoundEnvironment
-    ) {
-        elements.forEach { element ->
-            val packageName = this.getPackageNameOfClass(element)
-            val className = element.simpleName.toString()
-            val key = "$packageName.$className"
-            initCollectedQueryHandlerIfNeeded(element, packageName, className)
+    ) = elements.forEach { element ->
+        val packageName = this.getPackageNameOfClass(element)
+        val className = element.simpleName.toString()
+        val key = "$packageName.$className"
+        initCollectedQueryHandlerIfNeeded(element, packageName, className)
 
-            // If the Handler is provided enough information, then no need to find data
-            if (processAnnotationProperties(processingEnv, key, element, element.getAnnotation(Handler::class.java))) {
-                return@forEach
-            }
-
-            val implementedInterface = (element as TypeElement).interfaces
-                .firstOrNull {
-                    val e = processingEnv.typeUtils.asElement(it) as? TypeElement ?: return@firstOrNull false
-                    e.qualifiedName.toString() == QueryHandler::class.java.canonicalName
-                }
-
-            if (null !== implementedInterface) {
-                findImplementedQuery(processingEnv, key, implementedInterface as DeclaredType)
-            }
-
-            data[key] = data[key]!!.copy(
-                version = element.getAnnotation(Handler::class.java).version
-            )
+        // If the Handler is provided enough information, then no need to find data
+        if (processAnnotationProperties(processingEnv, key, element, element.getAnnotation(Handler::class.java))) {
+            return@forEach
         }
+
+        val implementedInterface = (element as TypeElement).interfaces
+            .firstOrNull {
+                val e = processingEnv.typeUtils.asElement(it) as? TypeElement ?: return@firstOrNull false
+                e.qualifiedName.toString() == QueryHandler::class.java.canonicalName
+            }
+
+        if (null !== implementedInterface) {
+            findImplementedQuery(processingEnv, key, implementedInterface as DeclaredType)
+        }
+
+        data[key] = data[key]!!.copy(
+            version = element.getAnnotation(Handler::class.java).version
+        )
     }
 
     private fun processAnnotationProperties(
