@@ -13,5 +13,5 @@ data class ContractSetting(
     val properties: Map<String, ContractProperty>,
     val collectedBy: String = "unknown"
 ) : Setting {
-    override val name: String = "${contract.packageName}.${contract.className}"
+    override val name: String = contract.fullName()
 }

@@ -30,7 +30,7 @@ class ContractFactoryMainGenerator {
         val stringBuffer = StringBuffer()
         file.writeTo(stringBuffer)
 
-        return Utility.buildMainGeneratedFile(target, stringBuffer.toString())
+        return GeneratedFile.makeMainFile(target, stringBuffer.toString())
     }
 
     private fun buildFile(settings: GeneratorSettings, target: ClassInfo): FileSpec {

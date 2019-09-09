@@ -39,7 +39,8 @@ internal object ProcessorOutput {
         implementations = listOf(),
         messages = listOf(),
         contracts = listOf(),
-        fakedAnnotations = listOf()
+        fakedAnnotations = listOf(),
+        fakedProperties = mapOf()
     )
 
     fun deleteFile(processingEnv: ProcessingEnvironment, path: String) {
@@ -109,12 +110,9 @@ internal object ProcessorOutput {
     }
 
     fun writeGeneratedFile(processingEnv: ProcessingEnvironment, file: GeneratedFile) {
-        writeText(
-            processingEnv,
-            file.directory,
-            file.fileName,
-            file.content
-        )
+        if (!file.empty) {
+            writeText(processingEnv, file.directory, file.fileName, file.content)
+        }
     }
 
     fun writeGlobalFile(processingEnv: ProcessingEnvironment, settings: GeneratorSettings, file: GeneratedFile) {
@@ -127,13 +125,11 @@ internal object ProcessorOutput {
         val mergedSettings = settings.copy(
             globalDirectory = file.directory
         )
-        writeText(
-            processingEnv,
-            file.directory,
-            file.fileName,
-            file.content
-        )
-        updateSettingsFile(processingEnv, mergedSettings)
+
+        if (!file.empty) {
+            writeText(processingEnv, file.directory, file.fileName, file.content)
+            updateSettingsFile(processingEnv, mergedSettings)
+        }
     }
 
     private fun getKaptGeneratedDirectory(processingEnv: ProcessingEnvironment): String {

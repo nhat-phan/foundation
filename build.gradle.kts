@@ -41,6 +41,7 @@ subprojects {
 
     if (name == "generator-test-contract") {
         apply(plugin = "org.jetbrains.kotlin.jvm")
+        apply(plugin = "org.jetbrains.kotlin.kapt")
     }
 
     if (name == "integration-test-contract") {

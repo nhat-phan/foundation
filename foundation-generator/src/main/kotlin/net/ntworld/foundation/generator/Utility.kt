@@ -109,25 +109,6 @@ internal object Utility {
         )
     }
 
-    fun buildMainGeneratedFile(target: ClassInfo, content: String) =
-        buildGeneratedFile(target, content, GeneratedFile.Type.Main)
-
-    fun buildTestGeneratedFile(target: ClassInfo, content: String) =
-        buildGeneratedFile(target, content, GeneratedFile.Type.Test)
-
-    private fun buildGeneratedFile(target: ClassInfo, content: String, type: GeneratedFile.Type): GeneratedFile {
-        val directory = target.packageName.replace(".", "/")
-        val fileName = target.className + ".kt"
-        return GeneratedFile(
-            type = type,
-            target = target,
-            directory = "/$directory",
-            fileName = fileName,
-            path = "/$directory/$fileName",
-            content = content
-        )
-    }
-
     fun findInfrastructureProviderTarget(settings: GeneratorSettings, namespace: String? = null): ClassInfo {
         var packageName = if (null !== namespace) namespace else ""
         settings.aggregateFactories.forEach {

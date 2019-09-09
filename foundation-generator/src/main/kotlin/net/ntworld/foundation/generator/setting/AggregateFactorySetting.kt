@@ -49,7 +49,7 @@ data class AggregateFactorySetting(
     val isAbstract: Boolean,
     val isEventSourced: Boolean
 ): Setting {
-    override val name: String = "${implementation.packageName}.${implementation.className}"
+    override val name: String = implementation.fullName()
 
     enum class Type {
         ABSTRACT_FACTORY,

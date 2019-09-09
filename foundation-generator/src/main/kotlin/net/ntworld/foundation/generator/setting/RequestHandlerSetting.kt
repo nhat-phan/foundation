@@ -12,5 +12,5 @@ data class RequestHandlerSetting(
     override val metadata: KotlinMetadata,
     override val makeByFactory: Boolean
 ) : VersionedHandlerSetting {
-    override val name: String = "${handler.packageName}.${handler.className}"
+    override val name: String = handler.fullName()
 }

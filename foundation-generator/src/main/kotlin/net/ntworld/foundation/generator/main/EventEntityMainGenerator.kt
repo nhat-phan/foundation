@@ -17,7 +17,7 @@ object EventEntityMainGenerator {
         val stringBuffer = StringBuffer()
         file.writeTo(stringBuffer)
 
-        return Utility.buildMainGeneratedFile(target, stringBuffer.toString())
+        return GeneratedFile.makeMainFile(target, stringBuffer.toString())
     }
 
     internal fun buildFile(setting: EventSourcingSetting, target: ClassInfo): FileSpec {

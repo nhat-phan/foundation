@@ -31,7 +31,7 @@ class ContractFactoryTestGenerator(private val platform: Platform) {
         val stringBuffer = StringBuffer()
         file.writeTo(stringBuffer)
 
-        return Utility.buildTestGeneratedFile(target, stringBuffer.toString())
+        return GeneratedFile.makeTestFile(target, stringBuffer.toString())
     }
 
     private fun buildFile(settings: GeneratorSettings, target: ClassInfo): FileSpec {

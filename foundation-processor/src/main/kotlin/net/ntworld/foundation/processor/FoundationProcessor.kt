@@ -31,6 +31,7 @@ import javax.lang.model.element.TypeElement
 @SupportedOptions(FrameworkProcessor.KAPT_KOTLIN_GENERATED_OPTION_NAME)
 class FoundationProcessor : AbstractProcessor() {
     private val annotationList = listOf(
+        FrameworkProcessor.Faked,
         FrameworkProcessor.Implementation,
         FrameworkProcessor.Handler,
         FrameworkProcessor.EventSourced,
@@ -54,11 +55,11 @@ class FoundationProcessor : AbstractProcessor() {
         ContractCollector.reset()
 
         val start = System.currentTimeMillis()
-        val processingAnnotations = mutableListOf<String>()
         if (null === annotations || null === roundEnv || !shouldProcess(annotations)) {
             return true
         }
 
+        val processingAnnotations = mutableListOf<String>()
         val currentSettings = ProcessorOutput.readSettingsFile(processingEnv)
         val lastRunInfo = currentSettings.annotationProcessorRunInfo.toMutableList()
         annotations.forEach {
@@ -169,11 +170,11 @@ class FoundationProcessor : AbstractProcessor() {
             LocalQueryBusMainGenerator().generate(settings.queryHandlers, global.packageName)
         )
 
-        ProcessorOutput.writeGlobalFile(
-            processingEnv,
-            settings,
-            InfrastructureProviderMainGenerator().generate(settings, global.packageName)
-        )
+//        ProcessorOutput.writeGlobalFile(
+//            processingEnv,
+//            settings,
+//            InfrastructureProviderMainGenerator().generate(settings, global.packageName)
+//        )
     }
 
     private fun runProcessor(

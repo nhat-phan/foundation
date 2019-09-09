@@ -8,5 +8,5 @@ data class FakedAnnotationSetting(
     val annotation: ClassInfo,
     val fakedType: String
 ) : Setting {
-    override val name: String = "${annotation.packageName}.${annotation.className}"
+    override val name: String = annotation.fullName()
 }

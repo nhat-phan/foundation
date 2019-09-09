@@ -1,8 +1,8 @@
 package net.ntworld.foundation.processor.util
 
 internal object FrameworkProcessor {
-    const val SETTINGS_PATH = ""
-    const val SETTINGS_FILENAME = "settings.json"
+    const val SETTINGS_PATH = "resources"
+    const val SETTINGS_FILENAME = "foundation-settings.json"
 
     const val KAPT_KOTLIN_GENERATED_OPTION_NAME = "kapt.kotlin.generated"
 

@@ -4,9 +4,10 @@ import kotlinx.serialization.Serializable
 import net.ntworld.foundation.generator.type.ClassInfo
 
 @Serializable
-data class MessageSetting(
+data class FakedPropertySetting(
     val contract: ClassInfo,
-    val channel: String
-): Setting {
-    override val name: String = contract.fullName()
+    val property: String,
+    val fakedType: String
+) : Setting {
+    override val name: String = "${contract.fullName()}\$$property"
 }

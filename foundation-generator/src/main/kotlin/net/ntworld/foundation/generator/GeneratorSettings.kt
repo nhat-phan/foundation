@@ -21,7 +21,8 @@ data class GeneratorSettings(
     val implementations: List<ImplementationSetting>,
     val messages: List<MessageSetting>,
     val contracts: List<ContractSetting>,
-    val fakedAnnotations: List<FakedAnnotationSetting>
+    val fakedAnnotations: List<FakedAnnotationSetting>,
+    val fakedProperties: Map<String, FakedPropertySetting>
 ) {
     fun toMutable(): MutableGeneratorSettings = MutableGeneratorSettings(this)
 

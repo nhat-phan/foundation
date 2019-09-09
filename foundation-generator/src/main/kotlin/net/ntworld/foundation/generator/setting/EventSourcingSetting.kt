@@ -29,7 +29,7 @@ data class EventSourcingSetting(
     val variant: Int,
     val hasSecondConstructor: Boolean
 ) : Setting {
-    override val name: String = "${event.packageName}.${event.className}"
+    override val name: String = event.fullName()
 
     companion object {
         object Comparision : Comparator<EventSourcingSetting> {

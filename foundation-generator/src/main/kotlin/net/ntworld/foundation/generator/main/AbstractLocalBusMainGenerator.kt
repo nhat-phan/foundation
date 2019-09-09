@@ -24,11 +24,15 @@ abstract class AbstractLocalBusMainGenerator<T : HandlerSetting> {
 
     fun generate(settings: List<T>, namespace: String? = null): GeneratedFile {
         val target = findTarget(settings, namespace)
+        if (settings.isEmpty()) {
+            return GeneratedFile.makeEmptyMainFile(target)
+        }
+
         val file = buildFile(settings, target)
         val stringBuffer = StringBuffer()
         file.writeTo(stringBuffer)
 
-        return Utility.buildMainGeneratedFile(target, stringBuffer.toString())
+        return GeneratedFile.makeMainFile(target, stringBuffer.toString())
     }
 
     private fun buildFile(settings: List<T>, target: ClassInfo): FileSpec {

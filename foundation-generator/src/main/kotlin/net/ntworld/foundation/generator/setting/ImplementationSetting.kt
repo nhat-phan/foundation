@@ -10,7 +10,7 @@ data class ImplementationSetting(
     val type: Type,
     val isGenerated: Boolean
 ) : Setting {
-    override val name: String = "${implementation.packageName}.${implementation.className}"
+    override val name: String = implementation.fullName()
 
     enum class Type {
         Unknown,

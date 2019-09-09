@@ -20,7 +20,7 @@ class InfrastructureProviderMainGenerator {
         val stringBuffer = StringBuffer()
         file.writeTo(stringBuffer)
 
-        return Utility.buildMainGeneratedFile(target, file.toString())
+        return GeneratedFile.makeMainFile(target, file.toString())
     }
 
     internal fun buildFile(settings: GeneratorSettings, target: ClassInfo): FileSpec {
