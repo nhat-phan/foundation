@@ -1,0 +1,21 @@
+package com.generator
+
+import net.ntworld.foundation.Faker
+import net.ntworld.foundation.util.JavaFakerWrapper
+
+object TestUtility {
+  private var customFaker: Faker? = null
+
+  private val defaultFaker: Faker = JavaFakerWrapper(com.github.javafaker.Faker())
+
+  val faker: Faker
+    get() {
+      val currentCustomFaker = customFaker
+      return if (null !== currentCustomFaker) currentCustomFaker else defaultFaker
+    }
+
+  fun setFaker(faker: Faker): TestUtility {
+    this.customFaker = faker
+    return this
+  }
+}

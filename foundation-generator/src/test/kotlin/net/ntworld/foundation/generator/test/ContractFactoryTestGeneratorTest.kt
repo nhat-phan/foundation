@@ -6,13 +6,18 @@ import net.ntworld.foundation.generator.TestSuite
 import net.ntworld.foundation.generator.test.ContractFactoryTestGenerator
 import net.ntworld.foundation.generator.type.ClassInfo
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class ContractFactoryTestGeneratorTest : TestSuite() {
     @Test
     fun `testGenerate Jvm-Empty`() {
         val allSettings = readSettings()
         val contractFactoryGenerator = ContractFactoryTestGenerator(Platform.Jvm)
-        val result = contractFactoryGenerator.generate(allSettings, GeneratorTest.namespace())
+        val result = contractFactoryGenerator.generate(
+            allSettings,
+            ClassInfo(className = "TestUtility", packageName = "com.generator"),
+            GeneratorTest.namespace()
+        )
         assertGeneratedFileMatched(result, "ContractFactory/Jvm-Empty.txt")
     }
 
@@ -42,7 +47,12 @@ class ContractFactoryTestGeneratorTest : TestSuite() {
             )
         )
 
-        val result = contractFactoryGenerator.generate(allSettings, GeneratorTest.namespace())
+        val result = contractFactoryGenerator.generate(
+            allSettings,
+            ClassInfo(className = "TestUtility", packageName = "com.generator"),
+            GeneratorTest.namespace()
+        )
+        assertEquals("ContractFactoryTest", result.target.className)
         assertGeneratedFileMatched(result, "ContractFactory/Jvm-NotEmpty.txt")
     }
 }

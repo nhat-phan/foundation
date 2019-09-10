@@ -61,6 +61,28 @@ internal object Utility {
         )
     }
 
+    fun findContractFactoryTargetForTest(factories: List<ClassInfo>, namespace: String? = null): ClassInfo {
+        var packageName = if (null !== namespace) namespace else ""
+        factories.forEach {
+            packageName = this.guessPackageName(packageName, it.packageName)
+        }
+        return ClassInfo(
+            className = "ContractFactoryTest",
+            packageName = packageName
+        )
+    }
+
+    fun findUtilityTargetForTest(classes: List<ClassInfo>, namespace: String? = null): ClassInfo {
+        var packageName = if (null !== namespace) namespace else ""
+        classes.forEach {
+            packageName = this.guessPackageName(packageName, it.packageName)
+        }
+        return ClassInfo(
+            className = "TestUtility",
+            packageName = packageName
+        )
+    }
+
     fun findContractImplementationTarget(setting: ContractSetting): ClassInfo {
         return ClassInfo(
             className = "${setting.contract.className}Impl",

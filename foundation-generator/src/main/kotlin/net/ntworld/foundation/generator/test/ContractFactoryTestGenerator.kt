@@ -22,25 +22,24 @@ class ContractFactoryTestGenerator(private val platform: Platform) {
         )
     }
 
-    fun generate(settings: GeneratorSettings, namespace: String? = null): GeneratedFile {
-        val target = Utility.findContractFactoryTarget(
+    fun generate(settings: GeneratorSettings, utilityTarget: ClassInfo, namespace: String? = null): GeneratedFile {
+        val target = Utility.findContractFactoryTargetForTest(
             items.map { it.value.contract },
             namespace
         )
-        val file = buildFile(settings, target)
+        val file = buildFile(settings, utilityTarget, target)
         val stringBuffer = StringBuffer()
         file.writeTo(stringBuffer)
 
         return GeneratedFile.makeTestFile(target, stringBuffer.toString())
     }
 
-    private fun buildFile(settings: GeneratorSettings, target: ClassInfo): FileSpec {
+    private fun buildFile(settings: GeneratorSettings, utilityTarget: ClassInfo, target: ClassInfo): FileSpec {
         val allSettings = settings.toMutable()
         val file = FileSpec.builder(target.packageName, target.className)
         GeneratorOutput.addHeader(file, this::class.qualifiedName)
 
-        file.addProperty(buildFakerProperty())
-        file.addFunction(buildCreateFakedDataFunction())
+        file.addFunction(buildCreateFakedDataFunction(utilityTarget))
         val reader = ContractReader(settings.contracts, settings.fakedAnnotations, settings.fakedProperties)
         items.forEach { (contract, item) ->
             if (!reader.hasCompanionObject(contract)) {
@@ -55,25 +54,7 @@ class ContractFactoryTestGenerator(private val platform: Platform) {
         return file.build()
     }
 
-    private fun buildFakerProperty(): PropertySpec {
-        val code = when (platform) {
-            Platform.Jvm -> getInitFakerForJvm()
-        }
-
-        return PropertySpec.builder("faker", Framework.Faker)
-            .addModifiers(KModifier.PRIVATE)
-            .initializer(code)
-            .build()
-    }
-
-    private fun getInitFakerForJvm(): CodeBlock {
-        val code = CodeBlock.builder()
-        code.add("%T(%T())\n", Framework.JavaFakerWrapper, Framework.JavaFaker)
-
-        return code.build()
-    }
-
-    private fun buildCreateFakedDataFunction(): FunSpec {
+    private fun buildCreateFakedDataFunction(utilityTarget: ClassInfo): FunSpec {
         return FunSpec.builder("createFakedData")
             .addModifiers(KModifier.PRIVATE)
             .addTypeVariable(TypeVariableName.invoke("T"))
@@ -84,7 +65,7 @@ class ContractFactoryTestGenerator(private val platform: Platform) {
                     .addMember("%S", "UNCHECKED_CAST")
                     .build()
             )
-            .addCode("return faker.makeFakeData(type) as T\n")
+            .addCode("return %T.faker.makeFakeData(type) as T\n", utilityTarget.toClassName())
             .build()
     }
 }

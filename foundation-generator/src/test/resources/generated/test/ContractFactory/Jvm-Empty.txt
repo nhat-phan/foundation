@@ -2,11 +2,6 @@ package com.generator
 
 import kotlin.String
 import kotlin.Suppress
-import net.ntworld.foundation.Faker
-import net.ntworld.foundation.util.JavaFakerWrapper
-
-private val faker: Faker = JavaFakerWrapper(com.github.javafaker.Faker())
-
 
 @Suppress("UNCHECKED_CAST")
-private fun <T> createFakedData(type: String): T = faker.makeFakeData(type) as T
+private fun <T> createFakedData(type: String): T = TestUtility.faker.makeFakeData(type) as T

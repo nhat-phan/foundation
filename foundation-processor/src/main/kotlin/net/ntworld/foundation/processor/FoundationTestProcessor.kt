@@ -6,6 +6,7 @@ import net.ntworld.foundation.generator.Platform
 import net.ntworld.foundation.generator.main.ContractImplementationMainGenerator
 import net.ntworld.foundation.generator.main.InfrastructureProviderMainGenerator
 import net.ntworld.foundation.generator.test.ContractFactoryTestGenerator
+import net.ntworld.foundation.generator.test.UtilityTestGenerator
 import net.ntworld.foundation.generator.type.ClassInfo
 import net.ntworld.foundation.processor.util.ContractCollector
 import net.ntworld.foundation.processor.util.FrameworkProcessor
@@ -40,6 +41,7 @@ class FoundationTestProcessor : AbstractProcessor() {
             fakedPropertySettings = settings.fakedProperties
         )
 
+        val utilityTestGenerator = UtilityTestGenerator(Platform.Jvm)
         val factoryTestGenerator = ContractFactoryTestGenerator(Platform.Jvm)
         val implementations = mutableMapOf<String, String>()
         settings.implementations.forEach {
@@ -54,9 +56,19 @@ class FoundationTestProcessor : AbstractProcessor() {
             val properties = reader.findPropertiesOfContract(it.name)
             if (null !== properties) {
                 val implFile = ContractImplementationMainGenerator.findImplementationTarget(it)
+                utilityTestGenerator.add(it.contract)
                 factoryTestGenerator.add(it.contract, implFile)
             }
         }
-        ProcessorOutput.writeGeneratedFile(processingEnv, factoryTestGenerator.generate(settings, global.packageName))
+        val utilityGeneratedFile = utilityTestGenerator.generate(global.packageName)
+        ProcessorOutput.writeGeneratedFile(processingEnv, utilityGeneratedFile)
+        ProcessorOutput.writeGeneratedFile(
+            processingEnv,
+            factoryTestGenerator.generate(
+                settings,
+                utilityGeneratedFile.target,
+                global.packageName
+            )
+        )
     }
 }
