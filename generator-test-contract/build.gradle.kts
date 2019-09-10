@@ -25,6 +25,14 @@ dependencies {
     testImplementation(kotlin("test-junit"))
 }
 
+kapt {
+    arguments {
+        arg("foundation.processor.dev", "true")
+        arg("foundation.processor.mode", "contractOnly")
+        arg("foundation.processor.settingsClass", "com.generator.ContractData")
+    }
+}
+
 idea {
     module {
         sourceDirs = sourceDirs + files(
@@ -37,10 +45,6 @@ idea {
             "build/generated/source/kaptKotlin/main",
             "build/generated/source/kapt/test",
             "build/generated/source/kaptKotlin/test"
-        )
-
-        resourceDirs = resourceDirs + files(
-            "build/generated/source/kaptKotlin/main/resources"
         )
     }
 }

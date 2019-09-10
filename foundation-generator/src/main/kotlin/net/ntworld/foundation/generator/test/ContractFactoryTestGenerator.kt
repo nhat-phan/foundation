@@ -41,7 +41,7 @@ class ContractFactoryTestGenerator(private val platform: Platform) {
 
         file.addProperty(buildFakerProperty())
         file.addFunction(buildCreateFakedDataFunction())
-        val reader = ContractReader(settings.contracts, settings.fakedAnnotations)
+        val reader = ContractReader(settings.contracts, settings.fakedAnnotations, settings.fakedProperties)
         items.forEach { (contract, item) ->
             if (!reader.hasCompanionObject(contract)) {
                 return@forEach

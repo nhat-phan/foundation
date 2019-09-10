@@ -4,7 +4,7 @@ import net.ntworld.foundation.generator.setting.*
 
 class MutableGeneratorSettings(private val settings: GeneratorSettings) {
     private val aggregateFactories = toMutableMap(settings.aggregateFactories)
-    private val events = toMutableMap(settings.eventSourcings)
+    private val eventSourcings = toMutableMap(settings.eventSourcings)
     private val eventHandlers = toMutableMap(settings.eventHandlers)
     private val commandHandlers = toMutableMap(settings.commandHandlers)
     private val queryHandlers = toMutableMap(settings.queryHandlers)
@@ -13,6 +13,7 @@ class MutableGeneratorSettings(private val settings: GeneratorSettings) {
     private val messages = toMutableMap(settings.messages)
     private val contracts = toMutableMap(settings.contracts)
     private val fakedAnnotations = toMutableMap(settings.fakedAnnotations)
+    private val fakedProperties = toMutableMap(settings.fakedProperties)
 
     private fun <T : Setting> toMutableMap(data: List<T>): MutableMap<String, T> {
         val map = mutableMapOf<String, T>()
@@ -29,100 +30,66 @@ class MutableGeneratorSettings(private val settings: GeneratorSettings) {
     fun toGeneratorSettings(): GeneratorSettings {
         return settings.copy(
             aggregateFactories = toList(aggregateFactories),
-            eventSourcings = toList(events),
+            eventSourcings = toList(eventSourcings),
             eventHandlers = toList(eventHandlers),
             commandHandlers = toList(commandHandlers),
             queryHandlers = toList(queryHandlers),
             implementations = toList(implementations),
             messages = toList(messages),
-            contracts = toList(contracts)
+            contracts = toList(contracts),
+            fakedAnnotations = toList(fakedAnnotations),
+            fakedProperties = toList(fakedProperties)
         )
     }
 
-    fun hasAggregateFactory(name: String): Boolean {
-        return aggregateFactories.containsKey(name)
+    fun merge(input: GeneratorSettings): MutableGeneratorSettings {
+        mergeItems(input.aggregateFactories, aggregateFactories)
+        mergeItems(input.eventSourcings, eventSourcings)
+        mergeItems(input.eventHandlers, eventHandlers)
+        mergeItems(input.commandHandlers, commandHandlers)
+        mergeItems(input.queryHandlers, queryHandlers)
+        mergeItems(input.implementations, implementations)
+        mergeItems(input.messages, messages)
+        mergeItems(input.contracts, contracts)
+        mergeItems(input.fakedAnnotations, fakedAnnotations)
+        mergeItems(input.fakedProperties, fakedProperties)
+        return this
     }
 
-    fun hasEventSourcing(name: String): Boolean {
-        return events.containsKey(name)
+    private fun <T : Setting> mergeItems(source: List<T>, target: MutableMap<String, T>) {
+        source.forEach {
+            target[it.name] = it
+        }
     }
 
-    fun hasEventHandler(name: String): Boolean {
-        return eventHandlers.containsKey(name)
-    }
+    fun hasAggregateFactory(name: String): Boolean = aggregateFactories.containsKey(name)
+    fun hasEventSourcing(name: String): Boolean = eventSourcings.containsKey(name)
+    fun hasEventHandler(name: String): Boolean = eventHandlers.containsKey(name)
+    fun hasCommandHandler(name: String): Boolean = commandHandlers.containsKey(name)
+    fun hasQueryHandler(name: String): Boolean = queryHandlers.containsKey(name)
+    fun hasRequestHandler(name: String): Boolean = requestHandlers.containsKey(name)
+    fun hasImplementation(name: String): Boolean = implementations.containsKey(name)
+    fun hasMessage(name: String): Boolean = messages.containsKey(name)
+    fun hasContract(name: String): ContractSetting? = contracts[name]
+    fun hasFakedAnnotationSetting(name: String): FakedAnnotationSetting? = fakedAnnotations[name]
+    fun hasFakedPropertySetting(name: String): FakedPropertySetting? = fakedProperties[name]
 
-    fun hasCommandHandler(name: String): Boolean {
-        return commandHandlers.containsKey(name)
-    }
-
-    fun hasQueryHandler(name: String): Boolean {
-        return queryHandlers.containsKey(name)
-    }
-
-    fun hasRequestHandler(name: String): Boolean {
-        return requestHandlers.containsKey(name)
-    }
-
-    fun hasImplementation(name: String): Boolean {
-        return implementations.containsKey(name)
-    }
-
-    fun hasMessage(name: String): Boolean {
-        return messages.containsKey(name)
-    }
-
-    fun hasContract(name: String): ContractSetting? {
-        return contracts[name]
-    }
-
-    fun hasFakedAnnotationSetting(name: String): FakedAnnotationSetting? {
-        return fakedAnnotations[name]
-    }
-
-    fun getAggregateFactory(name: String): AggregateFactorySetting? {
-        return aggregateFactories[name]
-    }
-
-    fun getEventSourcing(name: String): EventSourcingSetting? {
-        return events[name]
-    }
-
-    fun getEventHandler(name: String): EventHandlerSetting? {
-        return eventHandlers[name]
-    }
-
-    fun getCommandHandler(name: String): CommandHandlerSetting? {
-        return commandHandlers[name]
-    }
-
-    fun getQueryHandler(name: String): QueryHandlerSetting? {
-        return queryHandlers[name]
-    }
-
-    fun getRequestHandler(name: String): RequestHandlerSetting? {
-        return requestHandlers[name]
-    }
-
-    fun getImplementation(name: String): ImplementationSetting? {
-        return implementations[name]
-    }
-
-    fun getMessage(name: String): MessageSetting? {
-        return messages[name]
-    }
-
-    fun getContract(name: String): ContractSetting? {
-        return contracts[name]
-    }
-
-    fun getFakedAnnotationSetting(name: String): FakedAnnotationSetting? {
-        return fakedAnnotations[name]
-    }
+    fun getAggregateFactory(name: String): AggregateFactorySetting? = aggregateFactories[name]
+    fun getEventSourcing(name: String): EventSourcingSetting? = eventSourcings[name]
+    fun getEventHandler(name: String): EventHandlerSetting? = eventHandlers[name]
+    fun getCommandHandler(name: String): CommandHandlerSetting? = commandHandlers[name]
+    fun getQueryHandler(name: String): QueryHandlerSetting? = queryHandlers[name]
+    fun getRequestHandler(name: String): RequestHandlerSetting? = requestHandlers[name]
+    fun getImplementation(name: String): ImplementationSetting? = implementations[name]
+    fun getMessage(name: String): MessageSetting? = messages[name]
+    fun getContract(name: String): ContractSetting? = contracts[name]
+    fun getFakedAnnotationSetting(name: String): FakedAnnotationSetting? = fakedAnnotations[name]
+    fun getFakedPropertySetting(name: String): FakedPropertySetting? = fakedProperties[name]
 
     fun <T : Setting> put(setting: T): MutableGeneratorSettings {
         when (setting) {
             is AggregateFactorySetting -> aggregateFactories[setting.name] = setting
-            is EventSourcingSetting -> events[setting.name] = setting
+            is EventSourcingSetting -> eventSourcings[setting.name] = setting
             is EventHandlerSetting -> eventHandlers[setting.name] = setting
             is CommandHandlerSetting -> commandHandlers[setting.name] = setting
             is QueryHandlerSetting -> queryHandlers[setting.name] = setting
@@ -130,6 +97,7 @@ class MutableGeneratorSettings(private val settings: GeneratorSettings) {
             is MessageSetting -> messages[setting.name] = setting
             is ContractSetting -> contracts[setting.name] = setting
             is FakedAnnotationSetting -> fakedAnnotations[setting.name] = setting
+            is FakedPropertySetting -> fakedProperties[setting.name] = setting
         }
         return this
     }

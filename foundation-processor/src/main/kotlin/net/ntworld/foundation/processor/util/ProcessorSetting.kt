@@ -2,7 +2,7 @@ package net.ntworld.foundation.processor.util
 
 import javax.annotation.processing.ProcessingEnvironment
 
-internal class ProcessorSetting(
+internal data class ProcessorSetting(
     val mode: Mode,
     val settingsClass: String?,
     val isDev: Boolean
@@ -21,10 +21,14 @@ internal class ProcessorSetting(
         private val CONTRACT_ONLY_MODE_VALUES = listOf(
             "lib",
             "library",
+            "sharedContract",
+            "sharedContracts",
             "shared-contract",
             "shared-contracts",
             "contract",
             "contracts",
+            "contractOnly",
+            "contractsOnly",
             "contract-only",
             "contracts-only"
         )
@@ -39,7 +43,7 @@ internal class ProcessorSetting(
 
         private fun readMode(processingEnv: ProcessingEnvironment): Mode {
             val mode = processingEnv.options[FrameworkProcessor.MODE_OPTION_NAME]
-            if (null !== mode && CONTRACT_ONLY_MODE_VALUES.contains(mode.toLowerCase().trim())) {
+            if (null !== mode && CONTRACT_ONLY_MODE_VALUES.contains(mode.trim())) {
                 return Mode.ContractOnly
             }
             return Mode.Default

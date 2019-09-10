@@ -3,21 +3,27 @@ package net.ntworld.foundation.generator.util
 import net.ntworld.foundation.generator.DEFAULT_COMPANION_OBJECT_NAME
 import net.ntworld.foundation.generator.setting.ContractSetting
 import net.ntworld.foundation.generator.setting.FakedAnnotationSetting
+import net.ntworld.foundation.generator.setting.FakedPropertySetting
 import net.ntworld.foundation.generator.type.Property
 
 class ContractReader(
     contractSettings: List<ContractSetting>,
-    fakedAnnotationSettings: List<FakedAnnotationSetting>
+    fakedAnnotationSettings: List<FakedAnnotationSetting>,
+    fakedPropertySettings: List<FakedPropertySetting>
 ) {
-    private val settings: Map<String, ContractSetting> = mutableMapOf()
-    private val fakedAnnotations: Map<String, FakedAnnotationSetting> = mutableMapOf()
+    private val settings = mutableMapOf<String, ContractSetting>()
+    private val fakedAnnotations = mutableMapOf<String, FakedAnnotationSetting>()
+    private val fakedProperties = mutableMapOf<String, FakedPropertySetting>()
 
     init {
         contractSettings.forEach {
-            (settings as MutableMap)[it.name] = it
+            settings[it.name] = it
         }
         fakedAnnotationSettings.forEach {
-            (fakedAnnotations as MutableMap)[it.name] = it
+            fakedAnnotations[it.name] = it
+        }
+        fakedPropertySettings.forEach {
+            fakedProperties[it.name] = it
         }
     }
 
@@ -67,6 +73,14 @@ class ContractReader(
                 fakedType = contractProperty.fakedType
             }
 
+            if (fakedType.isEmpty()) {
+                fakedType = findFakedTypeByUnknownAnnotations(it.value.unknownAnnotations)
+            }
+
+            if (fakedType.isEmpty()) {
+                fakedType = findFakedTypeByPropertyName(setting.contract.fullName(), it.value.name)
+            }
+
             val kmProperty = KotlinMetadataReader.findKmProperty(kmClass, it.key)
             bucket[contractProperty.name] = Property(
                 name = contractProperty.name,
@@ -76,6 +90,21 @@ class ContractReader(
                 fakedType = fakedType
             )
         }
+    }
+
+    private fun findFakedTypeByUnknownAnnotations(annotations: List<String>): String {
+        annotations.forEach {
+            val fakedAnnotation = fakedAnnotations[it]
+            if (null !== fakedAnnotation && fakedAnnotation.fakedType.isNotEmpty()) {
+                return@findFakedTypeByUnknownAnnotations fakedAnnotation.fakedType
+            }
+        }
+        return ""
+    }
+
+    private fun findFakedTypeByPropertyName(contractFullName: String, propertyName: String): String {
+        val fakedProperty = fakedProperties["$contractFullName\$$propertyName"]
+        return if (null === fakedProperty) "" else fakedProperty.fakedType
     }
 
     private fun findSupertypeSettingsRecursively(

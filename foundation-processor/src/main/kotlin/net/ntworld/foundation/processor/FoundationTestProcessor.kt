@@ -36,7 +36,8 @@ class FoundationTestProcessor : AbstractProcessor() {
     private fun generateContractFactory(settings: GeneratorSettings, global: ClassInfo) {
         val reader = ContractReader(
             contractSettings = settings.contracts,
-            fakedAnnotationSettings = settings.fakedAnnotations
+            fakedAnnotationSettings = settings.fakedAnnotations,
+            fakedPropertySettings = settings.fakedProperties
         )
 
         val factoryTestGenerator = ContractFactoryTestGenerator(Platform.Jvm)

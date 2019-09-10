@@ -31,12 +31,12 @@ class FakedPropertyProcessor : Processor {
     override fun startProcess(settings: GeneratorSettings) {
         data.clear()
         settings.fakedProperties.forEach { item ->
-            data[item.key] =
+            data[item.name] =
                 CollectedFakedProperty(
-                    packageName = item.value.contract.packageName,
-                    className = item.value.contract.className,
-                    property = item.value.property,
-                    fakedType = item.value.fakedType
+                    packageName = item.contract.packageName,
+                    className = item.contract.className,
+                    property = item.property,
+                    fakedType = item.fakedType
                 )
         }
     }
@@ -49,7 +49,7 @@ class FakedPropertyProcessor : Processor {
                     it.value.property.isNotEmpty() &&
                     it.value.fakedType.isNotEmpty()
             }
-            .mapValues {
+            .map {
                 FakedPropertySetting(
                     contract = ClassInfo(
                         className = it.value.className,

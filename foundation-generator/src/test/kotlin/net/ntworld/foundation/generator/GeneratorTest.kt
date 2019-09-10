@@ -27,6 +27,7 @@ object GeneratorTest {
         const val OneSupertypeOverrideContract = "OneSupertypeOverrideContract"
         const val CustomTypeContract = "CustomTypeContract"
         const val CustomTypeContractAddress = "CustomTypeContractAddress"
+        const val CreateAccountCommand = "CreateAccountCommand"
     }
 
     object RequestHandler {

@@ -65,7 +65,7 @@ class InfrastructureProviderMainGeneratorTest : TestSuite() {
             messages = listOf(),
             contracts = listOf(),
             fakedAnnotations = listOf(),
-            fakedProperties = mapOf()
+            fakedProperties = listOf()
         )
 
         val result = InfrastructureProviderMainGenerator().generate(settings)

@@ -1,6 +1,7 @@
 package com.generator
 
 import net.ntworld.foundation.InfrastructureProvider
+import net.ntworld.foundation.Use
 
-@LoadSetting(GeneratorTestContractProcessorData.FoundationSettingsJson)
+@Use(ContractData.settings)
 class UserInfrastructure : InfrastructureProvider()

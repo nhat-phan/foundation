@@ -1,5 +1,6 @@
 package net.ntworld.foundation.processor
 
+import net.ntworld.foundation.Use
 import net.ntworld.foundation.generator.*
 import net.ntworld.foundation.generator.main.*
 import net.ntworld.foundation.generator.type.AnnotationProcessorRunInfo
@@ -15,6 +16,7 @@ import net.ntworld.foundation.processor.util.FrameworkProcessor
 import net.ntworld.foundation.processor.util.ProcessorOutput
 import net.ntworld.foundation.processor.util.ProcessorSetting
 import javax.annotation.processing.AbstractProcessor
+import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.TypeElement
 
@@ -46,7 +48,7 @@ class FoundationProcessor : AbstractProcessor() {
         }
 
         val processorSetting = ProcessorSetting.read(processingEnv)
-        val currentSettings = ProcessorOutput.readSettingsFile(processingEnv)
+        val currentSettings = getCurrentSettings(roundEnv)
         val lastRunInfo = currentSettings.annotationProcessorRunInfo.toMutableList()
 
         val settings = collectSettingsByProcessors(currentSettings, roundEnv)
@@ -82,6 +84,17 @@ class FoundationProcessor : AbstractProcessor() {
         return false
     }
 
+    private fun getCurrentSettings(roundEnv: RoundEnvironment): GeneratorSettings {
+        val settings = ProcessorOutput.readSettingsFile(processingEnv).toMutable()
+        val annotatedByUseElements = roundEnv.getElementsAnnotatedWith(Use::class.java)
+        annotatedByUseElements.forEach { element ->
+            val value = element.getAnnotation(Use::class.java).settings
+            val parsed = GeneratorSettings.parse(value)
+            settings.merge(parsed)
+        }
+        return settings.toGeneratorSettings()
+    }
+
     private fun collectSettingsByProcessors(
         currentSettings: GeneratorSettings,
         roundEnv: RoundEnvironment
@@ -115,7 +128,8 @@ class FoundationProcessor : AbstractProcessor() {
     }
 
     private fun generateModeContractOnly(processorSetting: ProcessorSetting, settings: GeneratorSettings) {
-
+        val file = ContractOnlyModeGenerator.generate(processorSetting.settingsClass, settings)
+        ProcessorOutput.writeGeneratedFile(processingEnv, file)
     }
 
     private fun generateModeDefault(processorSetting: ProcessorSetting, settings: GeneratorSettings) {
@@ -137,7 +151,8 @@ class FoundationProcessor : AbstractProcessor() {
     private fun generateUnimplementedContracts(settings: GeneratorSettings, global: ClassInfo) {
         val reader = ContractReader(
             contractSettings = settings.contracts,
-            fakedAnnotationSettings = settings.fakedAnnotations
+            fakedAnnotationSettings = settings.fakedAnnotations,
+            fakedPropertySettings = settings.fakedProperties
         )
 
         val factoryMainGenerator = ContractFactoryMainGenerator()

@@ -37,7 +37,7 @@ class ContractFactoryMainGenerator {
         val allSettings = settings.toMutable()
         val file = FileSpec.builder(target.packageName, target.className)
         GeneratorOutput.addHeader(file, this::class.qualifiedName)
-        val reader = ContractReader(settings.contracts, settings.fakedAnnotations)
+        val reader = ContractReader(settings.contracts, settings.fakedAnnotations, settings.fakedProperties)
         items.forEach { (contract, item) ->
             if (!reader.hasCompanionObject(contract)) {
                 return@forEach

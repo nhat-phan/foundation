@@ -8,7 +8,7 @@ import javax.annotation.processing.ProcessingEnvironment
 import javax.tools.Diagnostic
 
 internal object ProcessorOutput {
-    const val PROCESSOR_VERSION = "0.3.4.2"
+    private const val PROCESSOR_VERSION = "0.4.1"
     private var isTest: Boolean = false
 
     private val files: MutableMap<String, String> = mutableMapOf()
@@ -40,7 +40,7 @@ internal object ProcessorOutput {
         messages = listOf(),
         contracts = listOf(),
         fakedAnnotations = listOf(),
-        fakedProperties = mapOf()
+        fakedProperties = listOf()
     )
 
     fun deleteFile(processingEnv: ProcessingEnvironment, path: String) {

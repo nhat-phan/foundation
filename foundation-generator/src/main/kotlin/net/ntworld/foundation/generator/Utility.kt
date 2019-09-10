@@ -1,5 +1,6 @@
 package net.ntworld.foundation.generator
 
+import com.squareup.kotlinpoet.ClassName
 import net.ntworld.foundation.generator.setting.*
 import net.ntworld.foundation.generator.type.ClassInfo
 import java.lang.Math.min
@@ -157,5 +158,21 @@ internal object Utility {
 
     private fun findTargetNamespace(input: String): String {
         return "$input.generated"
+    }
+
+    fun stringToClassInfo(name: String): ClassInfo {
+        val parts = name.split('.')
+        if (parts.size == 1) {
+            return ClassInfo(packageName = "", className = name)
+        }
+        val packageParts = mutableListOf<String>()
+        for (i in 0 until parts.lastIndex) {
+            packageParts.add(parts[i])
+        }
+        return ClassInfo(packageName = packageParts.joinToString("."), className = parts[parts.lastIndex])
+    }
+
+    fun stringToClassName(name: String): ClassName {
+        return stringToClassInfo(name).toClassName()
     }
 }

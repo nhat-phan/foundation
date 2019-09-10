@@ -28,7 +28,7 @@ class ContractReaderTest : TestSuite() {
             GeneratorTest.Contract.namespace(GeneratorTest.Contract.CustomTypeContract) to false,
             GeneratorTest.Contract.namespace(GeneratorTest.Contract.CustomTypeContractAddress) to false
         )
-        val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
+        val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations, allSettings.fakedProperties)
         testContractExpectations.forEach { (name, expected) ->
             assertEquals(expected, reader.hasCompanionObject(name), "failed with $name")
         }
@@ -37,7 +37,7 @@ class ContractReaderTest : TestSuite() {
     @Test
     fun `testFindPropertyFor BasicTypesContract`() {
         val allSettings = readSettings()
-        val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
+        val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations, allSettings.fakedProperties)
         assertMatchExpectations(
             mapOf(
                 "byte" to ExpectedProperty(order = 1, type = "kotlin.Byte"),
@@ -66,7 +66,7 @@ class ContractReaderTest : TestSuite() {
     @Test
     fun `testFindPropertyFor ListTypeContract`() {
         val allSettings = readSettings()
-        val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
+        val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations, allSettings.fakedProperties)
         assertMatchExpectations(
             mapOf(
                 "listByte" to ExpectedProperty(
@@ -109,7 +109,7 @@ class ContractReaderTest : TestSuite() {
     @Test
     fun `testFindPropertyFor NoSupertypeContract`() {
         val allSettings = readSettings()
-        val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
+        val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations, allSettings.fakedProperties)
         assertMatchExpectations(
             mapOf(
                 "zelda" to ExpectedProperty(
@@ -145,7 +145,7 @@ class ContractReaderTest : TestSuite() {
     @Test
     fun `testFindPropertyFor OneSupertypeContract`() {
         val allSettings = readSettings()
-        val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
+        val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations, allSettings.fakedProperties)
         assertMatchExpectations(
             mapOf(
                 "zelda" to ExpectedProperty(order = 1, type = "kotlin.String", fakedType = "zelda.character"),
@@ -160,7 +160,7 @@ class ContractReaderTest : TestSuite() {
     @Test
     fun `testFindPropertyFor OneSupertypeOverrideContract`() {
         val allSettings = readSettings()
-        val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
+        val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations, allSettings.fakedProperties)
         assertMatchExpectations(
             mapOf(
                 "zelda" to ExpectedProperty(order = 1, type = "kotlin.String", fakedType = "zelda.character"),
@@ -175,7 +175,7 @@ class ContractReaderTest : TestSuite() {
     @Test
     fun `testFindPropertyFor DefaultValueContract`() {
         val allSettings = readSettings()
-        val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
+        val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations, allSettings.fakedProperties)
         assertMatchExpectations(
             mapOf(
                 "message" to ExpectedProperty(order = 1, type = "kotlin.String"),
@@ -189,7 +189,7 @@ class ContractReaderTest : TestSuite() {
     @Test
     fun `testFindPropertyFor CustomTypeContract`() {
         val allSettings = readSettings()
-        val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
+        val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations, allSettings.fakedProperties)
         assertMatchExpectations(
             mapOf(
                 "name" to ExpectedProperty(order = 1, type = "kotlin.String"),
@@ -207,6 +207,14 @@ class ContractReaderTest : TestSuite() {
             ),
             reader.findPropertiesOfContract(GeneratorTest.Contract.namespace(GeneratorTest.Contract.CustomTypeContractAddress))
         )
+    }
+
+    @Test
+    fun `testFindPropertyFor compiled library - CreateAccountCommand`() {
+        val allSettings = readSettings()
+        val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations, allSettings.fakedProperties)
+        val properties = reader.findPropertiesOfContract(GeneratorTest.Contract.namespace(GeneratorTest.Contract.CreateAccountCommand))
+        // TODO: Add assertion
     }
 
     // Bookmark: Add new test case when adding new contract settings

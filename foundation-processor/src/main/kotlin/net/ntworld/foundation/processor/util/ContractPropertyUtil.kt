@@ -48,7 +48,6 @@ object ContractPropertyUtil {
         )
     }
 
-
     fun sortProperties(properties: Map<String, ContractProperty>): Map<String, ContractProperty> {
         val keys = properties.keys.toList()
         val order = properties.mapValues { it.value.order }

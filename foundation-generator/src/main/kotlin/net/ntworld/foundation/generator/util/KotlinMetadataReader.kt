@@ -6,6 +6,7 @@ import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
 import kotlinx.metadata.*
 import kotlinx.metadata.jvm.KotlinClassMetadata
+import net.ntworld.foundation.generator.Utility
 import net.ntworld.foundation.generator.type.KotlinMetadata
 
 object KotlinMetadataReader {
@@ -48,7 +49,7 @@ object KotlinMetadataReader {
     fun convertKmTypeToTypeName(type: KmType): TypeName {
         val classifier: KmClassifier.Class = type.classifier as? KmClassifier.Class ?: return Any::class.asTypeName()
         val isNullable = Flag.Type.IS_NULLABLE(type.flags)
-        val baseType = stringToClassName(
+        val baseType = Utility.stringToClassName(
             classifier.name.replace(
                 '/',
                 '.'
@@ -80,17 +81,5 @@ object KotlinMetadataReader {
             return convertKmTypeToTypeName(type)
         }
         throw Exception("Not supported yet")
-    }
-
-    private fun stringToClassName(name: String): ClassName {
-        val parts = name.split('.')
-        if (parts.size == 1) {
-            return ClassName("", name)
-        }
-        val packageParts = mutableListOf<String>()
-        for (i in 0 until parts.lastIndex) {
-            packageParts.add(parts[i])
-        }
-        return ClassName(packageParts.joinToString("."), parts[parts.lastIndex])
     }
 }

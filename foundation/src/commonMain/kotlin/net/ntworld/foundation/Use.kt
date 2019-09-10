@@ -16,7 +16,7 @@ package net.ntworld.foundation
  * kapt {
  *     arguments {
  *         arg("foundation.processor.mode", "contract-only")
- *         arg("foundation.processor.settings-class", "com.domain.ContractData")
+ *         arg("foundation.processor.settingsClass", "com.domain.ContractData")
  *     }
  * }
  * ```

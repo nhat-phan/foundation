@@ -55,7 +55,7 @@ class ContractExtensionTestGeneratorTest: TestSuite() {
     private fun runTestForContract(name: String) {
         val allSettings = readSettings()
         val reader =
-            ContractReader(allSettings.contracts, allSettings.fakedAnnotations)
+            ContractReader(allSettings.contracts, allSettings.fakedAnnotations, allSettings.fakedProperties)
         val contract = GeneratorTest.Contract.namespace(name)
         val setting = allSettings.toMutable().getContract(contract)!!
         val properties = reader.findPropertiesOfContract(contract)!!
