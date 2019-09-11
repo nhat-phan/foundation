@@ -7,7 +7,10 @@ import net.ntworld.foundation.Faked
 import net.ntworld.foundation.generator.GeneratorSettings
 import net.ntworld.foundation.generator.setting.FakedPropertySetting
 import net.ntworld.foundation.generator.type.ClassInfo
+import net.ntworld.foundation.processor.util.ContractCollector
 import net.ntworld.foundation.processor.util.KotlinMetadataUtil
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.Element
@@ -101,6 +104,7 @@ class FakedPropertyProcessor : Processor {
         val enclosingElement = it.enclosingElement.enclosingElement
         if (enclosingElement.kind == ElementKind.INTERFACE && enclosingElement is TypeElement) {
             processContract(processingEnv, it, enclosingElement, fakedAnnotation.type)
+            ContractCollector.collect(processingEnv, enclosingElement)
             return@forEach
         }
     }
