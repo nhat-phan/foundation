@@ -51,7 +51,8 @@ class FoundationProcessor : AbstractProcessor() {
         val currentSettings = getCurrentSettings(roundEnv)
         val lastRunInfo = currentSettings.annotationProcessorRunInfo.toMutableList()
 
-        val settings = collectSettingsByProcessors(currentSettings, roundEnv)
+        ContractCollector.reset()
+        val settings = collectSettingsByProcessors(processorSetting, currentSettings, roundEnv)
         when (processorSetting.mode) {
             ProcessorSetting.Mode.Default -> generateModeDefault(processorSetting, settings)
             ProcessorSetting.Mode.ContractOnly -> generateModeContractOnly(processorSetting, settings)
@@ -89,13 +90,14 @@ class FoundationProcessor : AbstractProcessor() {
         val annotatedByUseElements = roundEnv.getElementsAnnotatedWith(Use::class.java)
         annotatedByUseElements.forEach { element ->
             val value = element.getAnnotation(Use::class.java).settings
-            val parsed = GeneratorSettings.parse(value)
+            val parsed = GeneratorSettings.fromBase64String(value)
             settings.merge(parsed)
         }
         return settings.toGeneratorSettings()
     }
 
     private fun collectSettingsByProcessors(
+        processorSetting: ProcessorSetting,
         currentSettings: GeneratorSettings,
         roundEnv: RoundEnvironment
     ): GeneratorSettings {
@@ -103,12 +105,7 @@ class FoundationProcessor : AbstractProcessor() {
         val processedSettings = processors.fold(currentSettings) { input, processor ->
             this.runProcessor(roundEnv, input, processor)
         }
-        val mutableSettings = processedSettings.toMutable()
-        ContractCollector.getCollectedSettings().forEach {
-            mutableSettings.put(it)
-        }
-
-        return mutableSettings.toGeneratorSettings()
+        return ContractCollector.toGeneratorSettings(processedSettings, processorSetting.mode)
     }
 
     private fun runProcessor(

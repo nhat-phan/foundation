@@ -7,7 +7,11 @@ import kotlinx.metadata.jvm.KotlinClassHeader
 import kotlinx.metadata.jvm.KotlinClassMetadata
 import kotlinx.metadata.jvm.getterSignature
 import kotlinx.metadata.jvm.syntheticMethodForAnnotations
+import net.ntworld.foundation.generator.GeneratorSettings
+import net.ntworld.foundation.generator.MutableGeneratorSettings
 import net.ntworld.foundation.generator.setting.ContractSetting
+import net.ntworld.foundation.generator.setting.FakedAnnotationSetting
+import net.ntworld.foundation.generator.setting.FakedPropertySetting
 import net.ntworld.foundation.generator.type.ClassInfo
 import net.ntworld.foundation.generator.type.ContractProperty
 import net.ntworld.foundation.generator.type.KotlinMetadata
@@ -16,7 +20,7 @@ import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.TypeElement
 
-object ContractCollector {
+internal object ContractCollector {
     private val BASE_CONTRACTS = arrayOf(
         FrameworkProcessor.Contract,
         "kotlin.Any"
@@ -220,12 +224,9 @@ object ContractCollector {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    fun reset() {
+    fun reset(): ContractCollector {
         collected.clear()
-    }
-
-    fun getCollectedSettings(): List<ContractSetting> {
-        return collected.values.toList()
+        return this
     }
 
     private fun collect(
@@ -252,5 +253,76 @@ object ContractCollector {
             element as TypeElement,
             collectedBy
         )
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    fun toGeneratorSettings(settings: GeneratorSettings, mode: ProcessorSetting.Mode): GeneratorSettings {
+        val mutableSettings = settings.toMutable()
+        if (mode == ProcessorSetting.Mode.Default) {
+            collected.values.forEach {
+                mutableSettings.put(it)
+            }
+        } else {
+            toGeneratorSettingsModeContractsOnly(mutableSettings)
+        }
+
+        return mutableSettings.toGeneratorSettings()
+    }
+
+    private fun toGeneratorSettingsModeContractsOnly(mutableSettings: MutableGeneratorSettings) {
+        collected.values.forEach {
+            copyContractPropertiesToFakedPropertiesIfNeeded(
+                mutableSettings,
+                it.contract,
+                it.properties.values
+            )
+        }
+    }
+
+    private fun copyContractPropertiesToFakedPropertiesIfNeeded(
+        mutableSettings: MutableGeneratorSettings,
+        contract: ClassInfo,
+        properties: Collection<ContractProperty>
+    ) = properties.forEach { property ->
+        val key = "${contract.fullName()}\$${property.name}"
+        if (mutableSettings.hasFakedPropertySetting(key)) {
+            return@forEach
+        }
+
+        if (null !== property.fakedType && property.fakedType!!.isEmpty()) {
+            return@forEach
+        }
+
+        if (property.unknownAnnotations.isEmpty()) {
+            return@forEach
+        }
+
+        // find & map unknown annotations
+        val fakedType = findFakedTypeByUnknownAnnotations(mutableSettings, property.unknownAnnotations)
+        if (fakedType.isEmpty()) {
+            return@forEach
+        }
+
+        mutableSettings.put(
+            FakedPropertySetting(
+                contract = contract,
+                property = property.name,
+                fakedType = fakedType
+            )
+        )
+    }
+
+    private fun findFakedTypeByUnknownAnnotations(
+        mutableSettings: MutableGeneratorSettings,
+        annotations: List<String>
+    ): String {
+        annotations.forEach {
+            val fakedAnnotation = mutableSettings.getFakedAnnotationSetting(it)
+            if (null !== fakedAnnotation && fakedAnnotation.fakedType.isNotEmpty()) {
+                return@findFakedTypeByUnknownAnnotations fakedAnnotation.fakedType
+            }
+        }
+        return ""
     }
 }

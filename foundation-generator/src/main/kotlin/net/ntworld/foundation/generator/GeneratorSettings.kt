@@ -5,6 +5,8 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import net.ntworld.foundation.generator.setting.*
 import net.ntworld.foundation.generator.type.AnnotationProcessorRunInfo
+import java.nio.charset.Charset
+import java.util.*
 
 @Serializable
 data class GeneratorSettings(
@@ -40,6 +42,21 @@ data class GeneratorSettings(
 
         fun parse(input: String, isDev: Boolean = false): GeneratorSettings {
             return getJson(isDev).parse(serializer(), input)
+        }
+
+        fun toBase64String(data: GeneratorSettings): String {
+            return Base64.getEncoder().encodeToString(
+                stringify(data).toByteArray(Charsets.UTF_8)
+            )
+        }
+
+        fun fromBase64String(input: String, multiline: Boolean = true): GeneratorSettings {
+            val source = if (multiline) input.replace("\r", "").replace("\n", "").replace(" ", "") else input
+            return parse(
+                Base64.getDecoder().decode(
+                    source.toByteArray()
+                ).toString(Charsets.UTF_8)
+            )
         }
     }
 }

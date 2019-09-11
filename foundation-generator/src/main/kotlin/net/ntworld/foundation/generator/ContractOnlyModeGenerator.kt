@@ -5,6 +5,7 @@ import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
 import net.ntworld.foundation.generator.type.ClassInfo
+import java.lang.StringBuilder
 
 object ContractOnlyModeGenerator {
     fun generate(settingsClass: String?, settings: GeneratorSettings): GeneratedFile {
@@ -24,14 +25,40 @@ object ContractOnlyModeGenerator {
         GeneratorOutput.addHeader(file, this::class.qualifiedName)
         val type = TypeSpec.objectBuilder(target.toClassName())
 
-        val value = GeneratorSettings.stringify(settings, false)
+        val value = makePrettyBase64(GeneratorSettings.toBase64String(settings))
         type.addProperty(
             PropertySpec.builder("settings", String::class)
                 .addModifiers(KModifier.CONST)
-                .initializer("%S", value)
+                .initializer("\"\"\"%L\"\"\"", value)
                 .build()
         )
 
         return file.addType(type.build()).build()
+    }
+
+    private fun makePrettyBase64(input: String, firstLineLimit: Int = 49, columnLimit: Int = 77): String {
+        val list = mutableListOf(
+            StringBuilder()
+        )
+        var count = 1
+        for (i in 0 until input.length) {
+            val shouldBreak = i == firstLineLimit || count == columnLimit
+
+            if (!shouldBreak) {
+                list[list.lastIndex].append(input[i])
+                count++
+                continue
+            }
+
+            count = 1
+            list.add(StringBuilder())
+            list[list.lastIndex].append(input[i])
+        }
+        val result = StringBuilder()
+        for (item in list) {
+            result.append(item.toString())
+            result.appendln()
+        }
+        return result.toString()
     }
 }

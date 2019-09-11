@@ -70,9 +70,9 @@ class MutableGeneratorSettings(private val settings: GeneratorSettings) {
     fun hasRequestHandler(name: String): Boolean = requestHandlers.containsKey(name)
     fun hasImplementation(name: String): Boolean = implementations.containsKey(name)
     fun hasMessage(name: String): Boolean = messages.containsKey(name)
-    fun hasContract(name: String): ContractSetting? = contracts[name]
-    fun hasFakedAnnotationSetting(name: String): FakedAnnotationSetting? = fakedAnnotations[name]
-    fun hasFakedPropertySetting(name: String): FakedPropertySetting? = fakedProperties[name]
+    fun hasContract(name: String): Boolean = contracts.containsKey(name)
+    fun hasFakedAnnotationSetting(name: String): Boolean = fakedAnnotations.containsKey(name)
+    fun hasFakedPropertySetting(name: String): Boolean = fakedProperties.containsKey(name)
 
     fun getAggregateFactory(name: String): AggregateFactorySetting? = aggregateFactories[name]
     fun getEventSourcing(name: String): EventSourcingSetting? = eventSourcings[name]
