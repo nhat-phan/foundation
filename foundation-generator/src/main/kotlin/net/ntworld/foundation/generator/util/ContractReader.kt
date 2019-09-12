@@ -1,9 +1,11 @@
 package net.ntworld.foundation.generator.util
 
 import net.ntworld.foundation.generator.DEFAULT_COMPANION_OBJECT_NAME
+import net.ntworld.foundation.generator.Framework
 import net.ntworld.foundation.generator.setting.ContractSetting
 import net.ntworld.foundation.generator.setting.FakedAnnotationSetting
 import net.ntworld.foundation.generator.setting.FakedPropertySetting
+import net.ntworld.foundation.generator.type.ComponentType
 import net.ntworld.foundation.generator.type.Property
 
 class ContractReader(
@@ -34,6 +36,19 @@ class ContractReader(
             return false
         }
         return null !== kmClass.companionObject && kmClass.companionObject == DEFAULT_COMPANION_OBJECT_NAME
+    }
+
+    fun findComponentType(name: String): ComponentType {
+        val setting: ContractSetting = settings[name] ?: return ComponentType.Unknown
+        val supertypeSettings = mutableMapOf<String, ContractSetting>()
+        findSupertypeSettingsRecursively(setting, supertypeSettings)
+        supertypeSettings.keys.forEach {
+            val type = Framework.ComponentTypeDictionary[it]
+            if (null !== type) {
+                return@findComponentType type
+            }
+        }
+        return ComponentType.Unknown
     }
 
     fun findPropertiesOfContract(name: String): Map<String, Property>? {

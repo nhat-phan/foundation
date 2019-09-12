@@ -114,7 +114,7 @@ internal object Utility {
     fun findMessageTranslatorTarget(setting: ContractSetting): ClassInfo {
         return ClassInfo(
             className = "${setting.contract.className}MessageTranslator",
-            packageName = findTargetNamespace(setting.contract.packageName)
+            packageName = findTargetNamespace(setting.contract.packageName, ".messageTranslator")
         )
     }
 
@@ -185,8 +185,8 @@ internal object Utility {
         return if (parts.isEmpty()) current else parts.joinToString(".")
     }
 
-    private fun findTargetNamespace(input: String): String {
-        return "$input.generated"
+    private fun findTargetNamespace(input: String, prefix: String = ""): String {
+        return "$input$prefix.generated"
     }
 
     fun stringToClassInfo(name: String): ClassInfo {

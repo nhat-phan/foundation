@@ -17,14 +17,14 @@ class MessageTranslatorMainGeneratorTest : TestSuite() {
 
     private fun runTestForContract(name: String) {
         val allSettings = readSettingsFromResource("/settings/generator-test.settings.json")
-        val reader =
-            ContractReader(allSettings.contracts, allSettings.fakedAnnotations, allSettings.fakedProperties)
+        val reader = ContractReader(allSettings.contracts, allSettings.fakedAnnotations, allSettings.fakedProperties)
         val contract = GeneratorTest.Contract.namespace(name)
         val setting = allSettings.toMutable().getContract(contract)
 
         val result = MessageTranslatorMainGenerator.generate(
             setting!!,
-            ClassInfo("${setting.contract.className}Impl", setting.contract.packageName)
+            ClassInfo("${setting.contract.className}Impl", setting.contract.packageName),
+            reader.findPropertiesOfContract(GeneratorTest.Contract.namespace(name))!!
         )
         println(result.content)
         // assertGeneratedFileMatched(result, "/ContractImplementation/$name.txt")

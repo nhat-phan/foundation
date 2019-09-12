@@ -10,9 +10,9 @@
                 "net.ntworld.foundation.Faked",
                 "net.ntworld.foundation.Handler"
             ],
-            "startedAt": 1568277136813,
-            "finishedAt": 1568277137113,
-            "duration": 300
+            "startedAt": 1568291077923,
+            "finishedAt": 1568291078271,
+            "duration": 348
         }
     ],
     "aggregateFactories": [

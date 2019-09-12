@@ -8,26 +8,41 @@ import net.ntworld.foundation.generator.Utility
 import net.ntworld.foundation.generator.type.ClassInfo
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import net.ntworld.foundation.generator.setting.ContractSetting
+import net.ntworld.foundation.generator.type.Property
 
 object MessageTranslatorMainGenerator {
-    fun generate(setting: ContractSetting, implementation: ClassInfo): GeneratedFile {
+    fun generate(
+        setting: ContractSetting,
+        implementation: ClassInfo,
+        properties: Map<String, Property>
+    ): GeneratedFile {
         val target = Utility.findMessageTranslatorTarget(setting)
-        val file = buildFile(setting, implementation, target)
+        val file = buildFile(setting, implementation, properties, target)
         val stringBuffer = StringBuffer()
         file.writeTo(stringBuffer)
 
         return GeneratedFile.makeMainFile(target, stringBuffer.toString())
     }
 
-    private fun buildFile(setting: ContractSetting, implementation: ClassInfo, target: ClassInfo): FileSpec {
+    private fun buildFile(
+        setting: ContractSetting,
+        implementation: ClassInfo,
+        properties: Map<String, Property>,
+        target: ClassInfo
+    ): FileSpec {
         val file = FileSpec.builder(target.packageName, target.className)
         GeneratorOutput.addHeader(file, this::class.qualifiedName)
-        file.addType(buildClass(setting, implementation, target))
+        file.addType(buildClass(setting, implementation, properties, target))
 
         return file.build()
     }
 
-    private fun buildClass(setting: ContractSetting, implementation: ClassInfo, target: ClassInfo): TypeSpec {
+    private fun buildClass(
+        setting: ContractSetting,
+        implementation: ClassInfo,
+        properties: Map<String, Property>,
+        target: ClassInfo
+    ): TypeSpec {
         val type = TypeSpec.objectBuilder(target.className)
             .addSuperinterface(
                 Framework.MessageTranslator.parameterizedBy(
@@ -44,7 +59,7 @@ object MessageTranslatorMainGenerator {
                     .build()
             )
 
-        buildMakeFunctionIfNeeded(setting, implementation, type)
+        buildMakeFunctionIfNeeded(setting, implementation, properties, type)
         buildCanConvertFunction(setting, type)
         buildFromMessageFunction(setting, implementation, type)
         buildToMessageFunction(setting, implementation, type)
@@ -54,6 +69,7 @@ object MessageTranslatorMainGenerator {
     private fun buildMakeFunctionIfNeeded(
         setting: ContractSetting,
         implementation: ClassInfo,
+        properties: Map<String, Property>,
         type: TypeSpec.Builder
     ) {
         if (setting.contract == implementation) {
@@ -66,7 +82,7 @@ object MessageTranslatorMainGenerator {
         code.endControlFlow()
         code.add("return %T(\n", implementation.toClassName())
         code.indent()
-        val fields = setting.properties.values
+        val fields = properties.values.filter { !it.hasBody }
         val lastIndex = fields.size - 1
         fields.forEachIndexed { index, field ->
             code.add("%L = instance.%L", field.name, field.name)
@@ -123,7 +139,8 @@ object MessageTranslatorMainGenerator {
         code.indent()
 
         code
-            .add("\"bodyType\" to %T.createStringAttribute(\n",
+            .add(
+                "\"bodyType\" to %T.createStringAttribute(\n",
                 Framework.MessageUtility
             )
             .indent()
@@ -131,7 +148,8 @@ object MessageTranslatorMainGenerator {
             .unindent()
             .add("),\n")
 
-        code.add("\"implementationType\" to %T.createStringAttribute(\n",
+        code.add(
+            "\"implementationType\" to %T.createStringAttribute(\n",
             Framework.MessageUtility
         )
             .indent()

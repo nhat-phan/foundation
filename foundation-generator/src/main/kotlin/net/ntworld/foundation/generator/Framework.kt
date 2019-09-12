@@ -1,9 +1,7 @@
 package net.ntworld.foundation.generator;
 
 import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.FileSpec
-import java.text.SimpleDateFormat
-import java.util.*
+import net.ntworld.foundation.generator.type.ComponentType
 
 internal object Framework {
     val namespace = "net.ntworld.foundation"
@@ -15,6 +13,11 @@ internal object Framework {
     val JavaFakerWrapper = ClassName("$namespace.util", "JavaFakerWrapper")
 
     val LocalBusResolver = ClassName(namespace, "LocalBusResolver")
+
+    val Aggregate = ClassName(namespace, "Aggregate")
+    val Error = ClassName(namespace, "Error")
+    val State = ClassName(namespace, "State")
+    val ReceivedData = ClassName(namespace, "ReceivedData")
 
     val Event = ClassName(namespace, "Event")
     val EventHandler = ClassName(namespace, "EventHandler")
@@ -60,4 +63,17 @@ internal object Framework {
     val JavaFaker = ClassName("com.github.javafaker", "Faker")
     val Json = ClassName("kotlinx.serialization.json", "Json")
     val JsonConfiguration = ClassName("kotlinx.serialization.json", "JsonConfiguration")
+
+    val ComponentTypeDictionary = mapOf<String, ComponentType>(
+        Aggregate.canonicalName to ComponentType.Aggregate,
+        Error.canonicalName to ComponentType.Error,
+        State.canonicalName to ComponentType.State,
+        ReceivedData.canonicalName to ComponentType.ReceivedData,
+        Event.canonicalName to ComponentType.Event,
+        Command.canonicalName to ComponentType.Command,
+        Query.canonicalName to ComponentType.Query,
+        QueryResult.canonicalName to ComponentType.QueryResult,
+        Request.canonicalName to ComponentType.Request,
+        Response.canonicalName to ComponentType.Response
+    )
 }

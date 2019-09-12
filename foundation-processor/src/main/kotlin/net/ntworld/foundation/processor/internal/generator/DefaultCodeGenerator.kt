@@ -4,6 +4,8 @@ import net.ntworld.foundation.generator.GeneratorSettings
 import net.ntworld.foundation.generator.main.*
 import net.ntworld.foundation.generator.setting.ContractSetting
 import net.ntworld.foundation.generator.type.ClassInfo
+import net.ntworld.foundation.generator.type.ComponentType
+import net.ntworld.foundation.generator.type.Property
 import net.ntworld.foundation.generator.util.ContractReader
 import net.ntworld.foundation.processor.util.ContractCollector
 import net.ntworld.foundation.processor.util.ProcessorOutput
@@ -83,22 +85,25 @@ internal class DefaultCodeGenerator : CodeGenerator {
                 return@forEach
             }
 
+            val type = reader.findComponentType(it.name)
+            val properties = reader.findPropertiesOfContract(it.name)
+            if (null === properties) {
+                return@forEach
+            }
+
             if (implementations.containsKey(it.name)) {
-                if (messaging.containsKey(it.name)) {
-                    generateMessageTranslator(processingEnv, it, implementations[it.name]!!)
+                if (messaging.containsKey(it.name) || TYPES_HAVE_MESSAGE_TRANSLATOR.contains(type)) {
+                    generateMessageTranslator(processingEnv, it, implementations[it.name]!!, properties)
                 }
                 return@forEach
             }
 
-            val properties = reader.findPropertiesOfContract(it.name)
-            if (null !== properties) {
-                val implFile = ContractImplementationMainGenerator.generate(it, properties)
-                ProcessorOutput.writeGeneratedFile(processingEnv, implFile)
+            val implFile = ContractImplementationMainGenerator.generate(it, properties)
+            ProcessorOutput.writeGeneratedFile(processingEnv, implFile)
 
-                factoryMainGenerator.add(it.contract, implFile.target)
-                if (messaging.containsKey(it.name)) {
-                    generateMessageTranslator(processingEnv, it, implFile.target)
-                }
+            factoryMainGenerator.add(it.contract, implFile.target)
+            if (messaging.containsKey(it.name) || TYPES_HAVE_MESSAGE_TRANSLATOR.contains(type)) {
+                generateMessageTranslator(processingEnv, it, implFile.target, properties)
             }
         }
         ProcessorOutput.writeGeneratedFile(processingEnv, factoryMainGenerator.generate(settings, global.packageName))
@@ -107,11 +112,12 @@ internal class DefaultCodeGenerator : CodeGenerator {
     private fun generateMessageTranslator(
         processingEnv: ProcessingEnvironment,
         contractSetting: ContractSetting,
-        implementation: ClassInfo
+        implementation: ClassInfo,
+        properties: Map<String, Property>
     ) {
         ProcessorOutput.writeGeneratedFile(
             processingEnv,
-            MessageTranslatorMainGenerator.generate(contractSetting, implementation)
+            MessageTranslatorMainGenerator.generate(contractSetting, implementation, properties)
         )
         registerMessageTranslator(contractSetting.contract, implementation)
     }
@@ -155,5 +161,15 @@ internal class DefaultCodeGenerator : CodeGenerator {
 //            settings,
 //            InfrastructureProviderMainGenerator().generate(settings, global.packageName)
 //        )
+    }
+
+    companion object {
+        private val TYPES_HAVE_MESSAGE_TRANSLATOR = listOf<ComponentType>(
+            ComponentType.Event,
+            ComponentType.Command,
+            ComponentType.Query,
+            ComponentType.Request,
+            ComponentType.Response
+        )
     }
 }

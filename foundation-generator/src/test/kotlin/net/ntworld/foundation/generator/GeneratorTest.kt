@@ -18,16 +18,15 @@ object GeneratorTest {
             return if (null === type) "$NAMESPACE.$NS_CONTRACT" else "$NAMESPACE.$NS_CONTRACT.$type"
         }
 
-        // TODO: change to RequestHandler's style to reduce calls namespace everywhere
-        const val BasicTypeContract = "BasicTypeContract"
-        const val DefaultValueContract = "DefaultValueContract"
-        const val ListTypeContract = "ListTypeContract"
-        const val NoSupertypeContract = "NoSupertypeContract"
-        const val OneSupertypeContract = "OneSupertypeContract"
-        const val OneSupertypeOverrideContract = "OneSupertypeOverrideContract"
-        const val CustomTypeContract = "CustomTypeContract"
-        const val CustomTypeContractAddress = "CustomTypeContractAddress"
-        const val CreateAccountCommand = "CreateAccountCommand"
+        val BasicTypeContract = namespace("BasicTypeContract")
+        val DefaultValueContract = namespace("DefaultValueContract")
+        val ListTypeContract = namespace("ListTypeContract")
+        val NoSupertypeContract = namespace("NoSupertypeContract")
+        val OneSupertypeContract = namespace("OneSupertypeContract")
+        val OneSupertypeOverrideContract = namespace("OneSupertypeOverrideContract")
+        val CustomTypeContract = namespace("CustomTypeContract")
+        val CustomTypeContractAddress = namespace("CustomTypeContractAddress")
+        val CreateAccountCommand = namespace("CreateAccountCommand")
     }
 
     object RequestHandler {

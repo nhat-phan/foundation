@@ -8,6 +8,7 @@ import net.ntworld.foundation.cqrs.ReceivedData
 import net.ntworld.foundation.generator.GeneratorSettings
 import net.ntworld.foundation.generator.setting.ImplementationSetting
 import net.ntworld.foundation.generator.type.ClassInfo
+import net.ntworld.foundation.generator.type.ComponentType
 import net.ntworld.foundation.processor.util.CodeUtility
 import net.ntworld.foundation.processor.util.ContractCollector
 import net.ntworld.foundation.processor.util.FrameworkProcessor
@@ -22,18 +23,18 @@ class ImplementationProcessor : Processor {
         Implementation::class.java
     )
 
-    private val definedInterfaces = mapOf<String, ImplementationSetting.Type>(
-        Aggregate::class.java.canonicalName to ImplementationSetting.Type.Aggregate,
-        Error::class.java.canonicalName to ImplementationSetting.Type.Error,
-        State::class.java.canonicalName to ImplementationSetting.Type.State,
-        ReceivedData::class.java.canonicalName to ImplementationSetting.Type.ReceivedData,
-        Event::class.java.canonicalName to ImplementationSetting.Type.Event,
-        Command::class.java.canonicalName to ImplementationSetting.Type.Command,
-        Query::class.java.canonicalName to ImplementationSetting.Type.Query,
-        QueryResult::class.java.canonicalName to ImplementationSetting.Type.QueryResult,
-        Request::class.java.canonicalName to ImplementationSetting.Type.Request,
-        Response::class.java.canonicalName to ImplementationSetting.Type.Response,
-        FrameworkProcessor.Contract to ImplementationSetting.Type.Unknown
+    private val definedInterfaces = mapOf<String, ComponentType>(
+        Aggregate::class.java.canonicalName to ComponentType.Aggregate,
+        Error::class.java.canonicalName to ComponentType.Error,
+        State::class.java.canonicalName to ComponentType.State,
+        ReceivedData::class.java.canonicalName to ComponentType.ReceivedData,
+        Event::class.java.canonicalName to ComponentType.Event,
+        Command::class.java.canonicalName to ComponentType.Command,
+        Query::class.java.canonicalName to ComponentType.Query,
+        QueryResult::class.java.canonicalName to ComponentType.QueryResult,
+        Request::class.java.canonicalName to ComponentType.Request,
+        Response::class.java.canonicalName to ComponentType.Response,
+        FrameworkProcessor.Contract to ComponentType.Unknown
     )
 
     private data class CollectedImplementation(
@@ -41,7 +42,7 @@ class ImplementationProcessor : Processor {
         val implementationClassName: String,
         val contractPackageName: String,
         val contractClassName: String,
-        val type: ImplementationSetting.Type,
+        val type: ComponentType,
         val isGenerated: Boolean
     )
 
@@ -166,7 +167,7 @@ class ImplementationProcessor : Processor {
                 contractPackageName = "",
                 contractClassName = "",
                 isGenerated = false,
-                type = ImplementationSetting.Type.Unknown
+                type = ComponentType.Unknown
             )
         }
     }
