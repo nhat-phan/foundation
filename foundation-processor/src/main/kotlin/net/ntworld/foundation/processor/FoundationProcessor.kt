@@ -2,28 +2,28 @@ package net.ntworld.foundation.processor
 
 import net.ntworld.foundation.Use
 import net.ntworld.foundation.generator.*
-import net.ntworld.foundation.generator.main.*
 import net.ntworld.foundation.generator.type.AnnotationProcessorRunInfo
-import net.ntworld.foundation.generator.type.ClassInfo
-import net.ntworld.foundation.generator.util.ContractReader
-import net.ntworld.foundation.processor.internal.*
-import net.ntworld.foundation.processor.internal.AggregateFactoryProcessor
-import net.ntworld.foundation.processor.internal.CommandHandlerProcessor
-import net.ntworld.foundation.processor.internal.EventHandlerProcessor
-import net.ntworld.foundation.processor.internal.Processor
+import net.ntworld.foundation.processor.internal.generator.CodeGenerator
+import net.ntworld.foundation.processor.internal.generator.ContractOnlyCodeGenerator
+import net.ntworld.foundation.processor.internal.generator.DefaultCodeGenerator
+import net.ntworld.foundation.processor.internal.processor.*
 import net.ntworld.foundation.processor.util.ContractCollector
 import net.ntworld.foundation.processor.util.FrameworkProcessor
 import net.ntworld.foundation.processor.util.ProcessorOutput
 import net.ntworld.foundation.processor.util.ProcessorSetting
 import javax.annotation.processing.AbstractProcessor
-import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.TypeElement
 
 class FoundationProcessor : AbstractProcessor() {
+    private val generators: List<CodeGenerator> = listOf(
+        ContractOnlyCodeGenerator(),
+        DefaultCodeGenerator()
+    )
     private val processors: List<Processor> = listOf(
         ImplementationProcessor(),
         FakedAnnotationProcessor(),
+        MessagingProcessor(),
         EventHandlerProcessor(),
         CommandHandlerProcessor(),
         QueryHandlerProcessor(),
@@ -53,10 +53,7 @@ class FoundationProcessor : AbstractProcessor() {
 
         ContractCollector.reset()
         val settings = collectSettingsByProcessors(processorSetting, currentSettings, roundEnv)
-        when (processorSetting.mode) {
-            ProcessorSetting.Mode.Default -> generateModeDefault(processorSetting, settings)
-            ProcessorSetting.Mode.ContractOnly -> generateModeContractOnly(processorSetting, settings)
-        }
+        generate(processorSetting, settings)
 
         val end = System.currentTimeMillis()
         lastRunInfo.add(
@@ -124,93 +121,12 @@ class FoundationProcessor : AbstractProcessor() {
         return processor.applySettings(settings)
     }
 
-    private fun generateModeContractOnly(processorSetting: ProcessorSetting, settings: GeneratorSettings) {
-        val file = ContractOnlyModeGenerator.generate(processorSetting.settingsClass, settings)
-        ProcessorOutput.writeGeneratedFile(processingEnv, file)
-    }
-
-    private fun generateModeDefault(processorSetting: ProcessorSetting, settings: GeneratorSettings) {
-        settings.eventSourcings.forEach {
-            ProcessorOutput.writeGeneratedFile(processingEnv, EventEntityMainGenerator.generate(it))
-            ProcessorOutput.writeGeneratedFile(processingEnv, EventConverterMainGenerator.generate(it))
-            ProcessorOutput.writeGeneratedFile(processingEnv, EventMessageTranslatorMainGenerator.generate(it))
-        }
-
-        settings.aggregateFactories.forEach {
-            ProcessorOutput.writeGeneratedFile(processingEnv, AggregateFactoryMainGenerator.generate(it))
-        }
-
-        val globalTarget = InfrastructureProviderMainGenerator().findTarget(settings)
-        generateUnimplementedContracts(settings, globalTarget)
-        generateProviderAndBuses(processorSetting, settings, globalTarget)
-    }
-
-    private fun generateUnimplementedContracts(settings: GeneratorSettings, global: ClassInfo) {
-        val reader = ContractReader(
-            contractSettings = settings.contracts,
-            fakedAnnotationSettings = settings.fakedAnnotations,
-            fakedPropertySettings = settings.fakedProperties
-        )
-
-        val factoryMainGenerator = ContractFactoryMainGenerator()
-        val implementations = mutableMapOf<String, String>()
-        settings.implementations.forEach {
-            implementations[it.contract.fullName()] = it.name
-        }
-
-        settings.contracts.forEach {
-            if (it.collectedBy != ContractCollector.COLLECTED_BY_KAPT || implementations.containsKey(it.name)) {
-                return@forEach
-            }
-
-            val properties = reader.findPropertiesOfContract(it.name)
-            if (null !== properties) {
-                val implFile = ContractImplementationMainGenerator.generate(it, properties)
-                ProcessorOutput.writeGeneratedFile(processingEnv, implFile)
-
-                factoryMainGenerator.add(it.contract, implFile.target)
+    private fun generate(processorSetting: ProcessorSetting, settings: GeneratorSettings) {
+        this.generators.forEach {
+            if (it.mode == processorSetting.mode) {
+                it.generate(processingEnv, processorSetting, settings)
+                return@generate
             }
         }
-        ProcessorOutput.writeGeneratedFile(processingEnv, factoryMainGenerator.generate(settings, global.packageName))
-    }
-
-    private fun generateProviderAndBuses(
-        processorSetting: ProcessorSetting,
-        settings: GeneratorSettings,
-        global: ClassInfo
-    ) {
-        ProcessorOutput.writeGlobalFile(
-            processingEnv,
-            settings,
-            LocalEventBusMainGenerator().generate(settings.eventHandlers, global.packageName),
-            processorSetting.isDev
-        )
-
-        ProcessorOutput.writeGlobalFile(
-            processingEnv,
-            settings,
-            LocalServiceBusMainGenerator().generate(settings.requestHandlers, global.packageName),
-            processorSetting.isDev
-        )
-
-        ProcessorOutput.writeGlobalFile(
-            processingEnv,
-            settings,
-            LocalCommandBusMainGenerator().generate(settings.commandHandlers, global.packageName),
-            processorSetting.isDev
-        )
-
-        ProcessorOutput.writeGlobalFile(
-            processingEnv,
-            settings,
-            LocalQueryBusMainGenerator().generate(settings.queryHandlers, global.packageName),
-            processorSetting.isDev
-        )
-
-//        ProcessorOutput.writeGlobalFile(
-//            processingEnv,
-//            settings,
-//            InfrastructureProviderMainGenerator().generate(settings, global.packageName)
-//        )
     }
 }

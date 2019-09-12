@@ -1,14 +1,14 @@
-package net.ntworld.foundation.processor.internal
+package net.ntworld.foundation.processor.internal.processor
 
 import net.ntworld.foundation.Handler
-import net.ntworld.foundation.cqrs.QueryHandler
+import net.ntworld.foundation.RequestHandler
 import net.ntworld.foundation.generator.GeneratorSettings
-import net.ntworld.foundation.generator.setting.QueryHandlerSetting
+import net.ntworld.foundation.generator.setting.RequestHandlerSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 import net.ntworld.foundation.generator.type.KotlinMetadata
+import net.ntworld.foundation.processor.FoundationProcessorException
 import net.ntworld.foundation.processor.util.CodeUtility
 import net.ntworld.foundation.processor.util.ContractCollector
-import net.ntworld.foundation.processor.FoundationProcessorException
 import net.ntworld.foundation.processor.util.FrameworkProcessor
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
@@ -17,14 +17,14 @@ import javax.lang.model.element.PackageElement
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.DeclaredType
 
-internal class QueryHandlerProcessor() : Processor {
+internal class RequestHandlerProcessor : Processor {
     override val annotations: List<Class<out Annotation>> = listOf(
         Handler::class.java
     )
 
-    private data class CollectedQueryHandler(
-        val queryPackageName: String,
-        val queryClassName: String,
+    private data class CollectedRequestHandler(
+        val requestPackageName: String,
+        val requestClassName: String,
         val handlerPackageName: String,
         val handlerClassName: String,
         val metadata: KotlinMetadata,
@@ -32,14 +32,14 @@ internal class QueryHandlerProcessor() : Processor {
         val version: Int
     )
 
-    private val data = mutableMapOf<String, CollectedQueryHandler>()
+    private val data = mutableMapOf<String, CollectedRequestHandler>()
 
     override fun startProcess(settings: GeneratorSettings) {
         data.clear()
-        settings.queryHandlers.forEach { item ->
-            data[item.name] = CollectedQueryHandler(
-                queryPackageName = item.query.packageName,
-                queryClassName = item.query.className,
+        settings.requestHandlers.forEach { item ->
+            data[item.name] = CollectedRequestHandler(
+                requestPackageName = item.request.packageName,
+                requestClassName = item.request.className,
                 handlerPackageName = item.handler.packageName,
                 handlerClassName = item.handler.className,
                 metadata = item.metadata,
@@ -50,11 +50,11 @@ internal class QueryHandlerProcessor() : Processor {
     }
 
     override fun applySettings(settings: GeneratorSettings): GeneratorSettings {
-        val queryHandlers = data.values.map {
-            QueryHandlerSetting(
-                query = ClassInfo(
-                    packageName = it.queryPackageName,
-                    className = it.queryClassName
+        val requestHandlers = data.values.map {
+            RequestHandlerSetting(
+                request = ClassInfo(
+                    packageName = it.requestPackageName,
+                    className = it.requestClassName
                 ),
                 version = it.version,
                 handler = ClassInfo(
@@ -65,7 +65,7 @@ internal class QueryHandlerProcessor() : Processor {
                 makeByFactory = it.makeByFactory
             )
         }
-        return settings.copy(queryHandlers = queryHandlers)
+        return settings.copy(requestHandlers = requestHandlers)
     }
 
     override fun shouldProcess(
@@ -77,7 +77,7 @@ internal class QueryHandlerProcessor() : Processor {
         return when (annotation) {
             Handler::class.java -> {
                 CodeUtility.isImplementInterface(
-                    processingEnv, element.asType(), QueryHandler::class.java.canonicalName, false
+                    processingEnv, element.asType(), RequestHandler::class.java.canonicalName, false
                 )
             }
 
@@ -94,7 +94,7 @@ internal class QueryHandlerProcessor() : Processor {
         val packageName = this.getPackageNameOfClass(element)
         val className = element.simpleName.toString()
         val key = "$packageName.$className"
-        initCollectedQueryHandlerIfNeeded(element, packageName, className)
+        initCollectedRequestHandlerIfNeeded(element, packageName, className)
 
         // If the Handler is provided enough information, then no need to find data
         if (processAnnotationProperties(processingEnv, key, element, element.getAnnotation(Handler::class.java))) {
@@ -104,11 +104,11 @@ internal class QueryHandlerProcessor() : Processor {
         val implementedInterface = (element as TypeElement).interfaces
             .firstOrNull {
                 val e = processingEnv.typeUtils.asElement(it) as? TypeElement ?: return@firstOrNull false
-                e.qualifiedName.toString() == QueryHandler::class.java.canonicalName
+                e.qualifiedName.toString() == RequestHandler::class.java.canonicalName
             }
 
         if (null !== implementedInterface) {
-            findImplementedQuery(processingEnv, key, implementedInterface as DeclaredType)
+            findImplementedRequest(processingEnv, key, implementedInterface as DeclaredType)
         }
 
         data[key] = data[key]!!.copy(
@@ -122,7 +122,7 @@ internal class QueryHandlerProcessor() : Processor {
         element: Element,
         annotation: Handler
     ): Boolean {
-        if (annotation.type !== Handler.Type.Query) {
+        if (annotation.type !== Handler.Type.Request) {
             return false
         }
 
@@ -147,24 +147,24 @@ internal class QueryHandlerProcessor() : Processor {
         val inputElement = processingEnv.elementUtils.getTypeElement(inputTypeName)
         ContractCollector.collect(processingEnv, inputElement)
         data[key] = data[key]!!.copy(
-            queryPackageName = getPackageNameOfClass(inputElement),
-            queryClassName = inputElement.simpleName.toString(),
+            requestPackageName = getPackageNameOfClass(inputElement),
+            requestClassName = inputElement.simpleName.toString(),
             version = annotation.version,
             makeByFactory = annotation.factory
         )
         return true
     }
 
-    private fun findImplementedQuery(processingEnv: ProcessingEnvironment, key: String, type: DeclaredType) {
+    private fun findImplementedRequest(processingEnv: ProcessingEnvironment, key: String, type: DeclaredType) {
         if (type.typeArguments.size != 2) {
             return
         }
-        val queryType = type.typeArguments.first()
-        val element = processingEnv.typeUtils.asElement(queryType)
+        val requestType = type.typeArguments.first()
+        val element = processingEnv.typeUtils.asElement(requestType)
         ContractCollector.collect(processingEnv, element)
         data[key] = data[key]!!.copy(
-            queryPackageName = getPackageNameOfClass(element),
-            queryClassName = element.simpleName.toString()
+            requestPackageName = getPackageNameOfClass(element),
+            requestClassName = element.simpleName.toString()
         )
     }
 
@@ -176,12 +176,12 @@ internal class QueryHandlerProcessor() : Processor {
         return upperElement.qualifiedName.toString()
     }
 
-    private fun initCollectedQueryHandlerIfNeeded(element: Element, packageName: String, className: String) {
+    private fun initCollectedRequestHandlerIfNeeded(element: Element, packageName: String, className: String) {
         val key = "$packageName.$className"
         if (!data.containsKey(key)) {
-            data[key] = CollectedQueryHandler(
-                queryPackageName = "",
-                queryClassName = "",
+            data[key] = CollectedRequestHandler(
+                requestPackageName = "",
+                requestClassName = "",
                 version = 0,
                 handlerPackageName = packageName,
                 handlerClassName = className,

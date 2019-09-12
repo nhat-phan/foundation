@@ -10,7 +10,7 @@ class MutableGeneratorSettings(private val settings: GeneratorSettings) {
     private val queryHandlers = toMutableMap(settings.queryHandlers)
     private val requestHandlers = toMutableMap(settings.requestHandlers)
     private val implementations = toMutableMap(settings.implementations)
-    private val messages = toMutableMap(settings.messages)
+    private val messages = toMutableMap(settings.messagings)
     private val contracts = toMutableMap(settings.contracts)
     private val fakedAnnotations = toMutableMap(settings.fakedAnnotations)
     private val fakedProperties = toMutableMap(settings.fakedProperties)
@@ -35,7 +35,7 @@ class MutableGeneratorSettings(private val settings: GeneratorSettings) {
             commandHandlers = toList(commandHandlers),
             queryHandlers = toList(queryHandlers),
             implementations = toList(implementations),
-            messages = toList(messages),
+            messagings = toList(messages),
             contracts = toList(contracts),
             fakedAnnotations = toList(fakedAnnotations),
             fakedProperties = toList(fakedProperties)
@@ -49,7 +49,7 @@ class MutableGeneratorSettings(private val settings: GeneratorSettings) {
         mergeItems(input.commandHandlers, commandHandlers)
         mergeItems(input.queryHandlers, queryHandlers)
         mergeItems(input.implementations, implementations)
-        mergeItems(input.messages, messages)
+        mergeItems(input.messagings, messages)
         mergeItems(input.contracts, contracts)
         mergeItems(input.fakedAnnotations, fakedAnnotations)
         mergeItems(input.fakedProperties, fakedProperties)
@@ -69,7 +69,7 @@ class MutableGeneratorSettings(private val settings: GeneratorSettings) {
     fun hasQueryHandler(name: String): Boolean = queryHandlers.containsKey(name)
     fun hasRequestHandler(name: String): Boolean = requestHandlers.containsKey(name)
     fun hasImplementation(name: String): Boolean = implementations.containsKey(name)
-    fun hasMessage(name: String): Boolean = messages.containsKey(name)
+    fun hasMessaging(name: String): Boolean = messages.containsKey(name)
     fun hasContract(name: String): Boolean = contracts.containsKey(name)
     fun hasFakedAnnotationSetting(name: String): Boolean = fakedAnnotations.containsKey(name)
     fun hasFakedPropertySetting(name: String): Boolean = fakedProperties.containsKey(name)
@@ -81,7 +81,7 @@ class MutableGeneratorSettings(private val settings: GeneratorSettings) {
     fun getQueryHandler(name: String): QueryHandlerSetting? = queryHandlers[name]
     fun getRequestHandler(name: String): RequestHandlerSetting? = requestHandlers[name]
     fun getImplementation(name: String): ImplementationSetting? = implementations[name]
-    fun getMessage(name: String): MessageSetting? = messages[name]
+    fun getMessaging(name: String): MessagingSetting? = messages[name]
     fun getContract(name: String): ContractSetting? = contracts[name]
     fun getFakedAnnotationSetting(name: String): FakedAnnotationSetting? = fakedAnnotations[name]
     fun getFakedPropertySetting(name: String): FakedPropertySetting? = fakedProperties[name]
@@ -94,7 +94,7 @@ class MutableGeneratorSettings(private val settings: GeneratorSettings) {
             is CommandHandlerSetting -> commandHandlers[setting.name] = setting
             is QueryHandlerSetting -> queryHandlers[setting.name] = setting
             is ImplementationSetting -> implementations[setting.name] = setting
-            is MessageSetting -> messages[setting.name] = setting
+            is MessagingSetting -> messages[setting.name] = setting
             is ContractSetting -> contracts[setting.name] = setting
             is FakedAnnotationSetting -> fakedAnnotations[setting.name] = setting
             is FakedPropertySetting -> fakedProperties[setting.name] = setting

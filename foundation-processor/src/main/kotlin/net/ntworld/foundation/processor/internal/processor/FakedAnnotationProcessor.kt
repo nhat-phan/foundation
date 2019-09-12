@@ -1,4 +1,4 @@
-package net.ntworld.foundation.processor.internal
+package net.ntworld.foundation.processor.internal.processor
 
 import net.ntworld.foundation.Faked
 import net.ntworld.foundation.generator.GeneratorSettings
@@ -8,7 +8,6 @@ import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
-import javax.lang.model.element.TypeElement
 
 internal class FakedAnnotationProcessor : Processor {
     override val annotations: List<Class<out Annotation>> = listOf(
@@ -88,21 +87,4 @@ internal class FakedAnnotationProcessor : Processor {
             fakedType = fakedAnnotation.type
         )
     }
-
-//    private fun getFakedType(element: Element): String? {
-//        val annotationMirrors = element.annotationMirrors
-//        annotationMirrors.forEach {
-//            val typeElement = it.annotationType.asElement() as? TypeElement ?: return@forEach
-//            val name = typeElement.qualifiedName.toString()
-//            if (name == Faked::class.java.canonicalName) {
-//                it.elementValues.forEach {
-//                    val valueName = it.key.simpleName.toString()
-//                    if (valueName == "type") {
-//                        return@getFakedType it.value.value.toString()
-//                    }
-//                }
-//            }
-//        }
-//        return null
-//    }
 }

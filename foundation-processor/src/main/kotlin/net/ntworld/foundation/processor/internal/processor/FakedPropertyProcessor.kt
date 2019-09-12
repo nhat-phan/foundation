@@ -1,4 +1,4 @@
-package net.ntworld.foundation.processor.internal
+package net.ntworld.foundation.processor.internal.processor
 
 import kotlinx.metadata.jvm.KotlinClassMetadata
 import kotlinx.metadata.jvm.getterSignature
@@ -9,8 +9,6 @@ import net.ntworld.foundation.generator.setting.FakedPropertySetting
 import net.ntworld.foundation.generator.type.ClassInfo
 import net.ntworld.foundation.processor.util.ContractCollector
 import net.ntworld.foundation.processor.util.KotlinMetadataUtil
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.Element
@@ -34,13 +32,12 @@ class FakedPropertyProcessor : Processor {
     override fun startProcess(settings: GeneratorSettings) {
         data.clear()
         settings.fakedProperties.forEach { item ->
-            data[item.name] =
-                CollectedFakedProperty(
-                    packageName = item.contract.packageName,
-                    className = item.contract.className,
-                    property = item.property,
-                    fakedType = item.fakedType
-                )
+            data[item.name] = CollectedFakedProperty(
+                packageName = item.contract.packageName,
+                className = item.contract.className,
+                property = item.property,
+                fakedType = item.fakedType
+            )
         }
     }
 

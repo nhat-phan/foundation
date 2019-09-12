@@ -1,9 +1,9 @@
-package net.ntworld.foundation.processor.internal
+package net.ntworld.foundation.processor.internal.processor
 
-import net.ntworld.foundation.EventHandler
 import net.ntworld.foundation.Handler
+import net.ntworld.foundation.cqrs.CommandHandler
 import net.ntworld.foundation.generator.GeneratorSettings
-import net.ntworld.foundation.generator.setting.EventHandlerSetting
+import net.ntworld.foundation.generator.setting.CommandHandlerSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 import net.ntworld.foundation.generator.type.KotlinMetadata
 import net.ntworld.foundation.processor.util.CodeUtility
@@ -17,43 +17,46 @@ import javax.lang.model.element.PackageElement
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.DeclaredType
 
-internal class EventHandlerProcessor : Processor {
+internal class CommandHandlerProcessor : Processor {
     override val annotations: List<Class<out Annotation>> = listOf(
         Handler::class.java
     )
 
-    internal data class CollectedEventHandler(
-        val eventPackageName: String,
-        val eventClassName: String,
+    internal data class CollectedCommandHandler(
+        val commandPackageName: String,
+        val commandClassName: String,
         val handlerPackageName: String,
         val handlerClassName: String,
         val metadata: KotlinMetadata,
-        val makeByFactory: Boolean
+        val makeByFactory: Boolean,
+        val version: Int
     )
 
-    private val data = mutableMapOf<String, CollectedEventHandler>()
+    private val data = mutableMapOf<String, CollectedCommandHandler>()
 
     override fun startProcess(settings: GeneratorSettings) {
         data.clear()
-        settings.eventHandlers.forEach { item ->
-            data[item.name] = CollectedEventHandler(
-                eventPackageName = item.event.packageName,
-                eventClassName = item.event.className,
+        settings.commandHandlers.forEach { item ->
+            data[item.name] = CollectedCommandHandler(
+                commandPackageName = item.command.packageName,
+                commandClassName = item.command.className,
                 handlerPackageName = item.handler.packageName,
                 handlerClassName = item.handler.className,
                 metadata = item.metadata,
-                makeByFactory = item.makeByFactory
+                makeByFactory = item.makeByFactory,
+                version = item.version
             )
         }
     }
 
     override fun applySettings(settings: GeneratorSettings): GeneratorSettings {
-        val eventHandlers = data.values.map {
-            EventHandlerSetting(
-                event = ClassInfo(
-                    packageName = it.eventPackageName,
-                    className = it.eventClassName
+        val commandHandlers = data.values.map {
+            CommandHandlerSetting(
+                command = ClassInfo(
+                    packageName = it.commandPackageName,
+                    className = it.commandClassName
                 ),
+                version = it.version,
                 handler = ClassInfo(
                     packageName = it.handlerPackageName,
                     className = it.handlerClassName
@@ -62,7 +65,7 @@ internal class EventHandlerProcessor : Processor {
                 makeByFactory = it.makeByFactory
             )
         }
-        return settings.copy(eventHandlers = eventHandlers)
+        return settings.copy(commandHandlers = commandHandlers)
     }
 
     override fun shouldProcess(
@@ -74,7 +77,7 @@ internal class EventHandlerProcessor : Processor {
         return when (annotation) {
             Handler::class.java -> {
                 CodeUtility.isImplementInterface(
-                    processingEnv, element.asType(), EventHandler::class.java.canonicalName, false
+                    processingEnv, element.asType(), CommandHandler::class.java.canonicalName, false
                 )
             }
 
@@ -91,7 +94,7 @@ internal class EventHandlerProcessor : Processor {
         val packageName = this.getPackageNameOfClass(element)
         val className = element.simpleName.toString()
         val key = "$packageName.$className"
-        initCollectedEventHandlerIfNeeded(element, packageName, className)
+        initCollectedCommandHandlerIfNeeded(element, packageName, className)
 
         // If the Handler is provided enough information, then no need to find data
         if (processAnnotationProperties(processingEnv, key, element, element.getAnnotation(Handler::class.java))) {
@@ -101,12 +104,16 @@ internal class EventHandlerProcessor : Processor {
         val implementedInterface = (element as TypeElement).interfaces
             .firstOrNull {
                 val e = processingEnv.typeUtils.asElement(it) as? TypeElement ?: return@firstOrNull false
-                e.qualifiedName.toString() == EventHandler::class.java.canonicalName
+                e.qualifiedName.toString() == CommandHandler::class.java.canonicalName
             }
 
         if (null !== implementedInterface) {
-            findImplementedEvent(processingEnv, key, implementedInterface as DeclaredType)
+            findImplementedCommand(processingEnv, key, implementedInterface as DeclaredType)
         }
+
+        data[key] = data[key]!!.copy(
+            version = element.getAnnotation(Handler::class.java).version
+        )
     }
 
     private fun processAnnotationProperties(
@@ -115,7 +122,7 @@ internal class EventHandlerProcessor : Processor {
         element: Element,
         annotation: Handler
     ): Boolean {
-        if (annotation.type != Handler.Type.Event) {
+        if (annotation.type != Handler.Type.Query) {
             return false
         }
 
@@ -138,25 +145,26 @@ internal class EventHandlerProcessor : Processor {
         }
 
         val inputElement = processingEnv.elementUtils.getTypeElement(inputTypeName)
-        ContractCollector.collect(processingEnv, element)
+        ContractCollector.collect(processingEnv, inputElement)
         data[key] = data[key]!!.copy(
-            eventPackageName = getPackageNameOfClass(inputElement),
-            eventClassName = inputElement.simpleName.toString(),
+            commandPackageName = getPackageNameOfClass(inputElement),
+            commandClassName = inputElement.simpleName.toString(),
+            version = annotation.version,
             makeByFactory = annotation.factory
         )
         return true
     }
 
-    private fun findImplementedEvent(processingEnv: ProcessingEnvironment, key: String, type: DeclaredType) {
+    private fun findImplementedCommand(processingEnv: ProcessingEnvironment, key: String, type: DeclaredType) {
         if (type.typeArguments.size != 1) {
             return
         }
-        val eventType = type.typeArguments.first()
-        val element = processingEnv.typeUtils.asElement(eventType)
+        val commandType = type.typeArguments.first()
+        val element = processingEnv.typeUtils.asElement(commandType)
         ContractCollector.collect(processingEnv, element)
         data[key] = data[key]!!.copy(
-            eventPackageName = getPackageNameOfClass(element),
-            eventClassName = element.simpleName.toString()
+            commandPackageName = getPackageNameOfClass(element),
+            commandClassName = element.simpleName.toString()
         )
     }
 
@@ -168,12 +176,13 @@ internal class EventHandlerProcessor : Processor {
         return upperElement.qualifiedName.toString()
     }
 
-    private fun initCollectedEventHandlerIfNeeded(element: Element, packageName: String, className: String) {
+    private fun initCollectedCommandHandlerIfNeeded(element: Element, packageName: String, className: String) {
         val key = "$packageName.$className"
         if (!data.containsKey(key)) {
-            data[key] = CollectedEventHandler(
-                eventPackageName = "",
-                eventClassName = "",
+            data[key] = CollectedCommandHandler(
+                commandPackageName = "",
+                commandClassName = "",
+                version = 0,
                 handlerPackageName = packageName,
                 handlerClassName = className,
                 metadata = KotlinMetadata.fromElement(element),

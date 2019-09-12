@@ -1,14 +1,14 @@
-package net.ntworld.foundation.processor.internal
+package net.ntworld.foundation.processor.internal.processor
 
+import net.ntworld.foundation.EventHandler
 import net.ntworld.foundation.Handler
-import net.ntworld.foundation.RequestHandler
 import net.ntworld.foundation.generator.GeneratorSettings
-import net.ntworld.foundation.generator.setting.RequestHandlerSetting
+import net.ntworld.foundation.generator.setting.EventHandlerSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 import net.ntworld.foundation.generator.type.KotlinMetadata
-import net.ntworld.foundation.processor.FoundationProcessorException
 import net.ntworld.foundation.processor.util.CodeUtility
 import net.ntworld.foundation.processor.util.ContractCollector
+import net.ntworld.foundation.processor.FoundationProcessorException
 import net.ntworld.foundation.processor.util.FrameworkProcessor
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
@@ -17,46 +17,43 @@ import javax.lang.model.element.PackageElement
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.DeclaredType
 
-internal class RequestHandlerProcessor : Processor {
+internal class EventHandlerProcessor : Processor {
     override val annotations: List<Class<out Annotation>> = listOf(
         Handler::class.java
     )
 
-    private data class CollectedRequestHandler(
-        val requestPackageName: String,
-        val requestClassName: String,
+    internal data class CollectedEventHandler(
+        val eventPackageName: String,
+        val eventClassName: String,
         val handlerPackageName: String,
         val handlerClassName: String,
         val metadata: KotlinMetadata,
-        val makeByFactory: Boolean,
-        val version: Int
+        val makeByFactory: Boolean
     )
 
-    private val data = mutableMapOf<String, CollectedRequestHandler>()
+    private val data = mutableMapOf<String, CollectedEventHandler>()
 
     override fun startProcess(settings: GeneratorSettings) {
         data.clear()
-        settings.requestHandlers.forEach { item ->
-            data[item.name] = CollectedRequestHandler(
-                requestPackageName = item.request.packageName,
-                requestClassName = item.request.className,
+        settings.eventHandlers.forEach { item ->
+            data[item.name] = CollectedEventHandler(
+                eventPackageName = item.event.packageName,
+                eventClassName = item.event.className,
                 handlerPackageName = item.handler.packageName,
                 handlerClassName = item.handler.className,
                 metadata = item.metadata,
-                makeByFactory = item.makeByFactory,
-                version = item.version
+                makeByFactory = item.makeByFactory
             )
         }
     }
 
     override fun applySettings(settings: GeneratorSettings): GeneratorSettings {
-        val requestHandlers = data.values.map {
-            RequestHandlerSetting(
-                request = ClassInfo(
-                    packageName = it.requestPackageName,
-                    className = it.requestClassName
+        val eventHandlers = data.values.map {
+            EventHandlerSetting(
+                event = ClassInfo(
+                    packageName = it.eventPackageName,
+                    className = it.eventClassName
                 ),
-                version = it.version,
                 handler = ClassInfo(
                     packageName = it.handlerPackageName,
                     className = it.handlerClassName
@@ -65,7 +62,7 @@ internal class RequestHandlerProcessor : Processor {
                 makeByFactory = it.makeByFactory
             )
         }
-        return settings.copy(requestHandlers = requestHandlers)
+        return settings.copy(eventHandlers = eventHandlers)
     }
 
     override fun shouldProcess(
@@ -77,7 +74,7 @@ internal class RequestHandlerProcessor : Processor {
         return when (annotation) {
             Handler::class.java -> {
                 CodeUtility.isImplementInterface(
-                    processingEnv, element.asType(), RequestHandler::class.java.canonicalName, false
+                    processingEnv, element.asType(), EventHandler::class.java.canonicalName, false
                 )
             }
 
@@ -94,7 +91,7 @@ internal class RequestHandlerProcessor : Processor {
         val packageName = this.getPackageNameOfClass(element)
         val className = element.simpleName.toString()
         val key = "$packageName.$className"
-        initCollectedRequestHandlerIfNeeded(element, packageName, className)
+        initCollectedEventHandlerIfNeeded(element, packageName, className)
 
         // If the Handler is provided enough information, then no need to find data
         if (processAnnotationProperties(processingEnv, key, element, element.getAnnotation(Handler::class.java))) {
@@ -104,16 +101,12 @@ internal class RequestHandlerProcessor : Processor {
         val implementedInterface = (element as TypeElement).interfaces
             .firstOrNull {
                 val e = processingEnv.typeUtils.asElement(it) as? TypeElement ?: return@firstOrNull false
-                e.qualifiedName.toString() == RequestHandler::class.java.canonicalName
+                e.qualifiedName.toString() == EventHandler::class.java.canonicalName
             }
 
         if (null !== implementedInterface) {
-            findImplementedRequest(processingEnv, key, implementedInterface as DeclaredType)
+            findImplementedEvent(processingEnv, key, implementedInterface as DeclaredType)
         }
-
-        data[key] = data[key]!!.copy(
-            version = element.getAnnotation(Handler::class.java).version
-        )
     }
 
     private fun processAnnotationProperties(
@@ -122,7 +115,7 @@ internal class RequestHandlerProcessor : Processor {
         element: Element,
         annotation: Handler
     ): Boolean {
-        if (annotation.type !== Handler.Type.Request) {
+        if (annotation.type != Handler.Type.Event) {
             return false
         }
 
@@ -145,26 +138,25 @@ internal class RequestHandlerProcessor : Processor {
         }
 
         val inputElement = processingEnv.elementUtils.getTypeElement(inputTypeName)
-        ContractCollector.collect(processingEnv, inputElement)
+        ContractCollector.collect(processingEnv, element)
         data[key] = data[key]!!.copy(
-            requestPackageName = getPackageNameOfClass(inputElement),
-            requestClassName = inputElement.simpleName.toString(),
-            version = annotation.version,
+            eventPackageName = getPackageNameOfClass(inputElement),
+            eventClassName = inputElement.simpleName.toString(),
             makeByFactory = annotation.factory
         )
         return true
     }
 
-    private fun findImplementedRequest(processingEnv: ProcessingEnvironment, key: String, type: DeclaredType) {
-        if (type.typeArguments.size != 2) {
+    private fun findImplementedEvent(processingEnv: ProcessingEnvironment, key: String, type: DeclaredType) {
+        if (type.typeArguments.size != 1) {
             return
         }
-        val requestType = type.typeArguments.first()
-        val element = processingEnv.typeUtils.asElement(requestType)
+        val eventType = type.typeArguments.first()
+        val element = processingEnv.typeUtils.asElement(eventType)
         ContractCollector.collect(processingEnv, element)
         data[key] = data[key]!!.copy(
-            requestPackageName = getPackageNameOfClass(element),
-            requestClassName = element.simpleName.toString()
+            eventPackageName = getPackageNameOfClass(element),
+            eventClassName = element.simpleName.toString()
         )
     }
 
@@ -176,13 +168,12 @@ internal class RequestHandlerProcessor : Processor {
         return upperElement.qualifiedName.toString()
     }
 
-    private fun initCollectedRequestHandlerIfNeeded(element: Element, packageName: String, className: String) {
+    private fun initCollectedEventHandlerIfNeeded(element: Element, packageName: String, className: String) {
         val key = "$packageName.$className"
         if (!data.containsKey(key)) {
-            data[key] = CollectedRequestHandler(
-                requestPackageName = "",
-                requestClassName = "",
-                version = 0,
+            data[key] = CollectedEventHandler(
+                eventPackageName = "",
+                eventClassName = "",
                 handlerPackageName = packageName,
                 handlerClassName = className,
                 metadata = KotlinMetadata.fromElement(element),

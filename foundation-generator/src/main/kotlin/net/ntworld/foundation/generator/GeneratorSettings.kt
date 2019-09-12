@@ -5,7 +5,6 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import net.ntworld.foundation.generator.setting.*
 import net.ntworld.foundation.generator.type.AnnotationProcessorRunInfo
-import java.nio.charset.Charset
 import java.util.*
 
 @Serializable
@@ -21,7 +20,7 @@ data class GeneratorSettings(
     val queryHandlers: List<QueryHandlerSetting>,
     val requestHandlers: List<RequestHandlerSetting>,
     val implementations: List<ImplementationSetting>,
-    val messages: List<MessageSetting>,
+    val messagings: List<MessagingSetting>,
     val contracts: List<ContractSetting>,
     val fakedAnnotations: List<FakedAnnotationSetting>,
     val fakedProperties: List<FakedPropertySetting>

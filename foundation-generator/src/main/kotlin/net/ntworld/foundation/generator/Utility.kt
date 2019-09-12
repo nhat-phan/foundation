@@ -111,6 +111,13 @@ internal object Utility {
         )
     }
 
+    fun findMessageTranslatorTarget(setting: ContractSetting): ClassInfo {
+        return ClassInfo(
+            className = "${setting.contract.className}MessageTranslator",
+            packageName = findTargetNamespace(setting.contract.packageName)
+        )
+    }
+
     fun findEventMessageTranslatorTarget(setting: EventSourcingSetting): ClassInfo {
         return ClassInfo(
             className = "${setting.implementation.className}MessageTranslator",

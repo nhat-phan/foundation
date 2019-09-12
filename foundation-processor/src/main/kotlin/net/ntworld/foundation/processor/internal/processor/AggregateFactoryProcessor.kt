@@ -1,4 +1,4 @@
-package net.ntworld.foundation.processor.internal
+package net.ntworld.foundation.processor.internal.processor
 
 import net.ntworld.foundation.*
 import net.ntworld.foundation.eventSourcing.EventSourced

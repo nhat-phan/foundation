@@ -37,7 +37,7 @@ internal object ProcessorOutput {
         queryHandlers = listOf(),
         requestHandlers = listOf(),
         implementations = listOf(),
-        messages = listOf(),
+        messagings = listOf(),
         contracts = listOf(),
         fakedAnnotations = listOf(),
         fakedProperties = listOf()
