@@ -4,6 +4,7 @@ import javax.annotation.processing.ProcessingEnvironment
 
 internal data class ProcessorSetting(
     val mode: Mode,
+    val globalNamespace: String?,
     val settingsClass: String?,
     val isDev: Boolean
 ) {
@@ -36,6 +37,7 @@ internal data class ProcessorSetting(
         fun read(processingEnv: ProcessingEnvironment): ProcessorSetting {
             return ProcessorSetting(
                 mode = readMode(processingEnv),
+                globalNamespace = readGlobalNamespace(processingEnv),
                 settingsClass = readSettingsClass(processingEnv),
                 isDev = readIsDev(processingEnv)
             )
@@ -51,6 +53,10 @@ internal data class ProcessorSetting(
 
         private fun readSettingsClass(processingEnv: ProcessingEnvironment): String? {
             return processingEnv.options[FrameworkProcessor.SETTINGS_CLASS_OPTION_NAME]
+        }
+
+        private fun readGlobalNamespace(processingEnv: ProcessingEnvironment): String? {
+            return processingEnv.options[FrameworkProcessor.GLOBAL_NAMESPACE_OPTION_NAME]
         }
 
         private fun readIsDev(processingEnv: ProcessingEnvironment): Boolean {

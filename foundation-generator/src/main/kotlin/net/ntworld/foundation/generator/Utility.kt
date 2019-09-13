@@ -7,10 +7,8 @@ import java.lang.Math.min
 
 internal object Utility {
     fun findLocalEventBusTarget(settings: List<EventHandlerSetting>, namespace: String? = null): ClassInfo {
-        var packageName = if (null !== namespace) namespace else ""
-        settings.forEach {
-            packageName = this.guessPackageName(packageName, it.handler.packageName)
-        }
+        val packageName = resolvePackageNameForLocalBuses(namespace, settings)
+
         return ClassInfo(
             className = "LocalEventBus",
             packageName = packageName
@@ -18,10 +16,8 @@ internal object Utility {
     }
 
     fun findLocalCommandBusTarget(settings: List<CommandHandlerSetting>, namespace: String? = null): ClassInfo {
-        var packageName = if (null !== namespace) namespace else ""
-        settings.forEach {
-            packageName = this.guessPackageName(packageName, it.handler.packageName)
-        }
+        val packageName = resolvePackageNameForLocalBuses(namespace, settings)
+
         return ClassInfo(
             className = "LocalCommandBus",
             packageName = packageName
@@ -29,10 +25,8 @@ internal object Utility {
     }
 
     fun findLocalQueryBusTarget(settings: List<QueryHandlerSetting>, namespace: String? = null): ClassInfo {
-        var packageName = if (null !== namespace) namespace else ""
-        settings.forEach {
-            packageName = this.guessPackageName(packageName, it.handler.packageName)
-        }
+        val packageName = resolvePackageNameForLocalBuses(namespace, settings)
+
         return ClassInfo(
             className = "LocalQueryBus",
             packageName = packageName
@@ -40,21 +34,39 @@ internal object Utility {
     }
 
     fun findLocalServiceBusTarget(settings: List<RequestHandlerSetting>, namespace: String? = null): ClassInfo {
-        var packageName = if (null !== namespace) namespace else ""
-        settings.forEach {
-            packageName = this.guessPackageName(packageName, it.handler.packageName)
-        }
+        val packageName = resolvePackageNameForLocalBuses(namespace, settings)
+
         return ClassInfo(
             className = "LocalServiceBus",
             packageName = packageName
         )
     }
 
-    fun findContractFactoryTarget(factories: List<ClassInfo>, namespace: String? = null): ClassInfo {
-        var packageName = if (null !== namespace) namespace else ""
-        factories.forEach {
-            packageName = this.guessPackageName(packageName, it.packageName)
+    fun findMessageChannelDictionaryTarget(contracts: List<ClassInfo>, namespace: String? = null): ClassInfo {
+        val packageName = resolvePackageName(namespace) {
+            var name = ""
+            contracts.forEach {
+                name = this.guessPackageName(name, it.packageName)
+            }
+            name
         }
+
+        return ClassInfo(
+            className = "MessageChannelDictionary",
+            packageName = packageName
+        )
+    }
+
+
+    fun findContractFactoryTarget(factories: List<ClassInfo>, namespace: String? = null): ClassInfo {
+        val packageName = resolvePackageName(namespace) {
+            var name = ""
+            factories.forEach {
+                name = this.guessPackageName(name, it.packageName)
+            }
+            name
+        }
+
         return ClassInfo(
             className = "ContractFactory",
             packageName = packageName
@@ -62,10 +74,14 @@ internal object Utility {
     }
 
     fun findContractFactoryTargetForTest(factories: List<ClassInfo>, namespace: String? = null): ClassInfo {
-        var packageName = if (null !== namespace) namespace else ""
-        factories.forEach {
-            packageName = this.guessPackageName(packageName, it.packageName)
+        val packageName = resolvePackageName(namespace) {
+            var name = ""
+            factories.forEach {
+                name = this.guessPackageName(name, it.packageName)
+            }
+            name
         }
+
         return ClassInfo(
             className = "ContractFactoryTest",
             packageName = packageName
@@ -73,10 +89,14 @@ internal object Utility {
     }
 
     fun findUtilityTargetForTest(classes: List<ClassInfo>, namespace: String? = null): ClassInfo {
-        var packageName = if (null !== namespace) namespace else ""
-        classes.forEach {
-            packageName = this.guessPackageName(packageName, it.packageName)
+        val packageName = resolvePackageName(namespace) {
+            var name = ""
+            classes.forEach {
+                name = this.guessPackageName(name, it.packageName)
+            }
+            name
         }
+
         return ClassInfo(
             className = "TestUtility",
             packageName = packageName
@@ -86,13 +106,6 @@ internal object Utility {
     fun findContractImplementationTarget(setting: ContractSetting): ClassInfo {
         return ClassInfo(
             className = "${setting.contract.className}Impl",
-            packageName = findTargetNamespace(setting.contract.packageName)
-        )
-    }
-
-    fun findContractImplementationFactoryTarget(setting: ContractSetting): ClassInfo {
-        return ClassInfo(
-            className = "${setting.contract.className}Factory",
             packageName = findTargetNamespace(setting.contract.packageName)
         )
     }
@@ -140,29 +153,49 @@ internal object Utility {
     }
 
     fun findInfrastructureProviderTarget(settings: GeneratorSettings, namespace: String? = null): ClassInfo {
-        var packageName = if (null !== namespace) namespace else ""
-        settings.aggregateFactories.forEach {
-            packageName = this.guessPackageName(packageName, it.implementation.packageName)
-        }
-        settings.eventSourcings.forEach {
-            packageName = this.guessPackageName(packageName, it.implementation.packageName)
-        }
-        settings.eventHandlers.forEach {
-            packageName = this.guessPackageName(packageName, it.handler.packageName)
-        }
-        settings.requestHandlers.forEach {
-            packageName = this.guessPackageName(packageName, it.handler.packageName)
-        }
-        settings.commandHandlers.forEach {
-            packageName = this.guessPackageName(packageName, it.handler.packageName)
-        }
-        settings.queryHandlers.forEach {
-            packageName = this.guessPackageName(packageName, it.handler.packageName)
+        val packageName = resolvePackageName(namespace) {
+            var name = ""
+            settings.aggregateFactories.forEach {
+                name = this.guessPackageName(name, it.implementation.packageName)
+            }
+            settings.eventSourcings.forEach {
+                name = this.guessPackageName(name, it.implementation.packageName)
+            }
+            settings.eventHandlers.forEach {
+                name = this.guessPackageName(name, it.handler.packageName)
+            }
+            settings.requestHandlers.forEach {
+                name = this.guessPackageName(name, it.handler.packageName)
+            }
+            settings.commandHandlers.forEach {
+                name = this.guessPackageName(name, it.handler.packageName)
+            }
+            settings.queryHandlers.forEach {
+                name = this.guessPackageName(name, it.handler.packageName)
+            }
+            name
         }
         return ClassInfo(
             packageName = packageName,
             className = "AutoGeneratedInfrastructureProvider"
         )
+    }
+
+    private fun resolvePackageName(namespace: String?, resolver: () -> String): String {
+        if (null !== namespace) {
+            return namespace
+        }
+        return resolver.invoke()
+    }
+
+    private fun resolvePackageNameForLocalBuses(namespace: String?, settings: List<HandlerSetting>): String {
+        return resolvePackageName(namespace) {
+            var name = ""
+            settings.forEach {
+                name = this.guessPackageName(name, it.handler.packageName)
+            }
+            name
+        }
     }
 
     internal fun guessPackageName(current: String, given: String): String {

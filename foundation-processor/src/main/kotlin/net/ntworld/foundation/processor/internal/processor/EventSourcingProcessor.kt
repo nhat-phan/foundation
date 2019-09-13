@@ -5,7 +5,7 @@ import net.ntworld.foundation.generator.*
 import net.ntworld.foundation.generator.setting.EventSourcingSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 import net.ntworld.foundation.generator.type.EventField
-import net.ntworld.foundation.processor.FoundationProcessorException
+import net.ntworld.foundation.processor.internal.FoundationProcessorException
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.Element

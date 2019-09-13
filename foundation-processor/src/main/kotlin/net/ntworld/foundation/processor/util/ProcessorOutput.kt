@@ -2,7 +2,7 @@ package net.ntworld.foundation.processor.util
 
 import net.ntworld.foundation.generator.GeneratedFile
 import net.ntworld.foundation.generator.GeneratorSettings
-import net.ntworld.foundation.processor.FoundationProcessorException
+import net.ntworld.foundation.processor.internal.FoundationProcessorException
 import java.nio.file.Paths
 import javax.annotation.processing.ProcessingEnvironment
 import javax.tools.Diagnostic

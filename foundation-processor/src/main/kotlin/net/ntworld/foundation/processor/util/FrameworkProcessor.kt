@@ -8,6 +8,7 @@ internal object FrameworkProcessor {
     const val DEV_OPTION_NAME = "foundation.processor.dev"
     const val MODE_OPTION_NAME = "foundation.processor.mode"
     const val SETTINGS_CLASS_OPTION_NAME = "foundation.processor.settingsClass"
+    const val GLOBAL_NAMESPACE_OPTION_NAME = "foundation.processor.globalNamespace"
 
     const val Contract = "net.ntworld.foundation.Contract"
     const val Aggregate = "net.ntworld.foundation.Aggregate"
@@ -27,7 +28,8 @@ internal object FrameworkProcessor {
         KAPT_KOTLIN_GENERATED_OPTION_NAME,
         MODE_OPTION_NAME,
         DEV_OPTION_NAME,
-        SETTINGS_CLASS_OPTION_NAME
+        SETTINGS_CLASS_OPTION_NAME,
+        GLOBAL_NAMESPACE_OPTION_NAME
     )
 
     val SUPPORTED_ANNOTATION_TYPES = setOf(

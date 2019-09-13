@@ -8,9 +8,12 @@ import net.ntworld.foundation.generator.main.InfrastructureProviderMainGenerator
 import net.ntworld.foundation.generator.test.ContractFactoryTestGenerator
 import net.ntworld.foundation.generator.test.UtilityTestGenerator
 import net.ntworld.foundation.generator.type.ClassInfo
+import net.ntworld.foundation.processor.util.*
 import net.ntworld.foundation.processor.util.ContractCollector
 import net.ntworld.foundation.processor.util.FrameworkProcessor
 import net.ntworld.foundation.processor.util.ProcessorOutput
+import net.ntworld.foundation.processor.util.ProcessorSetting
+import net.ntworld.foundation.processor.util.ProcessorUtil
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.RoundEnvironment
 import javax.annotation.processing.SupportedAnnotationTypes
@@ -27,14 +30,15 @@ import javax.lang.model.element.TypeElement
 )
 class FoundationTestProcessor : AbstractProcessor() {
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment?): Boolean {
+        val processorSetting = ProcessorSetting.read(processingEnv)
         val settings = ProcessorOutput.readSettingsFile(processingEnv, true)
-        val global = InfrastructureProviderMainGenerator().findTarget(settings)
-        generateContractFactory(settings, global)
+        val namespace = ProcessorUtil.findGlobalNamespace(processorSetting, settings)
+        generateContractFactory(settings, namespace)
 
         return true
     }
 
-    private fun generateContractFactory(settings: GeneratorSettings, global: ClassInfo) {
+    private fun generateContractFactory(settings: GeneratorSettings, namespace: String) {
         val reader = ContractReader(
             contractSettings = settings.contracts,
             fakedAnnotationSettings = settings.fakedAnnotations,
@@ -60,14 +64,14 @@ class FoundationTestProcessor : AbstractProcessor() {
                 factoryTestGenerator.add(it.contract, implFile)
             }
         }
-        val utilityGeneratedFile = utilityTestGenerator.generate(global.packageName)
+        val utilityGeneratedFile = utilityTestGenerator.generate(namespace)
         ProcessorOutput.writeGeneratedFile(processingEnv, utilityGeneratedFile)
         ProcessorOutput.writeGeneratedFile(
             processingEnv,
             factoryTestGenerator.generate(
                 settings,
                 utilityGeneratedFile.target,
-                global.packageName
+                namespace
             )
         )
     }

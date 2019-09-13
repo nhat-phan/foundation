@@ -6,7 +6,7 @@ import net.ntworld.foundation.generator.GeneratorSettings
 import net.ntworld.foundation.generator.setting.RequestHandlerSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 import net.ntworld.foundation.generator.type.KotlinMetadata
-import net.ntworld.foundation.processor.FoundationProcessorException
+import net.ntworld.foundation.processor.internal.FoundationProcessorException
 import net.ntworld.foundation.processor.util.CodeUtility
 import net.ntworld.foundation.processor.util.ContractCollector
 import net.ntworld.foundation.processor.util.FrameworkProcessor

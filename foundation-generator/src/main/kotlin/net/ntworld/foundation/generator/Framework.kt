@@ -44,6 +44,8 @@ internal object Framework {
     val QueryHandlerNotFoundException = ClassName("$namespace.exception", "QueryHandlerNotFoundException")
 
     val Message = ClassName(namespace, "Message")
+    val MessageChannelDictionary = ClassName(namespace, "MessageChannelDictionary")
+
     val MessageAttribute = ClassName(namespace, "MessageAttribute")
     val MessageUtility = ClassName(namespace, "MessageUtility")
     val MessageTranslator = ClassName(namespace, "MessageTranslator")

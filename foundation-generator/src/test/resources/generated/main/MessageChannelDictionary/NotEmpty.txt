@@ -1,0 +1,32 @@
+package com.generator
+
+import kotlin.String
+import net.ntworld.foundation.Message
+import net.ntworld.foundation.MessageChannelDictionary
+
+open class MessageChannelDictionary : MessageChannelDictionary {
+  open fun getDefaultChannel(): String = "DefaultChannel"
+
+  open fun resolveChannelByBodyType(value: String): String = value.replace(".", "-")
+
+  override fun lookupReplyChannel(message: Message): String = lookupChannel(message) + "-reply"
+
+  override fun lookupChannel(message: Message): String {
+    val bodyType = message.attributes["bodyType"]
+    if (null === bodyType) {
+      return getDefaultChannel()
+    }
+
+    val value = bodyType.stringValue
+    if (null === value) {
+      return getDefaultChannel()
+    }
+
+    return when (value) {
+      "com.generator.CreateSomethingRequest" -> "service"
+      "com.generator.UpdateSomethingRequest" -> "service"
+
+      else -> resolveChannelByBodyType(value)
+    }
+  }
+}
