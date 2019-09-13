@@ -9,8 +9,13 @@ internal object Framework {
     val Infrastructure = ClassName(namespace, "Infrastructure")
     val InfrastructureProvider = ClassName(namespace, "InfrastructureProvider")
 
+    val Environment = ClassName("$namespace", "Environment")
+
     val Faker = ClassName(namespace, "Faker")
     val JavaFakerWrapper = ClassName("$namespace.util", "JavaFakerWrapper")
+
+    val IdGenerator = ClassName("$namespace", "IdGenerator")
+    val UUIDGenerator = ClassName("$namespace.util", "UUIDGenerator")
 
     val LocalBusResolver = ClassName(namespace, "LocalBusResolver")
 
@@ -62,6 +67,7 @@ internal object Framework {
     val FakerRelatedSource_FakedData = "FakedData"
     val FakerRelatedSource_JavaFakerWrapper_Jvm = "JavaFakerWrapper"
 
+    val JavaSystem = ClassName("java.lang", "System")
     val JavaFaker = ClassName("com.github.javafaker", "Faker")
     val Json = ClassName("kotlinx.serialization.json", "Json")
     val JsonConfiguration = ClassName("kotlinx.serialization.json", "JsonConfiguration")

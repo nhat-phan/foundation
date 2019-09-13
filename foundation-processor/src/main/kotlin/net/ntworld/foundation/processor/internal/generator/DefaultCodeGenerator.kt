@@ -1,8 +1,10 @@
 package net.ntworld.foundation.processor.internal.generator
 
 import net.ntworld.foundation.generator.GeneratorSettings
+import net.ntworld.foundation.generator.Platform
 import net.ntworld.foundation.generator.main.*
 import net.ntworld.foundation.generator.setting.ContractSetting
+import net.ntworld.foundation.generator.setting.HandlerSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 import net.ntworld.foundation.generator.type.ComponentType
 import net.ntworld.foundation.generator.type.Property
@@ -14,23 +16,12 @@ import net.ntworld.foundation.processor.util.ProcessorUtil
 import javax.annotation.processing.ProcessingEnvironment
 
 internal class DefaultCodeGenerator : CodeGenerator {
-    private data class KnownMessageTranslator(
-        val contract: ClassInfo,
 
-        val messageTranslator: ClassInfo
-    )
 
     override val mode: ProcessorSetting.Mode = ProcessorSetting.Mode.Default
 
+    private val infrastructureProviderMainGenerator = InfrastructureProviderMainGenerator()
     private val messageChannelDictionaryMainGenerator = MessageChannelDictionaryMainGenerator()
-    private val messageTranslators = mutableMapOf<String, KnownMessageTranslator>()
-
-    private fun registerMessageTranslator(contract: ClassInfo, messageTranslator: ClassInfo) {
-        messageTranslators[contract.fullName()] = KnownMessageTranslator(
-            contract = contract,
-            messageTranslator = messageTranslator
-        )
-    }
 
     override fun generate(
         processingEnv: ProcessingEnvironment,
@@ -117,11 +108,11 @@ internal class DefaultCodeGenerator : CodeGenerator {
         properties: Map<String, Property>
     ) {
         messageChannelDictionaryMainGenerator.add(contractSetting.contract)
-        ProcessorOutput.writeGeneratedFile(
-            processingEnv,
-            MessageTranslatorMainGenerator.generate(contractSetting, implementation, properties)
-        )
-        registerMessageTranslator(contractSetting.contract, implementation)
+
+        val translator = MessageTranslatorMainGenerator.generate(contractSetting, implementation, properties)
+        ProcessorOutput.writeGeneratedFile(processingEnv, translator)
+
+        infrastructureProviderMainGenerator.registerMessageTranslator(contractSetting.contract, translator.target)
     }
 
     private fun generateLocalBuses(
@@ -130,33 +121,21 @@ internal class DefaultCodeGenerator : CodeGenerator {
         settings: GeneratorSettings,
         namespace: String
     ) {
-        ProcessorOutput.writeGlobalFile(
-            processingEnv,
-            settings,
-            LocalEventBusMainGenerator().generate(settings.eventHandlers, namespace),
-            processorSetting.isDev
-        )
+        generateLocalBus(LocalEventBusMainGenerator(), processingEnv, processorSetting, settings, namespace) {
+            settings.eventHandlers
+        }
 
-        ProcessorOutput.writeGlobalFile(
-            processingEnv,
-            settings,
-            LocalServiceBusMainGenerator().generate(settings.requestHandlers, namespace),
-            processorSetting.isDev
-        )
+        generateLocalBus(LocalServiceBusMainGenerator(), processingEnv, processorSetting, settings, namespace) {
+            settings.requestHandlers
+        }
 
-        ProcessorOutput.writeGlobalFile(
-            processingEnv,
-            settings,
-            LocalCommandBusMainGenerator().generate(settings.commandHandlers, namespace),
-            processorSetting.isDev
-        )
+        generateLocalBus(LocalCommandBusMainGenerator(), processingEnv, processorSetting, settings, namespace) {
+            settings.commandHandlers
+        }
 
-        ProcessorOutput.writeGlobalFile(
-            processingEnv,
-            settings,
-            LocalQueryBusMainGenerator().generate(settings.queryHandlers, namespace),
-            processorSetting.isDev
-        )
+        generateLocalBus(LocalQueryBusMainGenerator(), processingEnv, processorSetting, settings, namespace) {
+            settings.queryHandlers
+        }
 
         ProcessorOutput.writeGlobalFile(
             processingEnv,
@@ -165,11 +144,32 @@ internal class DefaultCodeGenerator : CodeGenerator {
             processorSetting.isDev
         )
 
-//        ProcessorOutput.writeGlobalFile(
-//            processingEnv,
-//            settings,
-//            InfrastructureProviderMainGenerator().generate(settings, global.packageName)
-//        )
+        ProcessorOutput.writeGlobalFile(
+            processingEnv,
+            settings,
+            infrastructureProviderMainGenerator.generate(Platform.Jvm, settings, namespace),
+            processorSetting.isDev
+        )
+    }
+
+    private fun <T : HandlerSetting> generateLocalBus(
+        localBusGenerator: AbstractLocalBusMainGenerator<T>,
+        processingEnv: ProcessingEnvironment,
+        processorSetting: ProcessorSetting,
+        settings: GeneratorSettings,
+        namespace: String,
+        handlerBlock: () -> List<T>
+    ) {
+        val localBus = localBusGenerator.generate(handlerBlock(), namespace)
+        ProcessorOutput.writeGlobalFile(processingEnv, settings, localBus, processorSetting.isDev)
+        infrastructureProviderMainGenerator.addToConstructorComposer(
+            localBus.target.className,
+            localBusGenerator.getConstructor()
+        )
+        infrastructureProviderMainGenerator.setLocalBusesStatus(
+            localBus.target.className,
+            !localBus.empty
+        )
     }
 
     companion object {

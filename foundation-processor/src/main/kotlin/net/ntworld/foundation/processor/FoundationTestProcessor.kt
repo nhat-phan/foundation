@@ -4,11 +4,8 @@ import net.ntworld.foundation.generator.util.ContractReader
 import net.ntworld.foundation.generator.GeneratorSettings
 import net.ntworld.foundation.generator.Platform
 import net.ntworld.foundation.generator.main.ContractImplementationMainGenerator
-import net.ntworld.foundation.generator.main.InfrastructureProviderMainGenerator
 import net.ntworld.foundation.generator.test.ContractFactoryTestGenerator
 import net.ntworld.foundation.generator.test.UtilityTestGenerator
-import net.ntworld.foundation.generator.type.ClassInfo
-import net.ntworld.foundation.processor.util.*
 import net.ntworld.foundation.processor.util.ContractCollector
 import net.ntworld.foundation.processor.util.FrameworkProcessor
 import net.ntworld.foundation.processor.util.ProcessorOutput

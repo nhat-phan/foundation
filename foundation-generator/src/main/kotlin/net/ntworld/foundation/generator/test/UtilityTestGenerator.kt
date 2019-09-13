@@ -4,6 +4,7 @@ import com.squareup.kotlinpoet.*
 import net.ntworld.foundation.generator.*
 import net.ntworld.foundation.generator.Utility
 import net.ntworld.foundation.generator.type.ClassInfo
+import net.ntworld.foundation.generator.util.MultiPlatformCodeGenerator
 
 class UtilityTestGenerator(private val platform: Platform) {
     private val classInfos = mutableListOf<ClassInfo>()
@@ -52,7 +53,7 @@ class UtilityTestGenerator(private val platform: Platform) {
 
     private fun buildDefaultFakerProperty(): PropertySpec {
         val code = when (platform) {
-            Platform.Jvm -> getInitDefaultFakerForJvm()
+            Platform.Jvm -> MultiPlatformCodeGenerator.getInitDefaultFakerForJvm()
         }
 
         return PropertySpec.builder("defaultFaker", Framework.Faker)
@@ -80,13 +81,5 @@ class UtilityTestGenerator(private val platform: Platform) {
         return PropertySpec.builder("faker", Framework.Faker)
             .getter(getter.build())
             .build()
-    }
-
-
-    private fun getInitDefaultFakerForJvm(): CodeBlock {
-        val code = CodeBlock.builder()
-        code.add("%T(%T())", Framework.JavaFakerWrapper, Framework.JavaFaker)
-
-        return code.build()
     }
 }

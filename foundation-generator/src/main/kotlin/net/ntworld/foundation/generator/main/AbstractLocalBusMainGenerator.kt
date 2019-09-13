@@ -8,6 +8,7 @@ import net.ntworld.foundation.generator.Utility
 import net.ntworld.foundation.generator.setting.HandlerSetting
 import net.ntworld.foundation.generator.setting.VersionedHandlerSetting
 import net.ntworld.foundation.generator.type.ClassInfo
+import net.ntworld.foundation.generator.type.Constructor
 import net.ntworld.foundation.generator.util.ConstructorComposer
 import net.ntworld.foundation.generator.util.HandlerReader
 
@@ -33,6 +34,10 @@ abstract class AbstractLocalBusMainGenerator<T : HandlerSetting> {
         file.writeTo(stringBuffer)
 
         return GeneratedFile.makeMainFile(target, stringBuffer.toString())
+    }
+
+    fun getConstructor(): Constructor {
+        return constructorComposer.getComposedConstructor()
     }
 
     private fun buildFile(settings: List<T>, target: ClassInfo): FileSpec {

@@ -48,6 +48,13 @@ class ConstructorComposerTest : TestSuite() {
             ),
             composer.items
         )
+        assertEquals(
+            Constructor(parameters = listOf(
+                Parameter("userId", type),
+                Parameter("companyId", type)
+            )),
+            composer.getComposedConstructor()
+        )
     }
 
     @Test
@@ -80,6 +87,12 @@ class ConstructorComposerTest : TestSuite() {
                 "Second" to mapOf()
             ),
             composer.items
+        )
+        assertEquals(
+            Constructor(parameters = listOf(
+                Parameter("userId", type)
+            )),
+            composer.getComposedConstructor()
         )
     }
 
@@ -120,6 +133,13 @@ class ConstructorComposerTest : TestSuite() {
                 )
             ),
             composer.items
+        )
+        assertEquals(
+            Constructor(parameters = listOf(
+                Parameter("userId", type),
+                Parameter("companyId", type)
+            )),
+            composer.getComposedConstructor()
         )
     }
 
@@ -162,6 +182,14 @@ class ConstructorComposerTest : TestSuite() {
                 )
             ),
             composer.items
+        )
+        assertEquals(
+            Constructor(parameters = listOf(
+                Parameter("userId", type),
+                Parameter("companyId", diffType),
+                Parameter("companyIdForSecond", type)
+            )),
+            composer.getComposedConstructor()
         )
     }
 
@@ -207,6 +235,14 @@ class ConstructorComposerTest : TestSuite() {
                 )
             ),
             composer.items
+        )
+        assertEquals(
+            Constructor(parameters = listOf(
+                Parameter("userId", kotlinType),
+                Parameter("infrastructure", type),
+                Parameter("factory", diffType)
+            )),
+            composer.getComposedConstructor()
         )
     }
 

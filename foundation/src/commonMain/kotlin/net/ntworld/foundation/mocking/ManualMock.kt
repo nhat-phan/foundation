@@ -38,6 +38,6 @@ open class ManualMock {
     }
 
     protected fun <R> mockFunction(func: KFunction<R>, vararg params: Any?): R {
-        return mockFunction(MockedFunction.getKeyedName(func))
+        return mockFunction(MockedFunction.getKeyedName(func), params)
     }
 }

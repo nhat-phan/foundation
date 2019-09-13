@@ -3,6 +3,7 @@ package net.ntworld.foundation.generator.util
 import com.squareup.kotlinpoet.*
 import net.ntworld.foundation.generator.KOTLIN_NAMESPACE
 import net.ntworld.foundation.generator.type.Constructor
+import net.ntworld.foundation.generator.type.Parameter
 
 /**
  * A class which collect a list of item's constructor and generate 1 constructor which
@@ -93,6 +94,17 @@ internal class ConstructorComposer {
         }
 
         return parameterName
+    }
+
+    /**
+     * Get composed Constructor
+     */
+    fun getComposedConstructor(): Constructor {
+        return Constructor(
+            parameters = composedParameters.map {
+                Parameter(name = it.key, type = it.value)
+            }
+        )
     }
 
     /**

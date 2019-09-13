@@ -1,6 +1,7 @@
 package net.ntworld.foundation.generator.main
 
 import net.ntworld.foundation.generator.GeneratorSettings
+import net.ntworld.foundation.generator.Platform
 import net.ntworld.foundation.generator.TestSuite
 import net.ntworld.foundation.generator.setting.EventSourcingSetting
 import net.ntworld.foundation.generator.type.ClassInfo
@@ -68,9 +69,9 @@ class InfrastructureProviderMainGeneratorTest : TestSuite() {
             fakedProperties = listOf()
         )
 
-        val result = InfrastructureProviderMainGenerator().generate(settings)
+        val result = InfrastructureProviderMainGenerator().generate(Platform.Jvm, settings)
 
         // TODO: Rewrite generator and test
-        // println(result.content)
+        println(result.content)
     }
 }
