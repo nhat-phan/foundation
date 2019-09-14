@@ -28,16 +28,27 @@ open class ManualMock {
         return data[name] as MockedFunction<R>
     }
 
-    protected fun <R> mockFunction(name: String, vararg params: Any?): R {
+    private fun <R> initMockedFunction(name: String): MockedFunction<R> {
         if (!data.contains(name)) {
             data[name] = MockedFunction<R>(name)
         }
-
         @Suppress("UNCHECKED_CAST")
-        return (data[name] as MockedFunction<R>).invoke(params.toList())
+        return (data[name] as MockedFunction<R>)
+    }
+
+    private fun <R> mockFunctionByName(name: String, fallback: (() -> R)?, vararg params: Any?): R {
+        val mockedFunction = initMockedFunction<R>(name)
+        if (fallback !== null && !mockedFunction.isMocked()) {
+            return fallback.invoke()
+        }
+        return mockedFunction.invoke(params.toList())
     }
 
     protected fun <R> mockFunction(func: KFunction<R>, vararg params: Any?): R {
-        return mockFunction(MockedFunction.getKeyedName(func), params)
+        return mockFunctionByName(MockedFunction.getKeyedName(func), null, params)
+    }
+
+    protected fun <R> mockFunction(func: KFunction<R>, fallback: () -> R, vararg params: Any?): R {
+        return mockFunctionByName(MockedFunction.getKeyedName(func), fallback, params)
     }
 }

@@ -1,4 +1,4 @@
 package net.ntworld.foundation
 
 @Target(AnnotationTarget.CLASS)
-annotation class ServiceProvider
+annotation class DomainInfrastructure

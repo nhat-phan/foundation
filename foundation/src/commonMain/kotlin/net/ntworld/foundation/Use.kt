@@ -34,7 +34,9 @@ package net.ntworld.foundation
  *
  * ```
  *
- * Please note that [@Use] usually annotated a main class/function
+ * Please note that [@Use] with [settings] usually annotated a main class/function
  */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
-annotation class Use(val settings: String)
+annotation class Use(
+    val settings: String = ""
+)

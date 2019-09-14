@@ -52,6 +52,10 @@ internal class MockedFunction<R>(private val fnName: String) {
         this.reset()
     }
 
+    fun isMocked(): Boolean {
+        return null !== callFake2 || null !== callFake1 || hasResult
+    }
+
     fun invoke(params: List<Any?>): R {
         if (null !== callFake2) {
             return calls.callFake(params, callFake2!!)
