@@ -1,7 +1,20 @@
 package net.ntworld.foundation
 
+import kotlin.reflect.KClass
+
 
 /**
+ * There are 2 ways to use [@Use]
+ *
+ * ***@Use(contract = ...)***
+ *
+ * In case you want to generate code from contracts which have no [@Handler], you need
+ * to use [@Use] with [contract].
+ *
+ * Please note that [@Use] with [contract] usually annotated a function which uses [contract]
+ *
+ * ***@Use(settings = "...settings...")***
+ *
  * Annotation processing has limitation that it cannot process compiled library
  * then this annotation will tell foundation-processor read and merged given
  * [settings] from a compiled library.
@@ -38,5 +51,6 @@ package net.ntworld.foundation
  */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 annotation class Use(
-    val settings: String = ""
+    val settings: String = "",
+    val contract: KClass<Contract> = Contract::class
 )

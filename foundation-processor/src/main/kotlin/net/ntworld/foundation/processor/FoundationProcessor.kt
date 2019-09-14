@@ -87,8 +87,14 @@ class FoundationProcessor : AbstractProcessor() {
         val annotatedByUseElements = roundEnv.getElementsAnnotatedWith(Use::class.java)
         annotatedByUseElements.forEach { element ->
             val value = element.getAnnotation(Use::class.java).settings
-            val parsed = GeneratorSettings.fromBase64String(value)
-            settings.merge(parsed)
+            // @Use has 2 usages:
+            //   @Use(settings = "the settings") for merging settings of shared library
+            //   @Use(contract = ...) for generate implementation of contracts
+            // then we have to check the settings is not empty
+            if (value.isNotEmpty()) {
+                val parsed = GeneratorSettings.fromBase64String(value)
+                settings.merge(parsed)
+            }
         }
         return settings.toGeneratorSettings()
     }
