@@ -1,10 +1,17 @@
 package net.ntworld.foundation.mocking.internal
 
+import net.ntworld.foundation.mocking.CallFakeBuilder
 import net.ntworld.foundation.mocking.InvokeData
 import net.ntworld.foundation.mocking.MockingException
 import net.ntworld.foundation.mocking.ParameterList
 
-class CallFakeBuilderImpl<R> {
+internal class CallFakeBuilderImpl<R> :
+    CallFakeBuilder.Start<R>,
+    CallFakeBuilder.Action<R>,
+    CallFakeBuilder.Build<R>,
+    CallFakeBuilder.Calls<R>,
+    CallFakeBuilder.Chain<R> {
+
     private data class Call<T>(
         val ordinal: Int,
         var returned: T?,
@@ -26,7 +33,74 @@ class CallFakeBuilderImpl<R> {
     }
 
     private val data = mutableMapOf<Int, Call<R>>()
+    private var fakedImpl: ((ParameterList, InvokeData) -> R)? = null
     private var currentOrdinal = 0
+
+    override fun alwaysReturns(result: R) = setResult(GLOBAL_ORDINAL, result)
+
+    override fun alwaysThrows(throwable: Throwable) = setThrown(GLOBAL_ORDINAL, throwable)
+
+    override fun otherwiseReturns(result: R) = alwaysReturns(result)
+
+    override fun otherwiseThrows(throwable: Throwable) = alwaysThrows(throwable)
+
+    override fun run(fakeImpl: (ParameterList, InvokeData) -> R) {
+        fakedImpl = fakeImpl
+    }
+
+    override fun returns(result: R): CallFakeBuilder.Chain<R> {
+        setResult(currentOrdinal, result)
+
+        return this
+    }
+
+    override fun throws(throwable: Throwable): CallFakeBuilder.Chain<R> {
+        setThrown(currentOrdinal, throwable)
+
+        return this
+    }
+
+    override fun onCall(n: Int): CallFakeBuilder.Action<R> {
+        currentOrdinal = n
+
+        return this
+    }
+
+    override fun toCallFake(): ((ParameterList, InvokeData) -> R)? {
+        if (data.isEmpty() && null === fakedImpl) {
+            return null
+        }
+
+        if (null !== fakedImpl) {
+            return fakedImpl
+        }
+
+        return { _, invokedData ->
+            val call = data[invokedData.ordinal]
+            if (null !== call) {
+                call.invoke()
+            } else {
+                val global = data[GLOBAL_ORDINAL]
+                if (null !== global) {
+                    global.invoke()
+                } else {
+                    throw MockingException("There is no global call fake. Please use provide returned value via .otherwiseReturns() or use .otherwiseThrows() to throw an exception")
+                }
+            }
+        }
+    }
+
+    private fun setResult(ordinal: Int, result: R) {
+        val call = findCall(ordinal)
+        call.returned = result
+        call.hasReturned = true
+    }
+
+    private fun setThrown(ordinal: Int, throwable: Throwable) {
+        val call = findCall(ordinal)
+        call.thrown = throwable
+        call.shouldThrow = true
+    }
 
     private fun findCall(ordinal: Int): Call<R> {
         val item = data[ordinal]
@@ -38,46 +112,7 @@ class CallFakeBuilderImpl<R> {
         return item
     }
 
-    fun throws(exception: Throwable): CallFakeBuilderImpl<R> {
-        val call = findCall(currentOrdinal)
-        call.thrown = exception
-        call.shouldThrow = true
-
-        return this
+    companion object {
+        const val GLOBAL_ORDINAL = -1
     }
-
-    fun returns(result: R): CallFakeBuilderImpl<R> {
-        val call = findCall(currentOrdinal)
-        call.returned = result
-        call.hasReturned = true
-
-        return this
-    }
-
-    fun onCall(n: Int): CallFakeBuilderImpl<R> {
-        currentOrdinal = n
-
-        return this
-    }
-
-    fun toCallFake(): ((ParameterList, InvokeData) -> R)? {
-        return { list, invokedData ->
-            val call = data[invokedData.ordinal]
-            if (null !== call) {
-                call.invoke()
-            } else {
-                throw MockingException("Please provide returned value via .returns() or use .throws() to throw an exception")
-            }
-        }
-    }
-
-    fun willReturn(result: R) = returns(result)
-
-    fun willThrowException(exception: Throwable) = throws(exception)
-
-    fun onFirstCall() = onCall(0)
-
-    fun onSecondCall() = onCall(1)
-
-    fun onThirdCall() = onCall(2)
 }

@@ -6,7 +6,7 @@ interface CallFakeBuilder {
 
         infix fun alwaysThrows(throwable: Throwable)
 
-        infix fun callFake(fakeImpl: (ParameterList, InvokeData) -> R)
+        infix fun run(fakeImpl: (ParameterList, InvokeData) -> R)
     }
 
     interface Action<R> {
@@ -41,20 +41,3 @@ interface CallFakeBuilder {
         fun toCallFake(): ((ParameterList, InvokeData) -> R)?
     }
 }
-
-//
-//fun syntax(builder: CallFakeBuilder.Start<Int>) {
-//    // builder.onFirstCall().returns(1).onSecondCall().returns(2)
-//    // builder.onFirstCall() returns 1 otherwiseReturns 100
-//    // builder alwaysReturns 1
-//    builder alwaysReturns 1000
-//    builder onCall 0 returns 0 otherwiseReturns -1
-//    builder onFirstCallReturns 1 onSecondCallReturns 2 otherwiseReturns -1
-//
-//
-//    builder onCall 0 returns 1 otherwiseReturns 100
-//
-//
-//    // builder onFirstCallReturns 1 onSecondCallReturns 2 otherwiseReturns 100
-//    // builder onFirstCallReturns 1 onSecondCallReturns 2 otherwiseReturns 100
-//}

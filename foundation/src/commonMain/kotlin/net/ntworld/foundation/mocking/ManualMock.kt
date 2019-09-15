@@ -44,6 +44,10 @@ open class ManualMock {
         return mockedFunction.invoke(params.toList())
     }
 
+    protected fun <R> whenFunctionCalled(func: KFunction<R>): CallFakeBuilder.Start<R> {
+        TODO()
+    }
+
     protected fun <R> mockFunction(func: KFunction<R>, vararg params: Any?): R {
         return mockFunctionByName(MockedFunction.getKeyedName(func), null, params)
     }
