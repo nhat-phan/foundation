@@ -1,5 +1,6 @@
 package net.ntworld.foundation.mocking.internal
 
+import net.ntworld.foundation.mocking.CallFakeBuilder
 import net.ntworld.foundation.mocking.InvokeData
 import net.ntworld.foundation.mocking.MockingException
 import net.ntworld.foundation.mocking.ParameterList
@@ -10,6 +11,7 @@ internal class MockedFunction<R>(private val fnName: String) {
     private var result: Any? = null
     private var callFake1: ((ParameterList) -> R)? = null
     private var callFake2: ((ParameterList, InvokeData) -> R)? = null
+    private var callFakeBuilder: CallFakeBuilder.Build<R>? = null
 
     private var calledAtLeast: Int = -1
     private var calledCount: Int = -1
@@ -57,6 +59,11 @@ internal class MockedFunction<R>(private val fnName: String) {
     }
 
     fun invoke(params: List<Any?>): R {
+        val builder = callFakeBuilder
+        if (null !== builder) {
+            this.callFake2 = builder.toCallFake()
+        }
+
         if (null !== callFake2) {
             return calls.callFake(params, callFake2!!)
         }
@@ -84,6 +91,10 @@ internal class MockedFunction<R>(private val fnName: String) {
 
     fun setCallFake(callFake: (ParameterList, InvokeData) -> R) {
         this.callFake2 = callFake
+    }
+
+    fun setCallFakeBuilder(callFakeBuilder: CallFakeBuilder.Build<R>) {
+        this.callFakeBuilder = callFakeBuilder
     }
 
     fun setCalledAtLeast(count: Int) {
