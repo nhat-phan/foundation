@@ -52,6 +52,10 @@ open class ManualMock {
         return builder
     }
 
+    protected fun <R> expectFunctionCalled(func: KFunction<R>): CalledWithBuilder.Start {
+        TODO()
+    }
+
     protected fun <R> mockFunction(func: KFunction<R>, vararg params: Any?): R {
         return mockFunctionByName(MockedFunction.getKeyedName(func), null, params)
     }

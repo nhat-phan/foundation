@@ -1,7 +1,5 @@
 package net.ntworld.foundation.mocking
 
-import kotlin.test.Test
-
 class CallFakeBuilderTest {
     class SyntaxTest {
         fun test(builder: CallFakeBuilder.Start<Int>) {
