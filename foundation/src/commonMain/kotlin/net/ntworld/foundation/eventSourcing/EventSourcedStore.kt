@@ -43,10 +43,10 @@ object EventSourcedStore {
         }
         infrastructure.root.eventStreamOf(eventSourced).write(events)
 
-//        val eventBus = infrastructure.root.eventBus()
-//        for (i in 0..events.lastIndex) {
-//            eventBus.publish(events[i], eventSourced.unpublishedEvents[i])
-//        }
+        val eventBus = infrastructure.root.eventBus()
+        for (i in 0..events.lastIndex) {
+            eventBus.publish(eventSourced.unpublishedEvents[i])
+        }
 
         val snapshotStore = infrastructure.root.snapshotStoreOf(aggregateKlass)
         snapshotStore.saveSnapshot(

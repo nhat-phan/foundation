@@ -44,7 +44,7 @@ class MemorizedInfrastructure(base: Infrastructure) : InfrastructureWrapper(base
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ReceivedData<Q, R>, Q : Query<R>, R: QueryResult> receiverOf(type: KClass<T>): DataReceiver<T> {
+    override fun <T : ReceivedData<Q, R>, Q : Query<R>, R : QueryResult> receiverOf(type: KClass<T>): DataReceiver<T> {
         if (!_dataReceivers.containsKey(type)) {
             _dataReceivers[type] = super.receiverOf(type)
         }

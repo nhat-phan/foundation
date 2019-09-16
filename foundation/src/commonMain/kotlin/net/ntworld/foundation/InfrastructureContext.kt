@@ -16,7 +16,8 @@ open class InfrastructureContext(open val self: Infrastructure) {
     fun <A : Aggregate<S>, S : State> factoryOf(type: KClass<A>): AggregateFactory<A, S> = self.factoryOf(type)
 
     @InfrastructureDsl.GenericDsl
-    fun <T : ReceivedData<Q, R>, Q: Query<R>, R: QueryResult> receiverOf(type: KClass<T>): DataReceiver<T> = self.receiverOf(type)
+    fun <T : ReceivedData<Q, R>, Q : Query<R>, R : QueryResult> receiverOf(type: KClass<T>): DataReceiver<T> =
+        self.receiverOf(type)
 
     @InfrastructureDsl.GenericDsl
     fun <A : Aggregate<S>, S : State> storeOf(type: KClass<A>): StateStore<S> = self.storeOf(type)

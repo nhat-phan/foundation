@@ -23,7 +23,6 @@ package net.ntworld.foundation
 //   4. subscriber will consume the message
 
 
-
 interface Message {
     val id: String?
     val type: String?

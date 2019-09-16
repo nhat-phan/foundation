@@ -12,8 +12,6 @@ import kotlin.reflect.KClass
 open class InfrastructureResolver(
     next: Infrastructure? = null
 ) : Infrastructure {
-
-
     private var included: List<Infrastructure> = listOf()
     private var next: Infrastructure? = null
     private var nextOrigin: Infrastructure? = next
@@ -78,7 +76,7 @@ open class InfrastructureResolver(
         throw CannotResolveException("Infrastructure.factoryOf() cannot resolve $type")
     }
 
-    override fun <T : ReceivedData<Q, R>, Q: Query<R>, R: QueryResult> receiverOf(type: KClass<T>): DataReceiver<T> {
+    override fun <T : ReceivedData<Q, R>, Q : Query<R>, R : QueryResult> receiverOf(type: KClass<T>): DataReceiver<T> {
         if (null !== next) {
             return next!!.receiverOf(type)
         }

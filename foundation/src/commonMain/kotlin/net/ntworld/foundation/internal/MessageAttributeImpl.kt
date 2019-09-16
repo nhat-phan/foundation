@@ -7,4 +7,4 @@ internal data class MessageAttributeImpl(
     override val dataType: String,
     override val binaryValue: ByteBuffer?,
     override val stringValue: String?
-): MessageAttribute
+) : MessageAttribute

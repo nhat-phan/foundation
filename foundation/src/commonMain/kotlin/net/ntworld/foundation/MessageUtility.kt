@@ -32,7 +32,6 @@ object MessageUtility {
         binaryValue = null
     )
 
-
     fun createAttribute(dataType: String, binaryValue: ByteBuffer): MessageAttribute = MessageAttributeImpl(
         dataType = dataType,
         stringValue = null,

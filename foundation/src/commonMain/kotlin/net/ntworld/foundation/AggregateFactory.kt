@@ -26,5 +26,4 @@ interface AggregateFactory<out A : Aggregate<S>, S : State> {
         }
         return instance
     }
-
 }

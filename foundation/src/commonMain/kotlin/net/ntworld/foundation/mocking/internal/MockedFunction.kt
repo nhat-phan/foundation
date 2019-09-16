@@ -25,6 +25,7 @@ internal class MockedFunction<R>(private val fnName: String) {
         this.result = null
         this.callFake1 = null
         this.callFake2 = null
+        this.callFakeBuilder = null
 
         this.calledCount = -1
         this.calledAtLeast = -1

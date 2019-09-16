@@ -32,7 +32,7 @@ open class InfrastructureWrapper(private val base: Infrastructure) : Infrastruct
         return base.factoryOf(type)
     }
 
-    override fun <T : ReceivedData<Q, R>, Q : Query<R>, R: QueryResult> receiverOf(type: KClass<T>): DataReceiver<T> {
+    override fun <T : ReceivedData<Q, R>, Q : Query<R>, R : QueryResult> receiverOf(type: KClass<T>): DataReceiver<T> {
         return base.receiverOf(type)
     }
 

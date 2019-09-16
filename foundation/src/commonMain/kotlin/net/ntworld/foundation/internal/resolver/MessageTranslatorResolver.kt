@@ -21,7 +21,7 @@ internal class MessageTranslatorResolver {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T: Any> resolve(type: KClass<T>): MessageTranslator<T> {
+    fun <T : Any> resolve(type: KClass<T>): MessageTranslator<T> {
         if (typeFnMap.containsKey(type)) {
             return typeFnMap[type]!!.invoke() as MessageTranslator<T>
         }

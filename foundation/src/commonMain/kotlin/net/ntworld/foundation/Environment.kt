@@ -5,25 +5,25 @@ interface Environment {
 
     val allowAnonymization: Boolean
 
-    object Development: Environment {
+    object Development : Environment {
         override val name: String = "development"
 
         override val allowAnonymization: Boolean = true
     }
 
-    object Test: Environment {
+    object Test : Environment {
         override val name: String = "test"
 
         override val allowAnonymization: Boolean = true
     }
 
-    object Stage: Environment {
+    object Stage : Environment {
         override val name: String = "stage"
 
         override val allowAnonymization: Boolean = false
     }
 
-    object Production: Environment {
+    object Production : Environment {
         override val name: String = "production"
 
         override val allowAnonymization: Boolean = false

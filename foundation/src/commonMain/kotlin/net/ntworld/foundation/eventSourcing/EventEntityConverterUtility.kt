@@ -8,6 +8,7 @@ object EventEntityConverterUtility {
     private const val ENCRYPTED_CIPHER_ID_KEY = "__encrypted@cipherId"
     private const val ENCRYPTED_ALGORITHM_KEY = "__encrypted@algorithm"
     private const val ENCRYPTED_DATA_KEY = "__encrypted@data"
+
     data class ProcessResult(
         val data: String,
         val metadata: String

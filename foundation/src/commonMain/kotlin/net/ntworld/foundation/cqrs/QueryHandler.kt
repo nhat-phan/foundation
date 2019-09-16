@@ -3,7 +3,7 @@ package net.ntworld.foundation.cqrs
 import net.ntworld.foundation.Infrastructure
 import net.ntworld.foundation.Message
 
-interface QueryHandler<in T, out R: QueryResult> where T : Query<out R> {
+interface QueryHandler<in T, out R : QueryResult> where T : Query<out R> {
     fun handle(query: T): R
 
     @Suppress("UNCHECKED_CAST")

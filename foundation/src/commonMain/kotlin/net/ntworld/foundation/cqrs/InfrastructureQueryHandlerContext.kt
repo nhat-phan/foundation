@@ -1,7 +1,6 @@
 package net.ntworld.foundation.cqrs
 
 import net.ntworld.foundation.*
-import kotlin.reflect.KClass
 
 open class InfrastructureQueryHandlerContext(private val self: Infrastructure) {
     @InfrastructureDsl.QueryHandlerDsl

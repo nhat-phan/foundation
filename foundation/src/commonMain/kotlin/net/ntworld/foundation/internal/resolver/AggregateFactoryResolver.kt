@@ -23,7 +23,7 @@ internal class AggregateFactoryResolver {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <A : Aggregate<S>, S: State> resolve(type: KClass<A>): AggregateFactory<A, S> {
+    fun <A : Aggregate<S>, S : State> resolve(type: KClass<A>): AggregateFactory<A, S> {
         if (typeFnMap.containsKey(type)) {
             return typeFnMap[type]!!.invoke() as AggregateFactory<A, S>
         }
