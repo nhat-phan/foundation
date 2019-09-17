@@ -84,7 +84,7 @@ internal class CallFakeBuilderImpl<R> :
                 if (null !== global) {
                     global.invoke()
                 } else {
-                    throw MockingException("There is no global call fake. Please use provide returned value via .otherwiseReturns() or use .otherwiseThrows() to throw an exception")
+                    throw MockingException("There is no global call fake. Please provide returned value via .otherwiseReturns() or use .otherwiseThrows() to throw an exception")
                 }
             }
         }

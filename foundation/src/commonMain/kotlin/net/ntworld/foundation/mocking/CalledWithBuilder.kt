@@ -8,30 +8,36 @@ interface CalledWithBuilder {
 
         infix fun exact(count: Int): Calls
 
+        infix fun alwaysMatch(verify: (ParameterList, InvokeData) -> Boolean)
+
         fun once() = exact(1)
 
         fun twice() = exact(2)
 
         fun thrice() = exact(3)
 
-        infix fun onceMatch(block: (ParameterList) -> Boolean) {
+        infix fun onceMatch(verify: (ParameterList) -> Boolean) {
             exact(1)
-            onCall(0).match(block)
+            onCall(0).match(verify)
         }
     }
 
     interface Calls {
         infix fun onCall(n: Int): Action
 
-        infix fun onFirstCallMatch(block: (ParameterList) -> Boolean) = onCall(0).match(block)
+        infix fun onFirstCallMatch(verify: (ParameterList) -> Boolean) = onCall(0).match(verify)
 
-        infix fun onSecondCallMatch(block: (ParameterList) -> Boolean) = onCall(1).match(block)
+        infix fun onSecondCallMatch(verify: (ParameterList) -> Boolean) = onCall(1).match(verify)
 
-        infix fun onThirdCallMatch(block: (ParameterList) -> Boolean) = onCall(2).match(block)
+        infix fun onThirdCallMatch(verify: (ParameterList) -> Boolean) = onCall(2).match(verify)
     }
 
     interface Action {
-        infix fun match(block: (ParameterList) -> Boolean): Calls
+        infix fun match(verify: (ParameterList) -> Boolean): Chain
+    }
+
+    interface Chain : Calls {
+        infix fun otherwiseMatch(verify: (ParameterList, InvokeData) -> Boolean)
     }
 
     interface Build {

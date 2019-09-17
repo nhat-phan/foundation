@@ -19,7 +19,7 @@ class CallFakeBuilderImplTest {
 
         syntax.invoke(builder)
 
-        return Callable<R>(builder.toCallFake())
+        return Callable(builder.toCallFake())
     }
 
     private fun expectException(instance: Throwable, block: () -> Unit) {

@@ -1,9 +1,6 @@
 package net.ntworld.foundation.mocking.internal
 
-import net.ntworld.foundation.mocking.CallFakeBuilder
-import net.ntworld.foundation.mocking.InvokeData
-import net.ntworld.foundation.mocking.MockingException
-import net.ntworld.foundation.mocking.ParameterList
+import net.ntworld.foundation.mocking.*
 import kotlin.reflect.KFunction
 
 internal class MockedFunction<R>(private val fnName: String) {
@@ -17,6 +14,7 @@ internal class MockedFunction<R>(private val fnName: String) {
     private var calledCount: Int = -1
     private var calledWith1: ((ParameterList) -> Boolean)? = null
     private var calledWith2: ((ParameterList, InvokeData) -> Boolean)? = null
+    private var calledWithBuilder: CalledWithBuilder.Build? = null
 
     private val calls: FunctionCalls = FunctionCalls()
 
@@ -31,11 +29,19 @@ internal class MockedFunction<R>(private val fnName: String) {
         this.calledAtLeast = -1
         this.calledWith1 = null
         this.calledWith2 = null
+        this.calledWithBuilder = null
 
         this.calls.reset()
     }
 
     fun verify() {
+        val builder = calledWithBuilder
+        if (null !== builder) {
+            this.calledCount = builder.getCalledCount()
+            this.calledAtLeast = builder.getCalledAtLeast()
+            this.calledWith2 = builder.toCalledWith()
+        }
+
         if (calledCount != -1 && calledCount != calls.count()) {
             throw MockingException("Expect function $fnName called $calledCount time(s) but it actually called ${calls.count()} time(s).")
         }
@@ -112,6 +118,10 @@ internal class MockedFunction<R>(private val fnName: String) {
 
     fun setCalledWith2(block: (ParameterList, InvokeData) -> Boolean) {
         this.calledWith2 = block
+    }
+
+    fun setCalledWithBuilder(calledWithBuilder: CalledWithBuilder.Build) {
+        this.calledWithBuilder = calledWithBuilder
     }
 
     companion object {

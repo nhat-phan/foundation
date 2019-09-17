@@ -1,6 +1,7 @@
 package net.ntworld.foundation.mocking
 
 import net.ntworld.foundation.mocking.internal.CallFakeBuilderImpl
+import net.ntworld.foundation.mocking.internal.CalledWithBuilderImpl
 import net.ntworld.foundation.mocking.internal.MockedFunction
 import kotlin.reflect.KFunction
 
@@ -53,7 +54,10 @@ open class ManualMock {
     }
 
     protected fun <R> expectFunctionCalled(func: KFunction<R>): CalledWithBuilder.Start {
-        TODO()
+        val builder = CalledWithBuilderImpl()
+        initMockedFunction<R>(MockedFunction.getKeyedName(func)).setCalledWithBuilder(builder)
+
+        return builder
     }
 
     protected fun <R> mockFunction(func: KFunction<R>, vararg params: Any?): R {
