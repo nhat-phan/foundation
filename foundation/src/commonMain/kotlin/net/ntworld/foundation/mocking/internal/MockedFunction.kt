@@ -4,6 +4,7 @@ import net.ntworld.foundation.mocking.*
 import kotlin.reflect.KFunction
 
 internal class MockedFunction<R>(private val fnName: String) {
+    private var fallback: (() -> R)? = null
     private var hasResult: Boolean = false
     private var result: Any? = null
     private var callFake1: ((ParameterList) -> R)? = null
@@ -46,7 +47,7 @@ internal class MockedFunction<R>(private val fnName: String) {
             throw MockingException("Expect function $fnName called $calledCount time(s) but it actually called ${calls.count()} time(s).")
         }
 
-        if (calledAtLeast != -1 && calledAtLeast < calls.count()) {
+        if (calledAtLeast != -1 && calledAtLeast > calls.count()) {
             throw MockingException("Expect function $fnName called at least $calledAtLeast time(s) but it actually called ${calls.count()} time(s).")
         }
 
@@ -62,10 +63,15 @@ internal class MockedFunction<R>(private val fnName: String) {
     }
 
     fun isMocked(): Boolean {
-        return null !== callFake2 || null !== callFake1 || hasResult
+        return null !== callFakeBuilder || null !== callFake2 || null !== callFake1 || hasResult
     }
 
     fun invoke(params: List<Any?>): R {
+        val fallbackFn = fallback
+        if (null !== fallbackFn) {
+            return calls.returnResult(params, fallbackFn.invoke())
+        }
+
         val builder = callFakeBuilder
         if (null !== builder) {
             this.callFake2 = builder.toCallFake()
@@ -85,6 +91,10 @@ internal class MockedFunction<R>(private val fnName: String) {
         }
 
         throw MockingException("Could not invoke a mocking function, please use mock(...) to set a result or callFake first")
+    }
+
+    fun setFallback(fallback: () -> R) {
+        this.fallback = fallback
     }
 
     fun setResult(result: R) {

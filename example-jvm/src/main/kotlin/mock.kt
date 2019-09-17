@@ -1,10 +1,9 @@
 import com.example.LocalServiceBus
 import com.example.make
-import generated.TestMockRequestImpl
 import net.ntworld.foundation.*
-import net.ntworld.foundation.mocking.ManualMock
-import net.ntworld.foundation.mocking.MockBuilder
-import net.ntworld.foundation.mocking.VerifyBuilder
+import net.ntworld.foundation.mocking.CallFakeBuilder
+import net.ntworld.foundation.mocking.CalledWithBuilder
+import net.ntworld.foundation.test.AbstractMockableServiceBus
 import kotlin.reflect.KClass
 
 interface TestMockRequest : Request<TestMockResponse> {
@@ -25,91 +24,23 @@ class TestMockRequestHandler : RequestHandler<TestMockRequest, TestMockResponse>
     }
 }
 
-class RequestHandlerManualMock<in T, out R : Response>(
-    private val origin: RequestHandler<T, R>?
-) : ManualMock(), RequestHandler<T, R> where T : Request<out R> {
-
-    override fun handle(request: T): R {
-        if (null === origin) {
-            return mockFunction(this::handle, request)
-        }
-
-        return mockFunction(this::handle, { origin.handle(request) }, request)
-    }
-
-}
-
-abstract class AbstractMockable<T: Contract> {
-    // abstract fun guessKClass(instance: T): KClass<*>
-
-    fun whenFunctionCalled(name: String) {
-    }
-
-    fun expectFunctionCalled(name: String) {
-    }
-}
-
-class MockableServiceBus<T>(
-    private val bus: T
-) : ServiceBus, LocalBusResolver<Request<*>, RequestHandler<*, *>>
+class MockableServiceBus<T>(private val bus: T) : AbstractMockableServiceBus<T>(bus)
     where T : ServiceBus, T : LocalBusResolver<Request<*>, RequestHandler<*, *>> {
-    private val mockedRequests = mutableMapOf<KClass<*>, MockBuilder.() -> Unit>()
-    private val mockedInstancesByRequest = mutableMapOf<KClass<*>, RequestHandlerManualMock<*, *>>()
-
-    override fun <R : Response> process(request: Request<R>): ServiceBusProcessResult<R> {
-        // check request should be mocked or not
-        return bus.process(request)
-    }
-
-    override fun resolve(instance: Request<*>): RequestHandler<*, *>? {
-        val origin = bus.resolve(instance)
-        val mockBuilder = mockedRequests[instance::class]
-        if (null === mockBuilder) {
-            return origin
+    override fun guessRequestKClassByInstance(instance: Request<*>): KClass<out Request<*>>? {
+        return when (instance) {
+            is TestMockRequest -> TestMockRequest::class
+            else -> null
         }
-
-        val mockInstance = resolveMockInstance(instance::class, origin)
-        net.ntworld.foundation.mocking.mock(mockInstance, mockBuilder)
-        return mockInstance
-    }
-
-    private fun resolveMockInstance(
-        request: KClass<out Request<*>>,
-        origin: RequestHandler<*, *>?
-    ): RequestHandlerManualMock<*, *> {
-        val instance = mockedInstancesByRequest[request::class]
-        if (null === instance) {
-            mockedInstancesByRequest[request::class] = RequestHandlerManualMock(origin)
-        }
-        return mockedInstancesByRequest[request::class] as RequestHandlerManualMock
-    }
-
-    fun mock(request: KClass<Request<*>>, block: MockBuilder.() -> Unit) {
-        mockedRequests[request] = block
-    }
-
-    fun <T : Request<*>, R : Response> willReturn(request: KClass<T>, response: R) {
-        val block: MockBuilder.() -> Unit = {
-            RequestHandler<*, *>::handle willReturn response
-        }
-        mockedRequests[request] = block
     }
 
     // We have the list at built-time, so no worries
-    infix fun whenReceive(request: TestMockRequest.Companion) = whenReceive(TestMockRequest::class)
-
-    infix fun whenReceive(request: KClass<out Request<*>>) {
-        println(request)
+    infix fun whenProcessing(request: TestMockRequest.Companion): CallFakeBuilder.Start<TestMockResponse> {
+        return whenProcessing(TestMockRequest::class)
     }
 
-    inline infix fun <reified T> shouldReceive(request: T) {
-        println(request)
+    infix fun shouldProcess(request: TestMockRequest.Companion): CalledWithBuilder.Start {
+        return shouldProcess(TestMockRequest::class)
     }
-//    data class DefinedRequest(private val kClass: KClass<out Request<*>>)
-//
-//    companion object {
-//        val TestMockRequest = DefinedRequest(TestMockRequest::class)
-//    }
 }
 
 fun main() {
@@ -124,22 +55,15 @@ fun main() {
     // infrastructure.serviceBus() shouldReceive Request match {
     //
     // }
+    val response = TestMockResponse.make(null)
+    val bus = MockableServiceBus(LocalServiceBus())
 
+    // bus whenProcessing TestMockRequest alwaysReturns response
+    bus shouldProcess TestMockRequest exact 3
 
-    val mockedBus = MockableServiceBus(LocalServiceBus())
+    println(bus.process(TestMockRequest.make("test")))
+    println(bus.process(TestMockRequest.make("test")).getResponse() === response)
+    println(bus.process(TestMockRequest.make("test")).getResponse() === response)
 
-    // ... whenReceive TestMockRequest willReturn TestMockResponse.make(null)
-    // ... whenReceive TestMockRequest on firstTime willReturn TestMockResponse.make(null)
-    // ... shouldReceive TestMockRequest
-    // ... shouldReceive TestMockRequest match { ... }
-    // ... shouldReceiveOnce TestMockRequest
-    // ... shouldReceiveTwice TestMockRequest
-
-    // mockedBus.shouldReceive(TestMockRequest)
-
-    // mockedBus.willReturn(TestMockRequestImpl::class, TestMockResponse.make(null))
-
-    // mockedBus.process(TestMockRequest.make("test"))
-
-    // mockedBus whenReceive TestMockRequest
+    bus.verifyAll()
 }

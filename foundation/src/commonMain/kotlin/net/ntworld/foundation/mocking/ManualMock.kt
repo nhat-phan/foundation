@@ -38,12 +38,15 @@ open class ManualMock {
         return (data[name] as MockedFunction<R>)
     }
 
-    private fun <R> mockFunctionByName(name: String, fallback: (() -> R)?, vararg params: Any?): R {
-        val mockedFunction = initMockedFunction<R>(name)
-        if (fallback !== null && !mockedFunction.isMocked()) {
-            return fallback.invoke()
+    private fun <R> mockFunctionByName(name: String, vararg params: Any?): R {
+        return initMockedFunction<R>(name).invoke(params.toList())
+    }
+
+    protected fun <R> setFallbackIfNotMocked(func: KFunction<R>, fallback: () -> R) {
+        val mockedFunction = initMockedFunction<R>(MockedFunction.getKeyedName(func))
+        if (!mockedFunction.isMocked()) {
+            mockedFunction.setFallback(fallback)
         }
-        return mockedFunction.invoke(params.toList())
     }
 
     protected fun <R> whenFunctionCalled(func: KFunction<R>): CallFakeBuilder.Start<R> {
@@ -61,10 +64,6 @@ open class ManualMock {
     }
 
     protected fun <R> mockFunction(func: KFunction<R>, vararg params: Any?): R {
-        return mockFunctionByName(MockedFunction.getKeyedName(func), null, params)
-    }
-
-    protected fun <R> mockFunction(func: KFunction<R>, fallback: () -> R, vararg params: Any?): R {
-        return mockFunctionByName(MockedFunction.getKeyedName(func), fallback, params)
+        return mockFunctionByName(MockedFunction.getKeyedName(func), params)
     }
 }
