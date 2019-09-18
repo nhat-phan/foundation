@@ -18,7 +18,7 @@ abstract class AbstractMockableCommandBus<T>(
     @Suppress("UNCHECKED_CAST")
     override fun process(command: Command) {
         val kClass = guessCommandKClassByInstance(command) ?: command::class
-        val mock = mocks[kClass] as HandlerManualMock<Command, Unit>?
+        val mock = handlerMocks[kClass] as HandlerManualMock<Command, Unit>?
         if (null === mock) {
             return bus.process(command)
         }
@@ -34,10 +34,10 @@ abstract class AbstractMockableCommandBus<T>(
 
     @Suppress("UNCHECKED_CAST")
     infix fun whenProcessing(command: KClass<out Command>): CallFakeBuilder.Start<Unit> {
-        return (initMockInstanceIfNeeded<Command, Unit>(command) as HandlerManualMock<Command, Unit>).whenHandleCalled()
+        return (initMockInstanceForHandlerIfNeeded<Command, Unit>(command) as HandlerManualMock<Command, Unit>).whenHandleCalled()
     }
 
     infix fun shouldProcess(command: KClass<out Command>): CalledWithBuilder.Start {
-        return initMockInstanceIfNeeded<Command, Unit>(command).expectHandleCalled()
+        return initMockInstanceForHandlerIfNeeded<Command, Unit>(command).expectHandleCalled()
     }
 }

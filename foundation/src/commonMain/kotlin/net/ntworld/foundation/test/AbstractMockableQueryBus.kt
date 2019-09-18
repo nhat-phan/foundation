@@ -19,7 +19,7 @@ abstract class AbstractMockableQueryBus<T>(
     @Suppress("UNCHECKED_CAST")
     override fun <R : QueryResult> process(query: Query<R>): R {
         val kClass = guessQueryKClassByInstance(query) ?: query::class
-        val mock = mocks[kClass] as HandlerManualMock<Query<R>, R>?
+        val mock = handlerMocks[kClass] as HandlerManualMock<Query<R>, R>?
         if (null === mock) {
             return bus.process(query)
         }
@@ -35,10 +35,10 @@ abstract class AbstractMockableQueryBus<T>(
 
     @Suppress("UNCHECKED_CAST")
     infix fun <R : QueryResult> whenProcessing(query: KClass<out Query<R>>): CallFakeBuilder.Start<R> {
-        return (initMockInstanceIfNeeded<Query<R>, R>(query) as HandlerManualMock<Query<R>, R>).whenHandleCalled()
+        return (initMockInstanceForHandlerIfNeeded<Query<R>, R>(query) as HandlerManualMock<Query<R>, R>).whenHandleCalled()
     }
 
     infix fun <R : QueryResult> shouldProcess(query: KClass<out Query<R>>): CalledWithBuilder.Start {
-        return initMockInstanceIfNeeded<Query<R>, R>(query).expectHandleCalled()
+        return initMockInstanceForHandlerIfNeeded<Query<R>, R>(query).expectHandleCalled()
     }
 }

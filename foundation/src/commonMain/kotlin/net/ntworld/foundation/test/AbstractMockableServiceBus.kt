@@ -15,7 +15,7 @@ abstract class AbstractMockableServiceBus<T>(
     @Suppress("UNCHECKED_CAST")
     override fun <R : Response> process(request: Request<R>): ServiceBusProcessResult<R> {
         val kClass = guessRequestKClassByInstance(request) ?: request::class
-        val mock = mocks[kClass] as HandlerManualMock<Request<R>, R>?
+        val mock = handlerMocks[kClass] as HandlerManualMock<Request<R>, R>?
         if (null === mock) {
             return bus.process(request)
         }
@@ -31,10 +31,10 @@ abstract class AbstractMockableServiceBus<T>(
 
     @Suppress("UNCHECKED_CAST")
     infix fun <R : Response> whenProcessing(request: KClass<out Request<R>>): CallFakeBuilder.Start<R> {
-        return (initMockInstanceIfNeeded<Request<R>, R>(request) as HandlerManualMock<Request<R>, R>).whenHandleCalled()
+        return (initMockInstanceForHandlerIfNeeded<Request<R>, R>(request) as HandlerManualMock<Request<R>, R>).whenHandleCalled()
     }
 
     infix fun <R : Response> shouldProcess(request: KClass<out Request<R>>): CalledWithBuilder.Start {
-        return initMockInstanceIfNeeded<Request<R>, R>(request).expectHandleCalled()
+        return initMockInstanceForHandlerIfNeeded<Request<R>, R>(request).expectHandleCalled()
     }
 }

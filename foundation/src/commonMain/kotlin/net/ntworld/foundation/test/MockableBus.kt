@@ -3,19 +3,19 @@ package net.ntworld.foundation.test
 import kotlin.reflect.KClass
 
 open class MockableBus {
-    protected val mocks = mutableMapOf<KClass<*>, HandlerManualMock<*, *>>()
+    protected val handlerMocks = mutableMapOf<KClass<*>, HandlerManualMock<*, *>>()
 
     @Suppress("UNCHECKED_CAST")
-    protected fun <T : Any, R> initMockInstanceIfNeeded(kClass: KClass<out T>): HandlerManualMock<*, *> {
-        val mock = mocks[kClass]
+    protected fun <T : Any, R> initMockInstanceForHandlerIfNeeded(kClass: KClass<out T>): HandlerManualMock<*, *> {
+        val mock = handlerMocks[kClass]
         if (null === mock) {
-            mocks[kClass] = HandlerManualMock<T, R>()
+            handlerMocks[kClass] = HandlerManualMock<T, R>()
         }
-        return mocks[kClass] as HandlerManualMock<*, *>
+        return handlerMocks[kClass] as HandlerManualMock<*, *>
     }
 
     fun verifyAll() {
-        mocks.values.forEach {
+        handlerMocks.values.forEach {
             it.verifyAll()
         }
     }
