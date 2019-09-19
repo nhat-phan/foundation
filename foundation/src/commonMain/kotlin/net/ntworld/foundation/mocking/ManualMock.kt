@@ -1,6 +1,5 @@
 package net.ntworld.foundation.mocking
 
-import net.ntworld.foundation.mocking.MockedFunction
 import net.ntworld.foundation.mocking.internal.CallFakeBuilderImpl
 import net.ntworld.foundation.mocking.internal.CalledWithBuilderImpl
 import net.ntworld.foundation.mocking.internal.MockedFunctionImpl

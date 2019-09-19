@@ -1,9 +1,16 @@
+import com.example.LocalCommandBus
 import com.example.LocalServiceBus
+import com.example.contract.CreateTodoCommand
 import com.example.make
 import net.ntworld.foundation.*
+import net.ntworld.foundation.cqrs.Command
+import net.ntworld.foundation.cqrs.CommandBus
+import net.ntworld.foundation.cqrs.CommandHandler
 import net.ntworld.foundation.mocking.CallFakeBuilder
 import net.ntworld.foundation.mocking.CalledWithBuilder
+import net.ntworld.foundation.test.AbstractMockableCommandBus
 import net.ntworld.foundation.test.AbstractMockableServiceBus
+import net.ntworld.foundation.test.nothing
 import kotlin.reflect.KClass
 
 interface TestMockRequest : Request<TestMockResponse> {
@@ -43,6 +50,15 @@ class MockableServiceBus<T>(private val bus: T) : AbstractMockableServiceBus<T>(
     }
 }
 
+class MockableCommandBus<T>(private val bus: T) : AbstractMockableCommandBus<T>(bus)
+    where T : CommandBus, T : LocalBusResolver<Command, CommandHandler<*>> {
+
+    override fun guessCommandKClassByInstance(instance: Command): KClass<out Command>? {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+}
+
 fun main() {
     // Foundation should generate a InfrastructureProvider for testing, which is
     // auto wired just like the other local buses
@@ -56,14 +72,22 @@ fun main() {
     //
     // }
     val response = TestMockResponse.make(null)
-    val bus = MockableServiceBus(LocalServiceBus())
+    val serviceBus = MockableServiceBus(LocalServiceBus())
 
     // bus whenProcessing TestMockRequest alwaysReturns response
-    bus shouldProcess TestMockRequest exact 3
+    serviceBus shouldProcess TestMockRequest exact 3
 
-    println(bus.process(TestMockRequest.make("test")))
-    println(bus.process(TestMockRequest.make("test")).getResponse() === response)
-    println(bus.process(TestMockRequest.make("test")).getResponse() === response)
+    println(serviceBus.process(TestMockRequest.make("test")))
+    println(serviceBus.process(TestMockRequest.make("test")).getResponse() === response)
+    println(serviceBus.process(TestMockRequest.make("test")).getResponse() === response)
 
-    bus.verifyAll()
+    serviceBus.verifyAll()
+}
+
+fun testCommandBus(infrastructure: Infrastructure) {
+    val commandBus = MockableCommandBus(LocalCommandBus(infrastructure))
+
+    commandBus whenProcessing CreateTodoCommand::class alwaysDoes nothing
+    commandBus whenProcessing CreateTodoCommand::class onCall 1 does nothing
+    
 }

@@ -1,7 +1,5 @@
 package net.ntworld.foundation.test
 
-import net.ntworld.foundation.mocking.CalledWithBuilder
-
 interface PublishCallFakeBuilder {
     interface Start<R> : Calls<R> {
         fun alwaysPublishes()
@@ -30,6 +28,4 @@ interface PublishCallFakeBuilder {
 
         fun otherwiseDoesNothing()
     }
-
-    interface Build : CalledWithBuilder.Build
 }
