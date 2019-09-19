@@ -3,7 +3,7 @@ package net.ntworld.foundation.mocking.internal
 import net.ntworld.foundation.mocking.*
 import kotlin.reflect.KFunction
 
-internal class MockedFunction<R>(private val fnName: String) {
+internal class MockedFunctionImpl<R>(private val fnName: String): MockedFunction<R> {
     private var fallback: (() -> R)? = null
     private var hasResult: Boolean = false
     private var result: Any? = null
@@ -19,7 +19,7 @@ internal class MockedFunction<R>(private val fnName: String) {
 
     private val calls: FunctionCalls = FunctionCalls()
 
-    fun reset() {
+    override fun reset() {
         this.hasResult = false
         this.result = null
         this.callFake1 = null
@@ -35,7 +35,7 @@ internal class MockedFunction<R>(private val fnName: String) {
         this.calls.reset()
     }
 
-    fun verify() {
+    override fun verify() {
         val builder = calledWithBuilder
         if (null !== builder) {
             this.calledCount = builder.getCalledCount()
@@ -62,11 +62,11 @@ internal class MockedFunction<R>(private val fnName: String) {
         this.reset()
     }
 
-    fun isMocked(): Boolean {
+    override fun isMocked(): Boolean {
         return null !== callFakeBuilder || null !== callFake2 || null !== callFake1 || hasResult
     }
 
-    fun invoke(params: List<Any?>): R {
+    override fun invoke(params: List<Any?>): R {
         val fallbackFn = fallback
         if (null !== fallbackFn) {
             return calls.returnResult(params, fallbackFn.invoke())
@@ -93,44 +93,44 @@ internal class MockedFunction<R>(private val fnName: String) {
         throw MockingException("Could not invoke a mocking function, please use mock(...) to set a result or callFake first")
     }
 
-    fun setFallback(fallback: () -> R) {
+    override fun setFallback(fallback: () -> R) {
         this.fallback = fallback
     }
 
-    fun setResult(result: R) {
+    override fun setResult(result: R) {
         this.hasResult = true
         this.result = result
     }
 
-    fun setCallFake(callFake: (ParameterList) -> R) {
+    override fun setCallFake(callFake: (ParameterList) -> R) {
         this.callFake1 = callFake
     }
 
-    fun setCallFake(callFake: (ParameterList, InvokeData) -> R) {
+    override fun setCallFake(callFake: (ParameterList, InvokeData) -> R) {
         this.callFake2 = callFake
     }
 
-    fun setCallFakeBuilder(callFakeBuilder: CallFakeBuilder.Build<R>) {
+    override fun setCallFakeBuilder(callFakeBuilder: CallFakeBuilder.Build<R>) {
         this.callFakeBuilder = callFakeBuilder
     }
 
-    fun setCalledAtLeast(count: Int) {
+    override fun setCalledAtLeast(count: Int) {
         this.calledAtLeast = count
     }
 
-    fun setCalledCount(count: Int) {
+    override fun setCalledCount(count: Int) {
         this.calledCount = count
     }
 
-    fun setCalledWith1(block: (ParameterList) -> Boolean) {
+    override fun setCalledWith1(block: (ParameterList) -> Boolean) {
         this.calledWith1 = block
     }
 
-    fun setCalledWith2(block: (ParameterList, InvokeData) -> Boolean) {
+    override fun setCalledWith2(block: (ParameterList, InvokeData) -> Boolean) {
         this.calledWith2 = block
     }
 
-    fun setCalledWithBuilder(calledWithBuilder: CalledWithBuilder.Build) {
+    override fun setCalledWithBuilder(calledWithBuilder: CalledWithBuilder.Build) {
         this.calledWithBuilder = calledWithBuilder
     }
 
