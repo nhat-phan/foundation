@@ -3,6 +3,7 @@ package net.ntworld.foundation.test
 import net.ntworld.foundation.*
 import net.ntworld.foundation.mocking.CallFakeBuilder
 import net.ntworld.foundation.mocking.CalledWithBuilder
+import net.ntworld.foundation.mocking.TestDsl
 import kotlin.reflect.KClass
 
 abstract class AbstractMockableServiceBus<T>(
@@ -30,10 +31,12 @@ abstract class AbstractMockableServiceBus<T>(
     override fun resolve(instance: Request<*>) = bus.resolve(instance)
 
     @Suppress("UNCHECKED_CAST")
+    @TestDsl.Mock
     infix fun <R : Response> whenProcessing(request: KClass<out Request<R>>): CallFakeBuilder.Start<R> {
         return (initMockInstanceForHandlerIfNeeded<Request<R>, R>(request) as HandlerManualMock<Request<R>, R>).whenHandleCalled()
     }
 
+    @TestDsl.Verify
     infix fun <R : Response> shouldProcess(request: KClass<out Request<R>>): CalledWithBuilder.Start {
         return initMockInstanceForHandlerIfNeeded<Request<R>, R>(request).expectHandleCalled()
     }

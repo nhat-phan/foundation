@@ -1,5 +1,7 @@
 package net.ntworld.foundation.test
 
+import net.ntworld.foundation.fluency.Word
+
 interface PublishCallFakeBuilder {
     interface Start<R> : Calls<R> {
         fun alwaysPublishes()
@@ -15,6 +17,8 @@ interface PublishCallFakeBuilder {
 
     interface Calls<R> {
         infix fun onCall(n: Int): Action<R>
+
+        infix fun on(nth: Word.ForOnCallFake): Action<R> = onCall(nth.value)
 
         fun onFirstCallDoesNothing() = onCall(0).doesNothing()
 

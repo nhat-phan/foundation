@@ -6,6 +6,7 @@ import net.ntworld.foundation.EventHandler
 import net.ntworld.foundation.LocalBusResolver
 import net.ntworld.foundation.mocking.CallFakeBuilder
 import net.ntworld.foundation.mocking.CalledWithBuilder
+import net.ntworld.foundation.mocking.TestDsl
 import kotlin.reflect.KClass
 
 abstract class AbstractMockableEventBus<T>(
@@ -44,10 +45,12 @@ abstract class AbstractMockableEventBus<T>(
     override fun resolve(instance: Event) = bus.resolve(instance)
 
     @Suppress("UNCHECKED_CAST")
+    @TestDsl.Mock
     infix fun whenProcessing(event: KClass<out Event>): CallFakeBuilder.Start<Unit> {
         return (initMockInstanceForHandlerIfNeeded<Event, Unit>(event) as HandlerManualMock<Event, Unit>).whenHandleCalled()
     }
 
+    @TestDsl.Verify
     infix fun shouldProcess(event: KClass<out Event>): CalledWithBuilder.Start {
         return initMockInstanceForHandlerIfNeeded<Event, Unit>(event).expectHandleCalled()
     }

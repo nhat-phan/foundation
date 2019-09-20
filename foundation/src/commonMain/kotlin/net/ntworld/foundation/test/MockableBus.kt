@@ -1,5 +1,6 @@
 package net.ntworld.foundation.test
 
+import net.ntworld.foundation.mocking.TestDsl
 import kotlin.reflect.KClass
 
 open class MockableBus {
@@ -14,6 +15,7 @@ open class MockableBus {
         return handlerMocks[kClass] as HandlerManualMock<*, *>
     }
 
+    @TestDsl.Verify
     fun verifyAll() {
         handlerMocks.values.forEach {
             it.verifyAll()

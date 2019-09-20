@@ -7,6 +7,7 @@ import net.ntworld.foundation.cqrs.QueryHandler
 import net.ntworld.foundation.cqrs.QueryResult
 import net.ntworld.foundation.mocking.CallFakeBuilder
 import net.ntworld.foundation.mocking.CalledWithBuilder
+import net.ntworld.foundation.mocking.TestDsl
 import kotlin.reflect.KClass
 
 abstract class AbstractMockableQueryBus<T>(
@@ -34,10 +35,12 @@ abstract class AbstractMockableQueryBus<T>(
     override fun resolve(instance: Query<*>) = bus.resolve(instance)
 
     @Suppress("UNCHECKED_CAST")
+    @TestDsl.Mock
     infix fun <R : QueryResult> whenProcessing(query: KClass<out Query<R>>): CallFakeBuilder.Start<R> {
         return (initMockInstanceForHandlerIfNeeded<Query<R>, R>(query) as HandlerManualMock<Query<R>, R>).whenHandleCalled()
     }
 
+    @TestDsl.Verify
     infix fun <R : QueryResult> shouldProcess(query: KClass<out Query<R>>): CalledWithBuilder.Start {
         return initMockInstanceForHandlerIfNeeded<Query<R>, R>(query).expectHandleCalled()
     }
