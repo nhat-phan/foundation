@@ -3,7 +3,7 @@ package net.ntworld.foundation.fluency
 interface Word {
     enum class Nothing { Default }
 
-    enum class ForOnCallFake(val value: Int) {
+    enum class OrdinalCall(val value: Int) {
         First(0),
         Second(1),
         Third(2),

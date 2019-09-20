@@ -18,7 +18,7 @@ interface PublishCallFakeBuilder {
     interface Calls<R> {
         infix fun onCall(n: Int): Action<R>
 
-        infix fun on(nth: Word.ForOnCallFake): Action<R> = onCall(nth.value)
+        infix fun on(nth: Word.OrdinalCall): Action<R> = onCall(nth.value)
 
         fun onFirstCallDoesNothing() = onCall(0).doesNothing()
 

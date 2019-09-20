@@ -82,6 +82,7 @@ fun main() {
 
     serviceBus whenProcessing TestMockRequest on firstCall returns response otherwiseReturns response
     serviceBus shouldProcess TestMockRequest exact 3
+    serviceBus shouldProcess TestMockRequest on firstCall match { true } otherwiseMatch { _, _ -> true }
 
     println(serviceBus.process(TestMockRequest.make("test")).getResponse() === response)
     println(serviceBus.process(TestMockRequest.make("test")).getResponse() === response)

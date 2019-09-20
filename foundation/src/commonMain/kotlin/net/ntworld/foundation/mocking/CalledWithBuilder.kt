@@ -1,5 +1,7 @@
 package net.ntworld.foundation.mocking
 
+import net.ntworld.foundation.fluency.Word
+
 interface CalledWithBuilder {
     interface Start : Calls {
         @TestDsl.Verify
@@ -33,6 +35,9 @@ interface CalledWithBuilder {
     interface Calls {
         @TestDsl.Verify
         infix fun onCall(n: Int): Action
+
+        @TestDsl.Verify
+        infix fun on(nth: Word.OrdinalCall): Action = onCall(nth.value)
 
         @TestDsl.Verify
         infix fun onFirstCallMatch(verify: (ParameterList) -> Boolean) = onCall(0).match(verify)

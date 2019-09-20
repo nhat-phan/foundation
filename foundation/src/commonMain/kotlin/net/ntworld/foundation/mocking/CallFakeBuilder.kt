@@ -27,7 +27,7 @@ interface CallFakeBuilder {
         infix fun onCall(n: Int): Action<R>
 
         @TestDsl.Mock
-        infix fun on(nth: Word.ForOnCallFake): Action<R> = onCall(nth.value)
+        infix fun on(nth: Word.OrdinalCall): Action<R> = onCall(nth.value)
 
         @TestDsl.Mock
         infix fun onFirstCallReturns(result: R) = onCall(0).returns(result)
