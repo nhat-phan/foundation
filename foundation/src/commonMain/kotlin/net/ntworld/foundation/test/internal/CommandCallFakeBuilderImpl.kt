@@ -15,8 +15,6 @@ internal class CommandCallFakeBuilderImpl(
 
     override fun alwaysThrows(throwable: Throwable) = callFakeBuilderImpl.alwaysThrows(throwable)
 
-    override fun run(fakeImpl: (ParameterList, InvokeData) -> Unit) = callFakeBuilderImpl.run(fakeImpl)
-
     override fun doesNothing(): CommandCallFakeBuilder.Chain {
         callFakeBuilderImpl.returns(Unit)
 

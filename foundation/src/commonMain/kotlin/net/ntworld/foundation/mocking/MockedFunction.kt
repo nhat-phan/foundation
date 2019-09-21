@@ -15,7 +15,7 @@ interface MockedFunction<R> {
 
     fun setCallFake(callFake: (ParameterList) -> R)
 
-    fun setCallFake(callFake: (ParameterList, InvokeData) -> R)
+    fun setCallFake(callFake: Invoker<R>)
 
     fun setCallFakeBuilder(callFakeBuilder: CallFakeBuilder.Build<R>)
 

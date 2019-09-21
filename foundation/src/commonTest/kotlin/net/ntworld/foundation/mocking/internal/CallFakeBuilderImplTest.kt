@@ -1,5 +1,6 @@
 package net.ntworld.foundation.mocking.internal
 
+import net.ntworld.foundation.fluency.fourthCall
 import net.ntworld.foundation.mocking.InvokeData
 import net.ntworld.foundation.mocking.ParameterList
 import kotlin.reflect.KClass
@@ -68,6 +69,20 @@ class CallFakeBuilderImplTest {
     }
 
     @Test
+    fun `test alwaysRuns()`() {
+        val error = Exception()
+        val callable = runTest<Int> {
+            it alwaysRuns { _, _ -> 0 }
+        }
+
+        assertEquals(0, callable(0))
+        assertEquals(0, callable(1))
+        assertEquals(0, callable(2))
+        assertEquals(0, callable(3))
+        assertEquals(0, callable(4))
+    }
+
+    @Test
     fun `test otherwiseReturns()`() {
         val callable = runTest<Int> {
             it onCall 1 returns 1 otherwiseReturns 100
@@ -94,24 +109,28 @@ class CallFakeBuilderImplTest {
     }
 
     @Test
+    fun `test otherwiseRuns()`() {
+        val callable = runTest<Int> {
+            it onCall 1 returns 1 otherwiseRuns { _, _ -> 100 }
+        }
+
+        assertEquals(100, callable(0))
+        assertEquals(1, callable(1))
+        assertEquals(100, callable(2))
+        assertEquals(100, callable(3))
+        assertEquals(100, callable(4))
+    }
+
+    @Test
     fun `test onCall()`() {
         val callable = runTest<Int> {
-            it onFirstCallReturns 1 onCall 1 returns 2 onThirdCallReturns 3 otherwiseThrows Exception()
+            it onFirstCallReturns 1 onCall 1 returns 2 onThirdCallReturns 3 on fourthCall runs { 4 } otherwiseThrows Exception()
         }
 
         assertEquals(1, callable(0))
         assertEquals(2, callable(1))
         assertEquals(3, callable(2))
-        expectException(Exception::class) { callable(3) }
+        assertEquals(4, callable(3))
         expectException(Exception::class) { callable(4) }
-    }
-
-    @Test
-    fun `test run()`() {
-        val builder = CallFakeBuilderImpl<Int>()
-        val fakeImpl: (ParameterList, InvokeData) -> Int = { _, _ -> 0 }
-        builder.run(fakeImpl)
-
-        assertSame(fakeImpl, builder.toCallFake())
     }
 }

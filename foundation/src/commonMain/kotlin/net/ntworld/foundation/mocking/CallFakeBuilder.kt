@@ -11,7 +11,7 @@ interface CallFakeBuilder {
         infix fun alwaysThrows(throwable: Throwable)
 
         @TestDsl.Mock
-        infix fun run(fakeImpl: (ParameterList, InvokeData) -> R)
+        infix fun alwaysRuns(fakeImpl: Invoker<R>)
     }
 
     interface Action<R> {
@@ -20,6 +20,9 @@ interface CallFakeBuilder {
 
         @TestDsl.Mock
         infix fun throws(throwable: Throwable): Chain<R>
+
+        @TestDsl.Mock
+        infix fun runs(fakeImpl: (ParameterList) -> R): Chain<R>
     }
 
     interface Calls<R> {
@@ -54,9 +57,12 @@ interface CallFakeBuilder {
 
         @TestDsl.Mock
         infix fun otherwiseThrows(throwable: Throwable)
+
+        @TestDsl.Mock
+        infix fun otherwiseRuns(fakeImpl: Invoker<R>)
     }
 
     interface Build<R> {
-        fun toCallFake(): ((ParameterList, InvokeData) -> R)?
+        fun toCallFake(): Invoker<R>?
     }
 }

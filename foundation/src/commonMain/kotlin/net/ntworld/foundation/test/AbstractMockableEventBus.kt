@@ -21,7 +21,7 @@ abstract class AbstractMockableEventBus<T>(
         val kClass = guessEventKClassByInstance(event) ?: event::class
         val mock = publisherMocks[kClass] as PublisherManualMock<Event>?
         if (null === mock) {
-            return bus.process(event)
+            return bus.publish(event)
         }
 
         mock.setPublisherFallbackIfNotMocked {}

@@ -3,22 +3,30 @@ package net.ntworld.foundation.test
 import net.ntworld.foundation.fluency.Word
 
 interface PublishCallFakeBuilder {
-    interface Start<R> : Calls<R> {
-        fun alwaysPublishes()
+    interface Start : Calls {
+        fun alwaysPublishesEvents()
 
-        fun alwaysDoNothing()
+        infix fun alwaysPublishes(word: Word.ReceivedEvents) = alwaysPublishesEvents()
+
+        fun alwaysDoesNothing()
+
+        infix fun alwaysDoes(word: Word.Nothing) = alwaysDoesNothing()
     }
 
-    interface Action<R> {
-        fun publishes(): Chain<R>
+    interface Action {
+        fun publishesReceivedEvent(): Chain
 
-        fun doesNothing(): Chain<R>
+        fun publishes(word: Word.ReceivedEvent): Chain
+
+        fun doesNothing(): Chain
+
+        fun does(word: Word.Nothing): Chain = doesNothing()
     }
 
-    interface Calls<R> {
-        infix fun onCall(n: Int): Action<R>
+    interface Calls {
+        infix fun onCall(n: Int): Action
 
-        infix fun on(nth: Word.OrdinalCall): Action<R> = onCall(nth.value)
+        infix fun on(nth: Word.OrdinalCall): Action = onCall(nth.value)
 
         fun onFirstCallDoesNothing() = onCall(0).doesNothing()
 
@@ -27,9 +35,13 @@ interface PublishCallFakeBuilder {
         fun onThirdCallDoesNothing() = onCall(2).doesNothing()
     }
 
-    interface Chain<R> : Calls<R> {
-        fun otherwisePublishes()
+    interface Chain : Calls {
+        fun otherwisePublishesEvents()
+
+        infix fun otherwisePublishes(word: Word.ReceivedEvents) = otherwisePublishesEvents()
 
         fun otherwiseDoesNothing()
+
+        infix fun otherwiseDoes(word: Word.Nothing) = otherwiseDoesNothing()
     }
 }

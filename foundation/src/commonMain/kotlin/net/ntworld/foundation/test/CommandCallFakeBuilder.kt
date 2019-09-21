@@ -7,6 +7,8 @@ import net.ntworld.foundation.mocking.TestDsl
 
 interface CommandCallFakeBuilder {
     interface Start : Calls {
+        // TODO: add runs()
+
         @TestDsl.Mock
         fun alwaysDoesNothing()
 
@@ -15,9 +17,6 @@ interface CommandCallFakeBuilder {
 
         @TestDsl.Mock
         infix fun alwaysThrows(throwable: Throwable)
-
-        @TestDsl.Mock
-        infix fun run(fakeImpl: (ParameterList, InvokeData) -> Unit)
     }
 
     interface Action {

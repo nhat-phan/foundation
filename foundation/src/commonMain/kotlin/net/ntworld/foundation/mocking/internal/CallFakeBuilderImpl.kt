@@ -1,9 +1,6 @@
 package net.ntworld.foundation.mocking.internal
 
-import net.ntworld.foundation.mocking.CallFakeBuilder
-import net.ntworld.foundation.mocking.InvokeData
-import net.ntworld.foundation.mocking.MockingException
-import net.ntworld.foundation.mocking.ParameterList
+import net.ntworld.foundation.mocking.*
 
 internal class CallFakeBuilderImpl<R> :
     CallFakeBuilder.Start<R>,
@@ -14,12 +11,18 @@ internal class CallFakeBuilderImpl<R> :
 
     private data class Call<T>(
         val ordinal: Int,
+        var fakeImpl: Invoker<T>?,
         var returned: T?,
         var thrown: Throwable?,
+        var runFakeImpl: Boolean = false,
         var hasReturned: Boolean = false,
         var shouldThrow: Boolean = false
     ) {
-        fun invoke(): T {
+        fun invoke(list: ParameterList, invokeData: InvokeData): T {
+            if (runFakeImpl) {
+                return fakeImpl!!.invoke(list, invokeData)
+            }
+
             if (hasReturned) {
                 return returned!!
             }
@@ -28,25 +31,24 @@ internal class CallFakeBuilderImpl<R> :
                 throw thrown!!
             }
 
-            throw MockingException("Please provide returned value via .returns() or use .throws() to throw an exception")
+            throw MockingException("Please provide returned value via .returns() or use .throws() to throw an exception or .runs() to provide fake implementation")
         }
     }
 
     private val data = mutableMapOf<Int, Call<R>>()
-    private var fakedImpl: ((ParameterList, InvokeData) -> R)? = null
     private var currentOrdinal = 0
 
     override fun alwaysReturns(result: R) = setResult(GLOBAL_ORDINAL, result)
 
     override fun alwaysThrows(throwable: Throwable) = setThrown(GLOBAL_ORDINAL, throwable)
 
+    override fun alwaysRuns(fakeImpl: Invoker<R>) = setFakeImpl(GLOBAL_ORDINAL, fakeImpl)
+
     override fun otherwiseReturns(result: R) = alwaysReturns(result)
 
     override fun otherwiseThrows(throwable: Throwable) = alwaysThrows(throwable)
 
-    override fun run(fakeImpl: (ParameterList, InvokeData) -> R) {
-        fakedImpl = fakeImpl
-    }
+    override fun otherwiseRuns(fakeImpl: Invoker<R>) = alwaysRuns(fakeImpl)
 
     override fun returns(result: R): CallFakeBuilder.Chain<R> {
         setResult(currentOrdinal, result)
@@ -60,31 +62,35 @@ internal class CallFakeBuilderImpl<R> :
         return this
     }
 
+    override fun runs(fakeImpl: (ParameterList) -> R): CallFakeBuilder.Chain<R> {
+        setFakeImpl(currentOrdinal) { list, _ ->
+            fakeImpl(list)
+        }
+
+        return this
+    }
+
     override fun onCall(n: Int): CallFakeBuilder.Action<R> {
         currentOrdinal = n
 
         return this
     }
 
-    override fun toCallFake(): ((ParameterList, InvokeData) -> R)? {
-        if (data.isEmpty() && null === fakedImpl) {
+    override fun toCallFake(): (Invoker<R>)? {
+        if (data.isEmpty()) {
             return null
         }
 
-        if (null !== fakedImpl) {
-            return fakedImpl
-        }
-
-        return { _, invokedData ->
+        return { list, invokedData ->
             val call = data[invokedData.ordinal]
             if (null !== call) {
-                call.invoke()
+                call.invoke(list, invokedData)
             } else {
                 val global = data[GLOBAL_ORDINAL]
                 if (null !== global) {
-                    global.invoke()
+                    global.invoke(list, invokedData)
                 } else {
-                    throw MockingException("There is no global call fake. Please provide returned value via .otherwiseReturns() or use .otherwiseThrows() to throw an exception")
+                    throw MockingException("There is no global call fake. Please provide returned value via .otherwiseReturns() or use .otherwiseThrows() to throw an exception or .otherwiseRuns() to provide fake implementation")
                 }
             }
         }
@@ -102,10 +108,16 @@ internal class CallFakeBuilderImpl<R> :
         call.shouldThrow = true
     }
 
+    private fun setFakeImpl(ordinal: Int, fakedImpl: Invoker<R>) {
+        val call = findCall(ordinal)
+        call.fakeImpl = fakedImpl
+        call.runFakeImpl = true
+    }
+
     private fun findCall(ordinal: Int): Call<R> {
         val item = data[ordinal]
         if (item === null) {
-            val new = Call<R>(ordinal, null, null)
+            val new = Call<R>(ordinal, null, null, null)
             data[ordinal] = new
             return new
         }

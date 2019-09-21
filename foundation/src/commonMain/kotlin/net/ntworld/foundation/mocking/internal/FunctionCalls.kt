@@ -1,6 +1,7 @@
 package net.ntworld.foundation.mocking.internal
 
 import net.ntworld.foundation.mocking.InvokeData
+import net.ntworld.foundation.mocking.Invoker
 import net.ntworld.foundation.mocking.ParameterList
 
 internal class FunctionCalls {
@@ -25,7 +26,7 @@ internal class FunctionCalls {
         return fake.invoke(this.add(params))
     }
 
-    fun <R> callFake(params: List<Any?>, fake: (ParameterList, InvokeData) -> R): R {
+    fun <R> callFake(params: List<Any?>, fake: Invoker<R>): R {
         val size = calledParams.size
         val list = this.add(params)
         return fake.invoke(list, InvokeData(size + 1))

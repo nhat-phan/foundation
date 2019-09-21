@@ -3,12 +3,12 @@ package net.ntworld.foundation.mocking.internal
 import net.ntworld.foundation.mocking.*
 import kotlin.reflect.KFunction
 
-internal class MockedFunctionImpl<R>(private val fnName: String): MockedFunction<R> {
+internal class MockedFunctionImpl<R>(private val fnName: String) : MockedFunction<R> {
     private var fallback: (() -> R)? = null
     private var hasResult: Boolean = false
     private var result: Any? = null
     private var callFake1: ((ParameterList) -> R)? = null
-    private var callFake2: ((ParameterList, InvokeData) -> R)? = null
+    private var callFake2: (Invoker<R>)? = null
     private var callFakeBuilder: CallFakeBuilder.Build<R>? = null
 
     private var calledAtLeast: Int = -1
@@ -106,7 +106,7 @@ internal class MockedFunctionImpl<R>(private val fnName: String): MockedFunction
         this.callFake1 = callFake
     }
 
-    override fun setCallFake(callFake: (ParameterList, InvokeData) -> R) {
+    override fun setCallFake(callFake: Invoker<R>) {
         this.callFake2 = callFake
     }
 

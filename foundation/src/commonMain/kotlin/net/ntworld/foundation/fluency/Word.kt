@@ -3,6 +3,10 @@ package net.ntworld.foundation.fluency
 interface Word {
     enum class Nothing { Default }
 
+    enum class ReceivedEvent { Default }
+
+    enum class ReceivedEvents { Default }
+
     enum class OrdinalCall(val value: Int) {
         First(0),
         Second(1),
