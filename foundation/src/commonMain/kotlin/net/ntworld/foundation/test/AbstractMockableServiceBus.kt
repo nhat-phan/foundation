@@ -13,6 +13,8 @@ abstract class AbstractMockableServiceBus<T>(
 
     abstract fun guessRequestKClassByInstance(instance: Request<*>): KClass<out Request<*>>?
 
+    val originalBus: ServiceBus = bus
+
     @Suppress("UNCHECKED_CAST")
     override fun <R : Response> process(request: Request<R>): ServiceBusProcessResult<R> {
         val kClass = guessRequestKClassByInstance(request) ?: request::class

@@ -17,6 +17,8 @@ abstract class AbstractMockableQueryBus<T>(
 
     abstract fun guessQueryKClassByInstance(instance: Query<*>): KClass<out Query<*>>?
 
+    val originalBus: QueryBus = bus
+
     @Suppress("UNCHECKED_CAST")
     override fun <R : QueryResult> process(query: Query<R>): R {
         val kClass = guessQueryKClassByInstance(query) ?: query::class

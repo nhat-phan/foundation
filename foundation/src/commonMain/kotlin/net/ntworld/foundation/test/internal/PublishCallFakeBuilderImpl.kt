@@ -16,10 +16,6 @@ internal class PublishCallFakeBuilderImpl(
     PublishCallFakeBuilder.Start,
     CallFakeBuilder.Build<Unit> {
 
-    override fun alwaysPublishesEvents() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     override fun alwaysDoesNothing() = callFakeBuilderImpl.alwaysReturns(Unit)
 
     override fun publishesReceivedEvent(): PublishCallFakeBuilder.Chain {

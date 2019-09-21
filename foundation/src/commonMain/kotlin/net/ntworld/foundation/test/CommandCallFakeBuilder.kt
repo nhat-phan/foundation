@@ -1,14 +1,12 @@
 package net.ntworld.foundation.test
 
+import net.ntworld.foundation.cqrs.Command
 import net.ntworld.foundation.fluency.Word
 import net.ntworld.foundation.mocking.InvokeData
-import net.ntworld.foundation.mocking.ParameterList
 import net.ntworld.foundation.mocking.TestDsl
 
 interface CommandCallFakeBuilder {
-    interface Start : Calls {
-        // TODO: add runs()
-
+    interface Start<T: Command> : Calls<T> {
         @TestDsl.Mock
         fun alwaysDoesNothing()
 
@@ -17,25 +15,31 @@ interface CommandCallFakeBuilder {
 
         @TestDsl.Mock
         infix fun alwaysThrows(throwable: Throwable)
+
+        @TestDsl.Mock
+        infix fun alwaysRuns(fakeImpl: (T, InvokeData) -> Unit)
     }
 
-    interface Action {
+    interface Action<T: Command> {
         @TestDsl.Mock
-        fun doesNothing(): Chain
+        fun doesNothing(): Chain<T>
 
         @TestDsl.Mock
         infix fun does(action: Word.Nothing) = doesNothing()
 
         @TestDsl.Mock
-        infix fun throws(throwable: Throwable): Chain
+        infix fun throws(throwable: Throwable): Chain<T>
+
+        @TestDsl.Mock
+        infix fun runs(fakeImpl: (T) -> Unit): Chain<T>
     }
 
-    interface Calls {
+    interface Calls<T: Command> {
         @TestDsl.Mock
-        infix fun onCall(n: Int): Action
+        infix fun onCall(n: Int): Action<T>
 
         @TestDsl.Mock
-        infix fun on(nth: Word.OrdinalCall): Action = onCall(nth.value)
+        infix fun on(nth: Word.OrdinalCall): Action<T> = onCall(nth.value)
 
         @TestDsl.Mock
         fun onFirstCallDoesNothing() = onCall(0).doesNothing()
@@ -56,7 +60,7 @@ interface CommandCallFakeBuilder {
         infix fun onThirdCallThrows(throwable: Throwable) = onCall(2).throws(throwable)
     }
 
-    interface Chain : Calls {
+    interface Chain<T: Command> : Calls<T> {
         @TestDsl.Mock
         fun otherwiseDoesNothing()
 
@@ -65,5 +69,8 @@ interface CommandCallFakeBuilder {
 
         @TestDsl.Mock
         infix fun otherwiseThrows(throwable: Throwable)
+
+        @TestDsl.Mock
+        infix fun otherwiseRuns(fakeImpl: (T, InvokeData) -> Unit)
     }
 }

@@ -4,10 +4,6 @@ import net.ntworld.foundation.fluency.Word
 
 interface PublishCallFakeBuilder {
     interface Start : Calls {
-        fun alwaysPublishesEvents()
-
-        infix fun alwaysPublishes(word: Word.ReceivedEvents) = alwaysPublishesEvents()
-
         fun alwaysDoesNothing()
 
         infix fun alwaysDoes(word: Word.Nothing) = alwaysDoesNothing()

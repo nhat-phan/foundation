@@ -17,6 +17,8 @@ abstract class AbstractMockableEventBus<T>(
 
     abstract fun guessEventKClassByInstance(instance: Event): KClass<out Event>?
 
+    val originalBus: EventBus = bus
+
     override fun publish(event: Event) {
         val kClass = guessEventKClassByInstance(event) ?: event::class
         val mock = publisherMocks[kClass] as PublisherManualMock<Event>?

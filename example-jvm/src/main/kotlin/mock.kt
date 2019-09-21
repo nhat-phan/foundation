@@ -12,6 +12,7 @@ import net.ntworld.foundation.mocking.CalledWithBuilder
 import net.ntworld.foundation.test.AbstractMockableCommandBus
 import net.ntworld.foundation.test.AbstractMockableServiceBus
 import net.ntworld.foundation.fluency.nothing
+import net.ntworld.foundation.mocking.InvokeData
 import net.ntworld.foundation.mocking.TestDsl
 import kotlin.reflect.KClass
 
@@ -81,6 +82,11 @@ fun main() {
     // serviceBus whenProcessing TestMockRequest alwaysReturns response
 
     serviceBus whenProcessing TestMockRequest on firstCall returns response otherwiseReturns response
+    serviceBus whenProcessing TestMockRequest alwaysRuns { params, _ ->
+        val (request) = params
+        serviceBus.originalBus.process(request as Request<TestMockResponse>).getResponse()
+    }
+
     serviceBus shouldProcess TestMockRequest exact 3
     serviceBus shouldProcess TestMockRequest on firstCall match { true } otherwiseMatch { _, _ -> true }
 
@@ -96,5 +102,9 @@ fun testCommandBus(infrastructure: Infrastructure) {
 
     commandBus whenProcessing CreateTodoCommand::class alwaysDoes nothing
     commandBus whenProcessing CreateTodoCommand::class onCall 1 does nothing otherwiseDoes nothing
+    commandBus whenProcessing CreateTodoCommand::class on firstCall throws Exception() otherwiseRuns { command, _ ->
+        commandBus.originalBus.process(command)
+    }
 
+    commandBus whenProcessing CreateTodoCommand::class alwaysRuns commandBus.originalProcess
 }
