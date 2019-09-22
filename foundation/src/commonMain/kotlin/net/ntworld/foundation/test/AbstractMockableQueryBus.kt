@@ -6,6 +6,7 @@ import net.ntworld.foundation.cqrs.QueryBus
 import net.ntworld.foundation.cqrs.QueryHandler
 import net.ntworld.foundation.cqrs.QueryResult
 import net.ntworld.foundation.mocking.CalledWithBuilder
+import net.ntworld.foundation.mocking.InvokeData
 import net.ntworld.foundation.mocking.TestDsl
 import net.ntworld.foundation.mocking.internal.CallFakeBuilderImpl
 import net.ntworld.foundation.test.internal.QueryBusCallFakeBuilderImpl
@@ -19,6 +20,9 @@ abstract class AbstractMockableQueryBus<T>(
     abstract fun guessQueryKClassByInstance(instance: Query<*>): KClass<out Query<*>>?
 
     val originalBus: QueryBus = bus
+    val originalProcess: (Query<*>, InvokeData) -> Unit = { query, _ ->
+        bus.process(query)
+    }
 
     @Suppress("UNCHECKED_CAST")
     override fun <R : QueryResult> process(query: Query<R>): R {

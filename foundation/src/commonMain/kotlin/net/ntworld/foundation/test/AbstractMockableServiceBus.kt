@@ -2,6 +2,7 @@ package net.ntworld.foundation.test
 
 import net.ntworld.foundation.*
 import net.ntworld.foundation.mocking.CalledWithBuilder
+import net.ntworld.foundation.mocking.InvokeData
 import net.ntworld.foundation.mocking.TestDsl
 import net.ntworld.foundation.mocking.internal.CallFakeBuilderImpl
 import net.ntworld.foundation.test.internal.ServiceBusCallFakeBuilderImpl
@@ -15,6 +16,9 @@ abstract class AbstractMockableServiceBus<T>(
     abstract fun guessRequestKClassByInstance(instance: Request<*>): KClass<out Request<*>>?
 
     val originalBus: ServiceBus = bus
+    val originalProcess: (Request<*>, InvokeData) -> Unit = { request, _ ->
+        bus.process(request)
+    }
 
     @Suppress("UNCHECKED_CAST")
     override fun <R : Response> process(request: Request<R>): ServiceBusProcessResult<R> {

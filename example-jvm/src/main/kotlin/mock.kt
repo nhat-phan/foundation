@@ -1,22 +1,17 @@
-import com.example.LocalCommandBus
-import com.example.LocalQueryBus
-import com.example.LocalServiceBus
+import com.example.*
 import com.example.contract.CreateTodoCommand
 import com.example.contract.GetAllTodoQuery
 import com.example.contract.GetAllTodoQueryResult
-import com.example.make
+import com.example.event.TodoDeletedEvent
 import net.ntworld.foundation.*
 import net.ntworld.foundation.cqrs.*
 import net.ntworld.foundation.fluency.firstCall
 import net.ntworld.foundation.mocking.CallFakeBuilder
 import net.ntworld.foundation.mocking.CalledWithBuilder
-import net.ntworld.foundation.test.AbstractMockableCommandBus
-import net.ntworld.foundation.test.AbstractMockableServiceBus
 import net.ntworld.foundation.fluency.nothing
 import net.ntworld.foundation.mocking.InvokeData
 import net.ntworld.foundation.mocking.TestDsl
-import net.ntworld.foundation.test.AbstractMockableQueryBus
-import net.ntworld.foundation.test.ServiceBusCallFakeBuilder
+import net.ntworld.foundation.test.*
 import kotlin.reflect.KClass
 
 interface TestMockRequest : Request<TestMockResponse> {
@@ -76,6 +71,14 @@ class MockableQueryBus<T>(private val bus: T) : AbstractMockableQueryBus<T>(bus)
     }
 }
 
+class MockableEventBus<T>(private val bus: T) : AbstractMockableEventBus<T>(bus)
+    where T : EventBus, T : LocalBusResolver<Event, Array<EventHandler<*>>> {
+    override fun guessEventKClassByInstance(instance: Event): KClass<out Event>? {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+}
+
 fun main() {
     // Foundation should generate a InfrastructureProvider for testing, which is
     // auto wired just like the other local buses
@@ -125,6 +128,16 @@ fun testQueryBus(infrastructure: Infrastructure) {
 
     queryBus whenProcessing GetAllTodoQuery::class on firstCall throws Exception()
     queryBus whenProcessing GetAllTodoQuery::class alwaysRuns { query, _ ->
+        TODO()
+    }
+}
+
+fun testEventBus(infrastructure: Infrastructure) {
+    val eventBus = MockableEventBus(LocalEventBus(infrastructure))
+
+    eventBus whenPublishing TodoDeletedEvent::class on firstCall does nothing otherwiseRuns eventBus.originalPublish
+    eventBus whenProcessing TodoDeletedEvent::class on firstCall throws Exception()
+    eventBus whenProcessing TodoDeletedEvent::class alwaysRuns { event, _ ->
         TODO()
     }
 }
