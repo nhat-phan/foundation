@@ -5,7 +5,7 @@ import net.ntworld.foundation.fluency.Word
 import net.ntworld.foundation.mocking.InvokeData
 import net.ntworld.foundation.mocking.TestDsl
 
-interface CommandCallFakeBuilder {
+interface CommandBusCallFakeBuilder {
     interface Start<T: Command> : Calls<T> {
         @TestDsl.Mock
         fun alwaysDoesNothing()

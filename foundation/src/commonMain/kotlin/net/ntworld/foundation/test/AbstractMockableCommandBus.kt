@@ -8,7 +8,7 @@ import net.ntworld.foundation.mocking.CalledWithBuilder
 import net.ntworld.foundation.mocking.InvokeData
 import net.ntworld.foundation.mocking.TestDsl
 import net.ntworld.foundation.mocking.internal.CallFakeBuilderImpl
-import net.ntworld.foundation.test.internal.CommandCallFakeBuilderImpl
+import net.ntworld.foundation.test.internal.CommandBusCallFakeBuilderImpl
 import kotlin.reflect.KClass
 
 abstract class AbstractMockableCommandBus<T>(
@@ -42,11 +42,11 @@ abstract class AbstractMockableCommandBus<T>(
 
     @Suppress("UNCHECKED_CAST")
     @TestDsl.Mock
-    infix fun<T: Command> whenProcessing(command: KClass<out T>): CommandCallFakeBuilder.Start<T> {
+    infix fun<T: Command> whenProcessing(command: KClass<out T>): CommandBusCallFakeBuilder.Start<T> {
         val start = (initMockInstanceForHandlerIfNeeded<Command, Unit>(command) as HandlerManualMock<Command, Unit>)
             .whenHandleCalled()
 
-        return CommandCallFakeBuilderImpl(start as CallFakeBuilderImpl<Unit>)
+        return CommandBusCallFakeBuilderImpl(start as CallFakeBuilderImpl<Unit>)
     }
 
     @TestDsl.Verify

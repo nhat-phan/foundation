@@ -3,14 +3,14 @@ package net.ntworld.foundation.test.internal
 import net.ntworld.foundation.cqrs.Command
 import net.ntworld.foundation.mocking.InvokeData
 import net.ntworld.foundation.mocking.internal.CallFakeBuilderImpl
-import net.ntworld.foundation.test.CommandCallFakeBuilder
+import net.ntworld.foundation.test.CommandBusCallFakeBuilder
 
-internal class CommandCallFakeBuilderImpl<T: Command>(
+internal class CommandBusCallFakeBuilderImpl<T: Command>(
     private val callFakeBuilderImpl: CallFakeBuilderImpl<Unit>
-) : CommandCallFakeBuilder.Action<T>,
-    CommandCallFakeBuilder.Calls<T>,
-    CommandCallFakeBuilder.Chain<T>,
-    CommandCallFakeBuilder.Start<T> {
+) : CommandBusCallFakeBuilder.Action<T>,
+    CommandBusCallFakeBuilder.Calls<T>,
+    CommandBusCallFakeBuilder.Chain<T>,
+    CommandBusCallFakeBuilder.Start<T> {
     override fun alwaysDoesNothing() = callFakeBuilderImpl.alwaysReturns(Unit)
 
     override fun alwaysThrows(throwable: Throwable) = callFakeBuilderImpl.alwaysThrows(throwable)
@@ -22,20 +22,20 @@ internal class CommandCallFakeBuilderImpl<T: Command>(
         }
     }
 
-    override fun doesNothing(): CommandCallFakeBuilder.Chain<T> {
+    override fun doesNothing(): CommandBusCallFakeBuilder.Chain<T> {
         callFakeBuilderImpl.returns(Unit)
 
         return this
     }
 
-    override fun throws(throwable: Throwable): CommandCallFakeBuilder.Chain<T> {
+    override fun throws(throwable: Throwable): CommandBusCallFakeBuilder.Chain<T> {
         callFakeBuilderImpl.throws(throwable)
 
         return this
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun runs(fakeImpl: (T) -> Unit): CommandCallFakeBuilder.Chain<T> {
+    override fun runs(fakeImpl: (T) -> Unit): CommandBusCallFakeBuilder.Chain<T> {
         callFakeBuilderImpl.runs {
             fakeImpl(it[0] as T)
         }
@@ -43,7 +43,7 @@ internal class CommandCallFakeBuilderImpl<T: Command>(
         return this
     }
 
-    override fun onCall(n: Int): CommandCallFakeBuilder.Action<T> {
+    override fun onCall(n: Int): CommandBusCallFakeBuilder.Action<T> {
         callFakeBuilderImpl.onCall(n)
 
         return this

@@ -1,11 +1,12 @@
 import com.example.LocalCommandBus
+import com.example.LocalQueryBus
 import com.example.LocalServiceBus
 import com.example.contract.CreateTodoCommand
+import com.example.contract.GetAllTodoQuery
+import com.example.contract.GetAllTodoQueryResult
 import com.example.make
 import net.ntworld.foundation.*
-import net.ntworld.foundation.cqrs.Command
-import net.ntworld.foundation.cqrs.CommandBus
-import net.ntworld.foundation.cqrs.CommandHandler
+import net.ntworld.foundation.cqrs.*
 import net.ntworld.foundation.fluency.firstCall
 import net.ntworld.foundation.mocking.CallFakeBuilder
 import net.ntworld.foundation.mocking.CalledWithBuilder
@@ -14,6 +15,8 @@ import net.ntworld.foundation.test.AbstractMockableServiceBus
 import net.ntworld.foundation.fluency.nothing
 import net.ntworld.foundation.mocking.InvokeData
 import net.ntworld.foundation.mocking.TestDsl
+import net.ntworld.foundation.test.AbstractMockableQueryBus
+import net.ntworld.foundation.test.ServiceBusCallFakeBuilder
 import kotlin.reflect.KClass
 
 interface TestMockRequest : Request<TestMockResponse> {
@@ -45,7 +48,8 @@ class MockableServiceBus<T>(private val bus: T) : AbstractMockableServiceBus<T>(
 
     // We have the list at built-time, so no worries
     @TestDsl.Mock
-    infix fun whenProcessing(request: TestMockRequest.Companion): CallFakeBuilder.Start<TestMockResponse> {
+    infix fun whenProcessing(request: TestMockRequest.Companion)
+        : ServiceBusCallFakeBuilder.Start<TestMockRequest, TestMockResponse> {
         return whenProcessing(TestMockRequest::class)
     }
 
@@ -62,6 +66,14 @@ class MockableCommandBus<T>(private val bus: T) : AbstractMockableCommandBus<T>(
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+}
+
+class MockableQueryBus<T>(private val bus: T) : AbstractMockableQueryBus<T>(bus)
+    where T : QueryBus, T : LocalBusResolver<Query<*>, QueryHandler<*, *>> {
+
+    override fun guessQueryKClassByInstance(instance: Query<*>): KClass<out Query<*>>? {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 }
 
 fun main() {
@@ -82,9 +94,8 @@ fun main() {
     // serviceBus whenProcessing TestMockRequest alwaysReturns response
 
     serviceBus whenProcessing TestMockRequest on firstCall returns response otherwiseReturns response
-    serviceBus whenProcessing TestMockRequest alwaysRuns { params, _ ->
-        val (request) = params
-        serviceBus.originalBus.process(request as Request<TestMockResponse>).getResponse()
+    serviceBus whenProcessing TestMockRequest alwaysRuns { request, _ ->
+        serviceBus.originalBus.process(request).getResponse()
     }
 
     serviceBus shouldProcess TestMockRequest exact 3
@@ -107,4 +118,13 @@ fun testCommandBus(infrastructure: Infrastructure) {
     }
 
     commandBus whenProcessing CreateTodoCommand::class alwaysRuns commandBus.originalProcess
+}
+
+fun testQueryBus(infrastructure: Infrastructure) {
+    val queryBus = MockableQueryBus(LocalQueryBus())
+
+    queryBus whenProcessing GetAllTodoQuery::class on firstCall throws Exception()
+    queryBus whenProcessing GetAllTodoQuery::class alwaysRuns { query, _ ->
+        TODO()
+    }
 }
