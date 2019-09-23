@@ -8,10 +8,16 @@ interface CalledWithBuilder {
         fun never() = exact(0)
 
         @TestDsl.Verify
+        infix fun never(called: Word.Called) = exact(0)
+
+        @TestDsl.Verify
         infix fun atLeast(count: Int): Calls
 
         @TestDsl.Verify
         infix fun exact(count: Int): Calls
+
+        @TestDsl.Verify
+        infix fun exact(count: Word.CalledCount): Calls = exact(count.value)
 
         @TestDsl.Verify
         infix fun alwaysMatch(verify: (ParameterList, InvokeData) -> Boolean)

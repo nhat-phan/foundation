@@ -93,12 +93,12 @@ class AbstractMockableCommandBusTest {
         }
 
         @TestDsl.Verify
-        infix fun shouldProcess(request: CreateCommand.Companion): CalledWithBuilder.Start {
+        infix fun shouldProcess(request: CreateCommand.Companion): BusCalledWithBuilder.Start<CreateCommand> {
             return shouldProcess(CreateCommand::class)
         }
 
         @TestDsl.Verify
-        infix fun shouldProcess(request: UpdateCommand.Companion): CalledWithBuilder.Start {
+        infix fun shouldProcess(request: UpdateCommand.Companion): BusCalledWithBuilder.Start<UpdateCommand> {
             return shouldProcess(UpdateCommand::class)
         }
     }
@@ -193,10 +193,9 @@ class AbstractMockableCommandBusTest {
         val data = TestData()
         val bus = makeMockableCommandBus(data)
 
-        bus shouldProcess CreateCommand onFirstCallMatch { params ->
-            val (command) = params
-            (command as CreateCommand).name == "create 1"
-        } otherwiseMatch { _, _ -> true }
+        bus shouldProcess CreateCommand onFirstCallMatch { command ->
+            command.name == "create 1"
+        }
 
         bus.process(CreateCommandImpl(name = "create 1"))
         bus.process(CreateCommandImpl(name = "create 2"))

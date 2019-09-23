@@ -8,6 +8,8 @@ import net.ntworld.foundation.mocking.CalledWithBuilder
 import net.ntworld.foundation.mocking.InvokeData
 import net.ntworld.foundation.mocking.TestDsl
 import net.ntworld.foundation.mocking.internal.CallFakeBuilderImpl
+import net.ntworld.foundation.mocking.internal.CalledWithBuilderImpl
+import net.ntworld.foundation.test.internal.BusCalledWithBuilderImpl
 import net.ntworld.foundation.test.internal.CommandBusCallFakeBuilderImpl
 import kotlin.reflect.KClass
 
@@ -42,7 +44,7 @@ abstract class AbstractMockableCommandBus<T>(
 
     @Suppress("UNCHECKED_CAST")
     @TestDsl.Mock
-    infix fun<T: Command> whenProcessing(command: KClass<out T>): CommandBusCallFakeBuilder.Start<T> {
+    infix fun <T : Command> whenProcessing(command: KClass<out T>): CommandBusCallFakeBuilder.Start<T> {
         val start = (initMockInstanceForHandlerIfNeeded<Command, Unit>(command) as HandlerManualMock<Command, Unit>)
             .whenHandleCalled()
 
@@ -50,7 +52,9 @@ abstract class AbstractMockableCommandBus<T>(
     }
 
     @TestDsl.Verify
-    infix fun shouldProcess(command: KClass<out Command>): CalledWithBuilder.Start {
-        return initMockInstanceForHandlerIfNeeded<Command, Unit>(command).expectHandleCalled()
+    infix fun <T : Command> shouldProcess(command: KClass<out T>): BusCalledWithBuilder.Start<T> {
+        val start = initMockInstanceForHandlerIfNeeded<Command, Unit>(command).expectHandleCalled()
+
+        return BusCalledWithBuilderImpl(start as CalledWithBuilderImpl)
     }
 }

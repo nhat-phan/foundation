@@ -82,7 +82,7 @@ internal class CallFakeBuilderImpl<R> :
         }
 
         return { list, invokedData ->
-            val call = data[invokedData.ordinal]
+            val call = data[invokedData.callIndex]
             if (null !== call) {
                 call.invoke(list, invokedData)
             } else {

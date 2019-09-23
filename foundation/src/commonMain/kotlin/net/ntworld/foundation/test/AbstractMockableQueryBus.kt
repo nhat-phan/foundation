@@ -9,6 +9,8 @@ import net.ntworld.foundation.mocking.CalledWithBuilder
 import net.ntworld.foundation.mocking.InvokeData
 import net.ntworld.foundation.mocking.TestDsl
 import net.ntworld.foundation.mocking.internal.CallFakeBuilderImpl
+import net.ntworld.foundation.mocking.internal.CalledWithBuilderImpl
+import net.ntworld.foundation.test.internal.BusCalledWithBuilderImpl
 import net.ntworld.foundation.test.internal.QueryBusCallFakeBuilderImpl
 import kotlin.reflect.KClass
 
@@ -51,7 +53,9 @@ abstract class AbstractMockableQueryBus<T>(
     }
 
     @TestDsl.Verify
-    infix fun <R : QueryResult> shouldProcess(query: KClass<out Query<R>>): CalledWithBuilder.Start {
-        return initMockInstanceForHandlerIfNeeded<Query<R>, R>(query).expectHandleCalled()
+    infix fun <T : Query<R>, R : QueryResult> shouldProcess(query: KClass<out T>): BusCalledWithBuilder.Start<T> {
+        val start = initMockInstanceForHandlerIfNeeded<Query<R>, R>(query).expectHandleCalled()
+
+        return BusCalledWithBuilderImpl(start as CalledWithBuilderImpl)
     }
 }

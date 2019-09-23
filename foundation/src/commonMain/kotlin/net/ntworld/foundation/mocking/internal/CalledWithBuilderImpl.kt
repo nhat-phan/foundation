@@ -70,7 +70,7 @@ internal class CalledWithBuilderImpl :
         }
 
         return { list, invokedData ->
-            val match = data[invokedData.ordinal]
+            val match = data[invokedData.callIndex]
             if (null !== match) {
                 match.verify(list, invokedData)
             } else {
@@ -78,7 +78,7 @@ internal class CalledWithBuilderImpl :
                 if (null !== global) {
                     global.verify(list, invokedData)
                 } else {
-                    throw MockingException("There is no global verify lambda. Please provide global verify lambda via .alwaysMatch() or .otherwiseMatch()")
+                    true
                 }
             }
         }

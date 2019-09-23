@@ -3,6 +3,11 @@ package net.ntworld.foundation.fluency
 val nothing = Word.Nothing.Default
 val receivedEvent = Word.ReceivedEvent.Default
 val receivedEvents = Word.ReceivedEvents.Default
+val called = Word.Called.Default
+
+val once = Word.CalledCount.Once
+val twice = Word.CalledCount.Twice
+val thrice = Word.CalledCount.Thrice
 
 val firstCall = Word.OrdinalCall.First
 val secondCall = Word.OrdinalCall.Second

@@ -49,7 +49,7 @@ class MockableServiceBus<T>(private val bus: T) : AbstractMockableServiceBus<T>(
     }
 
     @TestDsl.Verify
-    infix fun shouldProcess(request: TestMockRequest.Companion): CalledWithBuilder.Start {
+    infix fun shouldProcess(request: TestMockRequest.Companion): BusCalledWithBuilder.Start<TestMockRequest> {
         return shouldProcess(TestMockRequest::class)
     }
 }
@@ -102,7 +102,9 @@ fun main() {
     }
 
     serviceBus shouldProcess TestMockRequest exact 3
-    serviceBus shouldProcess TestMockRequest on firstCall match { true } otherwiseMatch { _, _ -> true }
+    serviceBus shouldProcess TestMockRequest on firstCall match {
+        it.name == "test"
+    }
 
     println(serviceBus.process(TestMockRequest.make("test")).getResponse() === response)
     println(serviceBus.process(TestMockRequest.make("test")).getResponse() === response)
@@ -130,6 +132,9 @@ fun testQueryBus(infrastructure: Infrastructure) {
     queryBus whenProcessing GetAllTodoQuery::class alwaysRuns { query, _ ->
         TODO()
     }
+    queryBus shouldProcess GetAllTodoQuery::class alwaysMatch { query, _ ->
+        true
+    }
 }
 
 fun testEventBus(infrastructure: Infrastructure) {
@@ -139,5 +144,8 @@ fun testEventBus(infrastructure: Infrastructure) {
     eventBus whenProcessing TodoDeletedEvent::class on firstCall throws Exception()
     eventBus whenProcessing TodoDeletedEvent::class alwaysRuns { event, _ ->
         TODO()
+    }
+    eventBus shouldProcess TodoDeletedEvent::class alwaysMatch { event, _ ->
+        true
     }
 }

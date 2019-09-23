@@ -5,6 +5,8 @@ import net.ntworld.foundation.mocking.CalledWithBuilder
 import net.ntworld.foundation.mocking.InvokeData
 import net.ntworld.foundation.mocking.TestDsl
 import net.ntworld.foundation.mocking.internal.CallFakeBuilderImpl
+import net.ntworld.foundation.mocking.internal.CalledWithBuilderImpl
+import net.ntworld.foundation.test.internal.BusCalledWithBuilderImpl
 import net.ntworld.foundation.test.internal.ServiceBusCallFakeBuilderImpl
 import kotlin.reflect.KClass
 
@@ -47,7 +49,9 @@ abstract class AbstractMockableServiceBus<T>(
     }
 
     @TestDsl.Verify
-    infix fun <R : Response> shouldProcess(request: KClass<out Request<R>>): CalledWithBuilder.Start {
-        return initMockInstanceForHandlerIfNeeded<Request<R>, R>(request).expectHandleCalled()
+    infix fun <T : Request<R>, R : Response> shouldProcess(request: KClass<out T>): BusCalledWithBuilder.Start<T> {
+        val start = initMockInstanceForHandlerIfNeeded<Request<R>, R>(request).expectHandleCalled()
+
+        return BusCalledWithBuilderImpl(start as CalledWithBuilderImpl)
     }
 }

@@ -8,6 +8,8 @@ import net.ntworld.foundation.mocking.CalledWithBuilder
 import net.ntworld.foundation.mocking.InvokeData
 import net.ntworld.foundation.mocking.TestDsl
 import net.ntworld.foundation.mocking.internal.CallFakeBuilderImpl
+import net.ntworld.foundation.mocking.internal.CalledWithBuilderImpl
+import net.ntworld.foundation.test.internal.BusCalledWithBuilderImpl
 import net.ntworld.foundation.test.internal.EventBusCallFakeBuilderImpl
 import kotlin.reflect.KClass
 
@@ -66,8 +68,10 @@ abstract class AbstractMockableEventBus<T>(
     }
 
     @TestDsl.Verify
-    infix fun shouldProcess(event: KClass<out Event>): CalledWithBuilder.Start {
-        return initMockInstanceForHandlerIfNeeded<Event, Unit>(event).expectHandleCalled()
+    infix fun <T : Event> shouldProcess(event: KClass<out T>): BusCalledWithBuilder.Start<T> {
+        val start = initMockInstanceForHandlerIfNeeded<Event, Unit>(event).expectHandleCalled()
+
+        return BusCalledWithBuilderImpl(start as CalledWithBuilderImpl)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -80,8 +84,10 @@ abstract class AbstractMockableEventBus<T>(
     }
 
     @TestDsl.Verify
-    infix fun shouldPublish(event: KClass<out Event>): CalledWithBuilder.Start {
-        return initMockInstanceForPublisherIfNeeded(event).expectPublishCalled()
+    infix fun <T : Event> shouldPublish(event: KClass<out T>): BusCalledWithBuilder.Start<T> {
+        val start = initMockInstanceForPublisherIfNeeded(event).expectPublishCalled()
+
+        return BusCalledWithBuilderImpl(start as CalledWithBuilderImpl)
     }
 
     @Suppress("UNCHECKED_CAST")

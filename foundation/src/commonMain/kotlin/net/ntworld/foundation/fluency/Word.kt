@@ -7,6 +7,14 @@ interface Word {
 
     enum class ReceivedEvents { Default }
 
+    enum class Called { Default }
+
+    enum class CalledCount(val value: Int) {
+        Once(1),
+        Twice(2),
+        Thrice(3)
+    }
+
     enum class OrdinalCall(val value: Int) {
         First(0),
         Second(1),
