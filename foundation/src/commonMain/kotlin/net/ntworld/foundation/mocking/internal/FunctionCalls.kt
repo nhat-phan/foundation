@@ -29,7 +29,7 @@ internal class FunctionCalls {
     fun <R> callFake(params: List<Any?>, fake: Invoker<R>): R {
         val size = calledParams.size
         val list = this.add(params)
-        return fake.invoke(list, InvokeData(size + 1))
+        return fake.invoke(list, InvokeData(size))
     }
 
     fun <R> returnResult(params: List<Any?>, result: R): R {
@@ -48,7 +48,7 @@ internal class FunctionCalls {
 
     fun verify(block: (ParameterList, InvokeData) -> Boolean): Boolean {
         for (index in 0 until count()) {
-            if (!block.invoke(calledParams[index], InvokeData(index + 1))) {
+            if (!block.invoke(calledParams[index], InvokeData(index))) {
                 return false
             }
         }

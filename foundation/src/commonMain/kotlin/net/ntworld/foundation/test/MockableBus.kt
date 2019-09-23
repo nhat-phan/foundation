@@ -16,9 +16,14 @@ open class MockableBus {
     }
 
     @TestDsl.Verify
-    open fun verifyAll() {
+    fun verifyProcessCalledAsExpected() {
         handlerMocks.values.forEach {
             it.verifyAll()
         }
+    }
+
+    @TestDsl.Verify
+    open fun verifyAll() {
+        verifyProcessCalledAsExpected()
     }
 }

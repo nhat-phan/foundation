@@ -94,13 +94,15 @@ abstract class AbstractMockableEventBus<T>(
     }
 
     @TestDsl.Verify
-    override fun verifyAll() {
-        handlerMocks.values.forEach {
-            it.verifyAll()
-        }
-
+    fun verifyPublishCalledAsExpected() {
         publisherMocks.values.forEach {
             it.verifyAll()
         }
+    }
+
+    @TestDsl.Verify
+    override fun verifyAll() {
+        verifyProcessCalledAsExpected()
+        verifyPublishCalledAsExpected()
     }
 }

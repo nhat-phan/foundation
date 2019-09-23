@@ -9,7 +9,7 @@ checks:
   argument-count:
     enabled: true
     config:
-      threshold: 4
+      threshold: 8
   complex-logic:
     enabled: true
     config:
@@ -21,7 +21,7 @@ checks:
   method-complexity:
     enabled: true
     config:
-      threshold: 8
+      threshold: 12
   method-count:
     enabled: true
     config:
@@ -41,10 +41,12 @@ checks:
   similar-code:
     enabled: true
     config:
-      threshold: 70
+      threshold: 100
   identical-code:
     enabled: true
     config:
-      threshold: 70
+      threshold: 100
 exclude_patterns:
   - 'build/'
+  - 'src/test'
+  - 'src/commonTest'
