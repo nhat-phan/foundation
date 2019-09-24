@@ -8,7 +8,7 @@ import javax.annotation.processing.ProcessingEnvironment
 import javax.tools.Diagnostic
 
 internal object ProcessorOutput {
-    private const val PROCESSOR_VERSION = "0.4.4"
+    private const val PROCESSOR_VERSION = "0.5.1"
     private var isTest: Boolean = false
 
     private val files: MutableMap<String, String> = mutableMapOf()

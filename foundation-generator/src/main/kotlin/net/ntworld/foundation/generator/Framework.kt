@@ -64,6 +64,16 @@ internal object Framework {
     val EventEntityConverterUtility = ClassName("$namespace.eventSourcing", "EventEntityConverterUtility")
     val EventEntityConverterUtilitySetting = ClassName("$namespace.eventSourcing.EventEntityConverterUtility", "Setting")
 
+    val AbstractMockableCommandBus = ClassName("$namespace.test", "AbstractMockableCommandBus")
+    val AbstractMockableServiceBus = ClassName("$namespace.test", "AbstractMockableServiceBus")
+
+    val BusCalledWithBuilderStart = ClassName("$namespace.test", "BusCalledWithBuilder", "Start")
+
+    val CommandBusCallFakeBuilderStart = ClassName("$namespace.test", "CommandBusCallFakeBuilder", "Start")
+
+    val TestDslMock = ClassName("$namespace.mocking", "TestDsl", "Mock")
+    val TestDslVerify = ClassName("$namespace.mocking", "TestDsl", "Verify")
+
     val FakerRelatedSource_FakedData = "FakedData"
     val FakerRelatedSource_JavaFakerWrapper_Jvm = "JavaFakerWrapper"
 

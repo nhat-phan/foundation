@@ -24,6 +24,15 @@ internal object Utility {
         )
     }
 
+    fun findMockableCommandBusTarget(settings: List<CommandHandlerSetting>, namespace: String? = null): ClassInfo {
+        val packageName = resolvePackageNameForLocalBuses(namespace, settings)
+
+        return ClassInfo(
+            className = "MockableCommandBus",
+            packageName = packageName
+        )
+    }
+
     fun findLocalQueryBusTarget(settings: List<QueryHandlerSetting>, namespace: String? = null): ClassInfo {
         val packageName = resolvePackageNameForLocalBuses(namespace, settings)
 
