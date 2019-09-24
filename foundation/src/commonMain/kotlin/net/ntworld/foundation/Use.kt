@@ -52,5 +52,5 @@ import kotlin.reflect.KClass
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 annotation class Use(
     val settings: String = "",
-    val contract: KClass<Contract> = Contract::class
+    val contract: KClass<out Contract> = Contract::class
 )
