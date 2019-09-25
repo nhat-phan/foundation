@@ -9,41 +9,43 @@ import net.ntworld.foundation.generator.Utility
 import net.ntworld.foundation.generator.setting.HandlerSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 
-class MockableCommandBusTestGenerator : AbstractMockableBusGeneratorTestGenerator() {
-    override val abstractMockableBus = Framework.AbstractMockableCommandBus
+class MockableQueryBusTestGenerator : AbstractMockableBusGeneratorTestGenerator() {
+    override val abstractMockableBus = Framework.AbstractMockableQueryBus
 
-    override val busType = Framework.CommandBus
+    override val busType = Framework.QueryBus
 
-    override val busResolverInput = Framework.Command
+    override val busResolverInput = Framework.Query.parameterizedBy(TypeVariableName("*"))
 
-    override val busResolverOutput = Framework.CommandHandler.parameterizedBy(TypeVariableName.invoke("*"))
+    override val busResolverOutput = Framework.QueryHandler.parameterizedBy(
+        TypeVariableName.invoke("*"), TypeVariableName.invoke("*")
+    )
 
-    override val busInputName = "command"
+    override val busInputName = "query"
 
-    override val guessKClassFunctionName = "guessCommandKClassByInstance"
+    override val guessKClassFunctionName = "guessQueryKClassByInstance"
 
-    override val guessKClassOutTypeName = "out Command"
+    override val guessKClassOutTypeName = "out Query<*>"
 
     override fun findTarget(settings: GeneratorSettings, namespace: String?): ClassInfo {
-        return Utility.findMockableCommandBusTarget(settings.commandHandlers, namespace)
+        return Utility.findMockableQueryBusTarget(settings.queryHandlers, namespace)
     }
 
     override fun getContracts(settings: GeneratorSettings): List<ClassInfo> {
         val result = mutableListOf<ClassInfo>()
-        settings.commandHandlers.forEach {
-            if (!result.contains(it.command)) {
-                result.add(it.command)
+        settings.queryHandlers.forEach {
+            if (!result.contains(it.query)) {
+                result.add(it.query)
             }
         }
         return result
     }
 
     override fun getHandlers(settings: GeneratorSettings): List<HandlerSetting> {
-        return settings.commandHandlers
+        return settings.queryHandlers
     }
 
     override fun findWhenProcessingReturnsType(contract: ClassInfo): TypeName {
-        return Framework.CommandBusCallFakeBuilderStart.parameterizedBy(
+        return Framework.QueryBusCallFakeBuilderStart.parameterizedBy(
             contract.toClassName()
         )
     }

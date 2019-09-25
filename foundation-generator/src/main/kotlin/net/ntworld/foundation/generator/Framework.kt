@@ -9,12 +9,12 @@ internal object Framework {
     val Infrastructure = ClassName(namespace, "Infrastructure")
     val InfrastructureProvider = ClassName(namespace, "InfrastructureProvider")
 
-    val Environment = ClassName("$namespace", "Environment")
+    val Environment = ClassName(namespace, "Environment")
 
     val Faker = ClassName(namespace, "Faker")
     val JavaFakerWrapper = ClassName("$namespace.util", "JavaFakerWrapper")
 
-    val IdGenerator = ClassName("$namespace", "IdGenerator")
+    val IdGenerator = ClassName(namespace, "IdGenerator")
     val UUIDGenerator = ClassName("$namespace.util", "UUIDGenerator")
 
     val LocalBusResolver = ClassName(namespace, "LocalBusResolver")
@@ -62,14 +62,20 @@ internal object Framework {
     val EventSourcedFactory = ClassName("$namespace.eventSourcing", "EventSourcedFactory")
 
     val EventEntityConverterUtility = ClassName("$namespace.eventSourcing", "EventEntityConverterUtility")
-    val EventEntityConverterUtilitySetting = ClassName("$namespace.eventSourcing.EventEntityConverterUtility", "Setting")
+    val EventEntityConverterUtilitySetting =
+        ClassName("$namespace.eventSourcing.EventEntityConverterUtility", "Setting")
 
     val AbstractMockableCommandBus = ClassName("$namespace.test", "AbstractMockableCommandBus")
+    val AbstractMockableEventBus = ClassName("$namespace.test", "AbstractMockableEventBus")
+    val AbstractMockableQueryBus = ClassName("$namespace.test", "AbstractMockableQueryBus")
     val AbstractMockableServiceBus = ClassName("$namespace.test", "AbstractMockableServiceBus")
 
     val BusCalledWithBuilderStart = ClassName("$namespace.test", "BusCalledWithBuilder", "Start")
 
     val CommandBusCallFakeBuilderStart = ClassName("$namespace.test", "CommandBusCallFakeBuilder", "Start")
+    val EventBusCallFakeBuilderStart = ClassName("$namespace.test", "EventBusCallFakeBuilder", "Start")
+    val QueryBusCallFakeBuilderStart = ClassName("$namespace.test", "QueryBusCallFakeBuilder", "Start")
+    val ServiceBusCallFakeBuilderStart = ClassName("$namespace.test", "ServiceBusCallFakeBuilder", "Start")
 
     val TestDslMock = ClassName("$namespace.mocking", "TestDsl", "Mock")
     val TestDslVerify = ClassName("$namespace.mocking", "TestDsl", "Verify")

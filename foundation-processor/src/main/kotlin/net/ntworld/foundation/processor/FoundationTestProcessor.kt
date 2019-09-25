@@ -6,6 +6,7 @@ import net.ntworld.foundation.generator.Platform
 import net.ntworld.foundation.generator.main.ContractImplementationMainGenerator
 import net.ntworld.foundation.generator.test.ContractFactoryTestGenerator
 import net.ntworld.foundation.generator.test.MockableCommandBusTestGenerator
+import net.ntworld.foundation.generator.test.MockableQueryBusTestGenerator
 import net.ntworld.foundation.generator.test.UtilityTestGenerator
 import net.ntworld.foundation.processor.util.ContractCollector
 import net.ntworld.foundation.processor.util.FrameworkProcessor
@@ -76,11 +77,14 @@ class FoundationTestProcessor : AbstractProcessor() {
     }
 
     private fun generateMockableBus(settings: GeneratorSettings, namespace: String) {
-        val mockableCommandBusTestGenerator = MockableCommandBusTestGenerator()
+        ProcessorOutput.writeGeneratedFile(
+            processingEnv,
+            MockableCommandBusTestGenerator().generate(settings, namespace)
+        )
 
         ProcessorOutput.writeGeneratedFile(
             processingEnv,
-            mockableCommandBusTestGenerator.generate(settings, namespace)
+            MockableQueryBusTestGenerator().generate(settings, namespace)
         )
     }
 }
