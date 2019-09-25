@@ -4,10 +4,7 @@ import net.ntworld.foundation.generator.util.ContractReader
 import net.ntworld.foundation.generator.GeneratorSettings
 import net.ntworld.foundation.generator.Platform
 import net.ntworld.foundation.generator.main.ContractImplementationMainGenerator
-import net.ntworld.foundation.generator.test.ContractFactoryTestGenerator
-import net.ntworld.foundation.generator.test.MockableCommandBusTestGenerator
-import net.ntworld.foundation.generator.test.MockableQueryBusTestGenerator
-import net.ntworld.foundation.generator.test.UtilityTestGenerator
+import net.ntworld.foundation.generator.test.*
 import net.ntworld.foundation.processor.util.ContractCollector
 import net.ntworld.foundation.processor.util.FrameworkProcessor
 import net.ntworld.foundation.processor.util.ProcessorOutput
@@ -82,9 +79,15 @@ class FoundationTestProcessor : AbstractProcessor() {
             MockableCommandBusTestGenerator().generate(settings, namespace)
         )
 
-        ProcessorOutput.writeGeneratedFile(
-            processingEnv,
-            MockableQueryBusTestGenerator().generate(settings, namespace)
-        )
+        // TODO: Add response to requestHandler, queryResult to queryHandler then regenerate mockableBus
+//        ProcessorOutput.writeGeneratedFile(
+//            processingEnv,
+//            MockableQueryBusTestGenerator().generate(settings, namespace)
+//        )
+//
+//        ProcessorOutput.writeGeneratedFile(
+//            processingEnv,
+//            MockableServiceBusTestGenerator().generate(settings, namespace)
+//        )
     }
 }

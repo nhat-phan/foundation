@@ -60,6 +60,15 @@ internal object Utility {
         )
     }
 
+    fun findMockableRequestBusTarget(settings: List<RequestHandlerSetting>, namespace: String? = null): ClassInfo {
+        val packageName = resolvePackageNameForLocalBuses(namespace, settings)
+
+        return ClassInfo(
+            className = "MockableServiceBus",
+            packageName = packageName
+        )
+    }
+
     fun findMessageChannelDictionaryTarget(contracts: List<ClassInfo>, namespace: String? = null): ClassInfo {
         val packageName = resolvePackageName(namespace) {
             var name = ""
