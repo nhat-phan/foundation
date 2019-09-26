@@ -21,5 +21,6 @@ data class TodoCreatedEvent(
 
     @Encrypted(faked = FakedData.Number.randomNumber)
     val money: Double
-
-) : Event
+) : Event {
+    companion object
+}

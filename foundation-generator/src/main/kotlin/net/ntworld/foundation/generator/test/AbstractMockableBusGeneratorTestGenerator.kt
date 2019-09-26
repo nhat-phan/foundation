@@ -118,6 +118,11 @@ abstract class AbstractMockableBusGeneratorTestGenerator {
         val whenProcessing = FunSpec.builder("whenProcessing")
             .addModifiers(KModifier.INFIX)
             .addAnnotation(Framework.TestDslMock)
+            .addAnnotation(
+                AnnotationSpec.builder(Suppress::class)
+                    .addMember("%S", "UNUSED_PARAMETER")
+                    .build()
+            )
             .returns(findWhenProcessingReturnsType(contract))
             .addParameter(busInputName, contract.toClassName().nestedClass("Companion"))
             .addCode("return whenProcessing(%T::class)\n", contract.toClassName())
@@ -125,6 +130,11 @@ abstract class AbstractMockableBusGeneratorTestGenerator {
         val shouldProcess = FunSpec.builder("shouldProcess")
             .addModifiers(KModifier.INFIX)
             .addAnnotation(Framework.TestDslVerify)
+            .addAnnotation(
+                AnnotationSpec.builder(Suppress::class)
+                    .addMember("%S", "UNUSED_PARAMETER")
+                    .build()
+            )
             .returns(findShouldProcessReturnsType(contract))
             .addParameter(busInputName, contract.toClassName().nestedClass("Companion"))
             .addCode("return shouldProcess(%T::class)\n", contract.toClassName())

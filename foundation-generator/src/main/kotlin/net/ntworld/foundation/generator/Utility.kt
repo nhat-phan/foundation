@@ -7,65 +7,58 @@ import java.lang.Math.min
 
 internal object Utility {
     fun findLocalEventBusTarget(settings: List<EventHandlerSetting>, namespace: String? = null): ClassInfo {
-        val packageName = resolvePackageNameForLocalBuses(namespace, settings)
-
         return ClassInfo(
             className = "LocalEventBus",
-            packageName = packageName
+            packageName = resolvePackageNameForLocalBuses(namespace, settings)
+        )
+    }
+
+    fun findMockableEventBusTarget(settings: List<EventHandlerSetting>, namespace: String? = null): ClassInfo {
+        return ClassInfo(
+            className = "MockableEventBus",
+            packageName = resolvePackageNameForLocalBuses(namespace, settings)
         )
     }
 
     fun findLocalCommandBusTarget(settings: List<CommandHandlerSetting>, namespace: String? = null): ClassInfo {
-        val packageName = resolvePackageNameForLocalBuses(namespace, settings)
-
         return ClassInfo(
             className = "LocalCommandBus",
-            packageName = packageName
+            packageName = resolvePackageNameForLocalBuses(namespace, settings)
         )
     }
 
     fun findMockableCommandBusTarget(settings: List<CommandHandlerSetting>, namespace: String? = null): ClassInfo {
-        val packageName = resolvePackageNameForLocalBuses(namespace, settings)
-
         return ClassInfo(
             className = "MockableCommandBus",
-            packageName = packageName
+            packageName = resolvePackageNameForLocalBuses(namespace, settings)
         )
     }
 
     fun findLocalQueryBusTarget(settings: List<QueryHandlerSetting>, namespace: String? = null): ClassInfo {
-        val packageName = resolvePackageNameForLocalBuses(namespace, settings)
-
         return ClassInfo(
             className = "LocalQueryBus",
-            packageName = packageName
+            packageName = resolvePackageNameForLocalBuses(namespace, settings)
         )
     }
 
     fun findMockableQueryBusTarget(settings: List<QueryHandlerSetting>, namespace: String? = null): ClassInfo {
-        val packageName = resolvePackageNameForLocalBuses(namespace, settings)
-
         return ClassInfo(
             className = "MockableQueryBus",
-            packageName = packageName
+            packageName = resolvePackageNameForLocalBuses(namespace, settings)
         )
     }
 
     fun findLocalServiceBusTarget(settings: List<RequestHandlerSetting>, namespace: String? = null): ClassInfo {
-        val packageName = resolvePackageNameForLocalBuses(namespace, settings)
-
         return ClassInfo(
             className = "LocalServiceBus",
-            packageName = packageName
+            packageName = resolvePackageNameForLocalBuses(namespace, settings)
         )
     }
 
     fun findMockableRequestBusTarget(settings: List<RequestHandlerSetting>, namespace: String? = null): ClassInfo {
-        val packageName = resolvePackageNameForLocalBuses(namespace, settings)
-
         return ClassInfo(
             className = "MockableServiceBus",
-            packageName = packageName
+            packageName = resolvePackageNameForLocalBuses(namespace, settings)
         )
     }
 

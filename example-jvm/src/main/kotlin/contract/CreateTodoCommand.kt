@@ -18,4 +18,6 @@ interface CreateTodoCommand : Command {
     val id: String
 
     val something: String
+
+    companion object
 }

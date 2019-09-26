@@ -76,6 +76,11 @@ class FoundationTestProcessor : AbstractProcessor() {
     private fun generateMockableBus(settings: GeneratorSettings, namespace: String) {
         ProcessorOutput.writeGeneratedFile(
             processingEnv,
+            MockableEventBusTestGenerator().generate(settings, namespace)
+        )
+
+        ProcessorOutput.writeGeneratedFile(
+            processingEnv,
             MockableCommandBusTestGenerator().generate(settings, namespace)
         )
 
