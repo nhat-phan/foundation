@@ -5,7 +5,9 @@ import net.ntworld.foundation.cqrs.Query
 import net.ntworld.foundation.cqrs.QueryResult
 
 @Messaging(channel = "todo")
-interface GetAllTodoQuery : Query<GetAllTodoQueryResult>
+interface GetAllTodoQuery : Query<GetAllTodoQueryResult> {
+    companion object
+}
 
 interface GetAllTodoQueryResult: QueryResult {
     val data: List<String>

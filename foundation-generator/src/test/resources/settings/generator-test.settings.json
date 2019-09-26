@@ -1,6 +1,6 @@
 {
     "description": "",
-    "processorVersion": "0.4.3",
+    "processorVersion": "0.5.1",
     "globalDirectory": "",
     "annotationProcessorRunInfo": [
         {
@@ -10,9 +10,9 @@
                 "net.ntworld.foundation.Faked",
                 "net.ntworld.foundation.Handler"
             ],
-            "startedAt": 1568291077923,
-            "finishedAt": 1568291078271,
-            "duration": 348
+            "startedAt": 1569769496489,
+            "finishedAt": 1569769496830,
+            "duration": 341
         }
     ],
     "aggregateFactories": [
@@ -367,6 +367,10 @@
                 "className": "GetUserByIdQuery",
                 "packageName": "com.generator.contract"
             },
+            "queryResult": {
+                "className": "GetUserByIdQueryResult",
+                "packageName": "com.generator.contract"
+            },
             "version": 0,
             "handler": {
                 "className": "GetUserByIdQueryHandler",
@@ -413,6 +417,10 @@
                 "className": "CreateUserRequest",
                 "packageName": "com.generator.contract"
             },
+            "response": {
+                "className": "CreateUserResponse",
+                "packageName": "com.generator.contract"
+            },
             "version": 0,
             "handler": {
                 "className": "CreateUserRequestHandler",
@@ -455,6 +463,10 @@
         {
             "request": {
                 "className": "GetUserByIdRequest",
+                "packageName": "com.generator.contract"
+            },
+            "response": {
+                "className": "GetUserByIdResponse",
                 "packageName": "com.generator.contract"
             },
             "version": 0,

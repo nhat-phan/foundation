@@ -84,15 +84,14 @@ class FoundationTestProcessor : AbstractProcessor() {
             MockableCommandBusTestGenerator().generate(settings, namespace)
         )
 
-        // TODO: Add response to requestHandler, queryResult to queryHandler then regenerate mockableBus
-//        ProcessorOutput.writeGeneratedFile(
-//            processingEnv,
-//            MockableQueryBusTestGenerator().generate(settings, namespace)
-//        )
-//
-//        ProcessorOutput.writeGeneratedFile(
-//            processingEnv,
-//            MockableServiceBusTestGenerator().generate(settings, namespace)
-//        )
+        ProcessorOutput.writeGeneratedFile(
+            processingEnv,
+            MockableQueryBusTestGenerator().generate(settings, namespace)
+        )
+
+        ProcessorOutput.writeGeneratedFile(
+            processingEnv,
+            MockableServiceBusTestGenerator().generate(settings, namespace)
+        )
     }
 }

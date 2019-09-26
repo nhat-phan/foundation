@@ -10,6 +10,8 @@ import net.ntworld.foundation.generator.setting.HandlerSetting
 import net.ntworld.foundation.generator.type.ClassInfo
 
 class MockableServiceBusTestGenerator : AbstractMockableBusGeneratorTestGenerator() {
+    private val data = mutableMapOf<String, ClassInfo>()
+
     override val abstractMockableBus = Framework.AbstractMockableServiceBus
 
     override val busType = Framework.ServiceBus
@@ -35,6 +37,7 @@ class MockableServiceBusTestGenerator : AbstractMockableBusGeneratorTestGenerato
         settings.requestHandlers.forEach {
             if (!result.contains(it.request)) {
                 result.add(it.request)
+                data[it.request.fullName()] = it.response
             }
         }
         return result
@@ -46,7 +49,8 @@ class MockableServiceBusTestGenerator : AbstractMockableBusGeneratorTestGenerato
 
     override fun findWhenProcessingReturnsType(contract: ClassInfo): TypeName {
         return Framework.ServiceBusCallFakeBuilderStart.parameterizedBy(
-            contract.toClassName()
+            contract.toClassName(),
+            data[contract.fullName()]!!.toClassName()
         )
     }
 

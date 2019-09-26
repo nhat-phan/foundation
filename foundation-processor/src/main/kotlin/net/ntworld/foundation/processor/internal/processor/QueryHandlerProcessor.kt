@@ -25,6 +25,8 @@ internal class QueryHandlerProcessor() : Processor {
     private data class CollectedQueryHandler(
         val queryPackageName: String,
         val queryClassName: String,
+        val queryResultPackageName: String,
+        val queryResultClassName: String,
         val handlerPackageName: String,
         val handlerClassName: String,
         val metadata: KotlinMetadata,
@@ -40,6 +42,8 @@ internal class QueryHandlerProcessor() : Processor {
             data[item.name] = CollectedQueryHandler(
                 queryPackageName = item.query.packageName,
                 queryClassName = item.query.className,
+                queryResultPackageName = item.queryResult.packageName,
+                queryResultClassName = item.queryResult.className,
                 handlerPackageName = item.handler.packageName,
                 handlerClassName = item.handler.className,
                 metadata = item.metadata,
@@ -50,21 +54,34 @@ internal class QueryHandlerProcessor() : Processor {
     }
 
     override fun applySettings(settings: GeneratorSettings): GeneratorSettings {
-        val queryHandlers = data.values.map {
-            QueryHandlerSetting(
-                query = ClassInfo(
-                    packageName = it.queryPackageName,
-                    className = it.queryClassName
-                ),
-                version = it.version,
-                handler = ClassInfo(
-                    packageName = it.handlerPackageName,
-                    className = it.handlerClassName
-                ),
-                metadata = it.metadata,
-                makeByFactory = it.makeByFactory
-            )
-        }
+        val queryHandlers = data.values
+            .filter {
+                it.queryPackageName.isNotEmpty() &&
+                    it.queryClassName.isNotEmpty() &&
+                    it.queryResultPackageName.isNotEmpty() &&
+                    it.queryResultClassName.isNotEmpty() &&
+                    it.handlerPackageName.isNotEmpty() &&
+                    it.handlerClassName.isNotEmpty()
+            }
+            .map {
+                QueryHandlerSetting(
+                    query = ClassInfo(
+                        packageName = it.queryPackageName,
+                        className = it.queryClassName
+                    ),
+                    queryResult = ClassInfo(
+                        packageName = it.queryResultPackageName,
+                        className = it.queryResultClassName
+                    ),
+                    version = it.version,
+                    handler = ClassInfo(
+                        packageName = it.handlerPackageName,
+                        className = it.handlerClassName
+                    ),
+                    metadata = it.metadata,
+                    makeByFactory = it.makeByFactory
+                )
+            }
         return settings.copy(queryHandlers = queryHandlers)
     }
 
@@ -96,11 +113,6 @@ internal class QueryHandlerProcessor() : Processor {
         val key = "$packageName.$className"
         initCollectedQueryHandlerIfNeeded(element, packageName, className)
 
-        // If the Handler is provided enough information, then no need to find data
-        if (processAnnotationProperties(processingEnv, key, element, element.getAnnotation(Handler::class.java))) {
-            return@forEach
-        }
-
         val implementedInterface = (element as TypeElement).interfaces
             .firstOrNull {
                 val e = processingEnv.typeUtils.asElement(it) as? TypeElement ?: return@firstOrNull false
@@ -108,7 +120,7 @@ internal class QueryHandlerProcessor() : Processor {
             }
 
         if (null !== implementedInterface) {
-            findImplementedQuery(processingEnv, key, implementedInterface as DeclaredType)
+            findImplementedQueryAndResult(processingEnv, key, implementedInterface as DeclaredType)
         }
 
         data[key] = data[key]!!.copy(
@@ -116,55 +128,23 @@ internal class QueryHandlerProcessor() : Processor {
         )
     }
 
-    private fun processAnnotationProperties(
-        processingEnv: ProcessingEnvironment,
-        key: String,
-        element: Element,
-        annotation: Handler
-    ): Boolean {
-        if (annotation.type !== Handler.Type.Query) {
-            return false
-        }
-
-        var inputTypeName = ""
-        val mirrors = element.annotationMirrors
-        mirrors.forEach {
-            if (it.annotationType.toString() == FrameworkProcessor.Handler) {
-                it.elementValues.forEach {
-                    if (it.key.simpleName.toString() == "input" &&
-                        it.value.value.toString() != java.lang.Object::class.java.canonicalName
-                    ) {
-                        inputTypeName = it.value.value.toString()
-                    }
-                }
-            }
-        }
-
-        if (inputTypeName.isEmpty()) {
-            return false
-        }
-
-        val inputElement = processingEnv.elementUtils.getTypeElement(inputTypeName)
-        ContractCollector.collect(processingEnv, inputElement)
-        data[key] = data[key]!!.copy(
-            queryPackageName = getPackageNameOfClass(inputElement),
-            queryClassName = inputElement.simpleName.toString(),
-            version = annotation.version,
-            makeByFactory = annotation.factory
-        )
-        return true
-    }
-
-    private fun findImplementedQuery(processingEnv: ProcessingEnvironment, key: String, type: DeclaredType) {
+    private fun findImplementedQueryAndResult(processingEnv: ProcessingEnvironment, key: String, type: DeclaredType) {
         if (type.typeArguments.size != 2) {
             return
         }
         val queryType = type.typeArguments.first()
-        val element = processingEnv.typeUtils.asElement(queryType)
-        ContractCollector.collect(processingEnv, element)
+        val queryElement = processingEnv.typeUtils.asElement(queryType)
+        ContractCollector.collect(processingEnv, queryElement)
+
+        val queryResultType = type.typeArguments.last()
+        val queryResultElement = processingEnv.typeUtils.asElement(queryResultType)
+        ContractCollector.collect(processingEnv, queryResultElement)
+
         data[key] = data[key]!!.copy(
-            queryPackageName = getPackageNameOfClass(element),
-            queryClassName = element.simpleName.toString()
+            queryPackageName = getPackageNameOfClass(queryElement),
+            queryClassName = queryElement.simpleName.toString(),
+            queryResultPackageName = getPackageNameOfClass(queryResultElement),
+            queryResultClassName = queryResultElement.simpleName.toString()
         )
     }
 
@@ -182,6 +162,8 @@ internal class QueryHandlerProcessor() : Processor {
             data[key] = CollectedQueryHandler(
                 queryPackageName = "",
                 queryClassName = "",
+                queryResultPackageName = "",
+                queryResultClassName = "",
                 version = 0,
                 handlerPackageName = packageName,
                 handlerClassName = className,

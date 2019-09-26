@@ -7,6 +7,7 @@ import net.ntworld.foundation.generator.type.KotlinMetadata
 @Serializable
 data class RequestHandlerSetting(
     val request: ClassInfo,
+    val response: ClassInfo,
     override val version: Int,
     override val handler: ClassInfo,
     override val metadata: KotlinMetadata,

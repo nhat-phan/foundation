@@ -1,3 +1,5 @@
+package com.example
+
 import com.example.*
 import com.example.contract.CreateTodoCommand
 import com.example.contract.GetAllTodoQuery
@@ -32,120 +34,120 @@ class TestMockRequestHandler : RequestHandler<TestMockRequest, TestMockResponse>
     }
 }
 
-class MockableServiceBus<T>(private val bus: T) : AbstractMockableServiceBus<T>(bus)
-    where T : ServiceBus, T : LocalBusResolver<Request<*>, RequestHandler<*, *>> {
-    override fun guessRequestKClassByInstance(instance: Request<*>): KClass<out Request<*>>? {
-        return when (instance) {
-            is TestMockRequest -> TestMockRequest::class
-            else -> null
-        }
-    }
-
-    // We have the list at built-time, so no worries
-    @TestDsl.Mock
-    infix fun whenProcessing(request: TestMockRequest.Companion)
-        : ServiceBusCallFakeBuilder.Start<TestMockRequest, TestMockResponse> {
-        return whenProcessing(TestMockRequest::class)
-    }
-
-    @TestDsl.Verify
-    infix fun shouldProcess(request: TestMockRequest.Companion): BusCalledWithBuilder.Start<TestMockRequest> {
-        return shouldProcess(TestMockRequest::class)
-    }
-}
-
-class MockableCommandBus<T>(private val bus: T) : AbstractMockableCommandBus<T>(bus)
-    where T : CommandBus, T : LocalBusResolver<Command, CommandHandler<*>> {
-
-    override fun guessCommandKClassByInstance(instance: Command): KClass<out Command>? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-}
-
-class MockableQueryBus<T>(private val bus: T) : AbstractMockableQueryBus<T>(bus)
-    where T : QueryBus, T : LocalBusResolver<Query<*>, QueryHandler<*, *>> {
-
-    override fun guessQueryKClassByInstance(instance: Query<*>): KClass<out Query<*>>? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-}
-
-class MockableEventBus<T>(private val bus: T) : AbstractMockableEventBus<T>(bus)
-    where T : EventBus, T : LocalBusResolver<Event, Array<EventHandler<*>>> {
-    override fun guessEventKClassByInstance(instance: Event): KClass<out Event>? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-}
-
-fun main() {
-    // Foundation should generate a InfrastructureProvider for testing, which is
-    // auto wired just like the other local buses
-    // Then it will be used like this:
-    //
-    // infrastructure = TestInfrastructure(domain-infrastructure)
-    // infrastructure.serviceBus() whenReceive Request willReturn Response
-    //
-    // infrastructure.serviceBus().process(Request(...))
-    // infrastructure.serviceBus() shouldReceive Request match {
-    //
-    // }
-    val response = TestMockResponse.make(null)
-    val serviceBus = MockableServiceBus(LocalServiceBus())
-
-    // serviceBus whenProcessing TestMockRequest alwaysReturns response
-
-    serviceBus whenProcessing TestMockRequest on firstCall returns response otherwiseReturns response
-    serviceBus whenProcessing TestMockRequest alwaysRuns { request, _ ->
-        serviceBus.originalBus.process(request).getResponse()
-    }
-
-    serviceBus shouldProcess TestMockRequest exact 3
-    serviceBus shouldProcess TestMockRequest on firstCall match {
-        it.name == "test"
-    }
-
-    println(serviceBus.process(TestMockRequest.make("test")).getResponse() === response)
-    println(serviceBus.process(TestMockRequest.make("test")).getResponse() === response)
-    println(serviceBus.process(TestMockRequest.make("test")).getResponse() === response)
-
-    serviceBus.verifyAll()
-}
-
-fun testCommandBus(infrastructure: Infrastructure) {
-    val commandBus = MockableCommandBus(LocalCommandBus(infrastructure))
-
-    commandBus whenProcessing CreateTodoCommand::class alwaysDoes nothing
-    commandBus whenProcessing CreateTodoCommand::class onCall 1 does nothing otherwiseDoes nothing
-    commandBus whenProcessing CreateTodoCommand::class on firstCall throws Exception() otherwiseRuns { command, _ ->
-        commandBus.originalBus.process(command)
-    }
-
-    commandBus whenProcessing CreateTodoCommand::class alwaysRuns commandBus.originalProcess
-}
-
-fun testQueryBus(infrastructure: Infrastructure) {
-    val queryBus = MockableQueryBus(LocalQueryBus())
-
-    queryBus whenProcessing GetAllTodoQuery::class on firstCall throws Exception()
-    queryBus whenProcessing GetAllTodoQuery::class alwaysRuns { query, _ ->
-        TODO()
-    }
-    queryBus shouldProcess GetAllTodoQuery::class alwaysMatch { query, _ ->
-        true
-    }
-}
-
-fun testEventBus(infrastructure: Infrastructure) {
-    val eventBus = MockableEventBus(LocalEventBus(infrastructure))
-
-    eventBus whenPublishing TodoDeletedEvent::class on firstCall does nothing otherwiseRuns eventBus.originalPublish
-    eventBus whenProcessing TodoDeletedEvent::class on firstCall throws Exception()
-    eventBus whenProcessing TodoDeletedEvent::class alwaysRuns { event, _ ->
-        TODO()
-    }
-    eventBus shouldProcess TodoDeletedEvent::class alwaysMatch { event, _ ->
-        true
-    }
-}
+//class MockableServiceBus<T>(private val bus: T) : AbstractMockableServiceBus<T>(bus)
+//    where T : ServiceBus, T : LocalBusResolver<Request<*>, RequestHandler<*, *>> {
+//    override fun guessRequestKClassByInstance(instance: Request<*>): KClass<out Request<*>>? {
+//        return when (instance) {
+//            is TestMockRequest -> TestMockRequest::class
+//            else -> null
+//        }
+//    }
+//
+//    // We have the list at built-time, so no worries
+//    @TestDsl.Mock
+//    infix fun whenProcessing(request: TestMockRequest.Companion)
+//        : ServiceBusCallFakeBuilder.Start<TestMockRequest, TestMockResponse> {
+//        return whenProcessing(TestMockRequest::class)
+//    }
+//
+//    @TestDsl.Verify
+//    infix fun shouldProcess(request: TestMockRequest.Companion): BusCalledWithBuilder.Start<TestMockRequest> {
+//        return shouldProcess(TestMockRequest::class)
+//    }
+//}
+//
+//class MockableCommandBus<T>(private val bus: T) : AbstractMockableCommandBus<T>(bus)
+//    where T : CommandBus, T : LocalBusResolver<Command, CommandHandler<*>> {
+//
+//    override fun guessCommandKClassByInstance(instance: Command): KClass<out Command>? {
+//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+//    }
+//
+//}
+//
+//class MockableQueryBus<T>(private val bus: T) : AbstractMockableQueryBus<T>(bus)
+//    where T : QueryBus, T : LocalBusResolver<Query<*>, QueryHandler<*, *>> {
+//
+//    override fun guessQueryKClassByInstance(instance: Query<*>): KClass<out Query<*>>? {
+//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+//    }
+//}
+//
+//class MockableEventBus<T>(private val bus: T) : AbstractMockableEventBus<T>(bus)
+//    where T : EventBus, T : LocalBusResolver<Event, Array<EventHandler<*>>> {
+//    override fun guessEventKClassByInstance(instance: Event): KClass<out Event>? {
+//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+//    }
+//
+//}
+//
+//fun main() {
+//    // Foundation should generate a InfrastructureProvider for testing, which is
+//    // auto wired just like the other local buses
+//    // Then it will be used like this:
+//    //
+//    // infrastructure = TestInfrastructure(domain-infrastructure)
+//    // infrastructure.serviceBus() whenReceive Request willReturn Response
+//    //
+//    // infrastructure.serviceBus().process(Request(...))
+//    // infrastructure.serviceBus() shouldReceive Request match {
+//    //
+//    // }
+//    val response = TestMockResponse.make(null)
+//    val serviceBus = MockableServiceBus(LocalServiceBus())
+//
+//    // serviceBus whenProcessing TestMockRequest alwaysReturns response
+//
+//    serviceBus whenProcessing TestMockRequest on firstCall returns response otherwiseReturns response
+//    serviceBus whenProcessing TestMockRequest alwaysRuns { request, _ ->
+//        serviceBus.originalBus.process(request).getResponse()
+//    }
+//
+//    serviceBus shouldProcess TestMockRequest exact 3
+//    serviceBus shouldProcess TestMockRequest on firstCall match {
+//        it.name == "test"
+//    }
+//
+//    println(serviceBus.process(TestMockRequest.make("test")).getResponse() === response)
+//    println(serviceBus.process(TestMockRequest.make("test")).getResponse() === response)
+//    println(serviceBus.process(TestMockRequest.make("test")).getResponse() === response)
+//
+//    serviceBus.verifyAll()
+//}
+//
+//fun testCommandBus(infrastructure: Infrastructure) {
+//    val commandBus = MockableCommandBus(LocalCommandBus(infrastructure))
+//
+//    commandBus whenProcessing CreateTodoCommand::class alwaysDoes nothing
+//    commandBus whenProcessing CreateTodoCommand::class onCall 1 does nothing otherwiseDoes nothing
+//    commandBus whenProcessing CreateTodoCommand::class on firstCall throws Exception() otherwiseRuns { command, _ ->
+//        commandBus.originalBus.process(command)
+//    }
+//
+//    commandBus whenProcessing CreateTodoCommand::class alwaysRuns commandBus.originalProcess
+//}
+//
+//fun testQueryBus(infrastructure: Infrastructure) {
+//    val queryBus = MockableQueryBus(LocalQueryBus())
+//
+//    queryBus whenProcessing GetAllTodoQuery::class on firstCall throws Exception()
+//    queryBus whenProcessing GetAllTodoQuery::class alwaysRuns { query, _ ->
+//        TODO()
+//    }
+//    queryBus shouldProcess GetAllTodoQuery::class alwaysMatch { query, _ ->
+//        true
+//    }
+//}
+//
+//fun testEventBus(infrastructure: Infrastructure) {
+//    val eventBus = MockableEventBus(LocalEventBus(infrastructure))
+//
+//    eventBus whenPublishing TodoDeletedEvent::class on firstCall does nothing otherwiseRuns eventBus.originalPublish
+//    eventBus whenProcessing TodoDeletedEvent::class on firstCall throws Exception()
+//    eventBus whenProcessing TodoDeletedEvent::class alwaysRuns { event, _ ->
+//        TODO()
+//    }
+//    eventBus shouldProcess TodoDeletedEvent::class alwaysMatch { event, _ ->
+//        true
+//    }
+//}

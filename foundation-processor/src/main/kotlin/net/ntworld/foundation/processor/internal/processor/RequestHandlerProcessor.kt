@@ -25,6 +25,8 @@ internal class RequestHandlerProcessor : Processor {
     private data class CollectedRequestHandler(
         val requestPackageName: String,
         val requestClassName: String,
+        val responsePackageName: String,
+        val responseClassName: String,
         val handlerPackageName: String,
         val handlerClassName: String,
         val metadata: KotlinMetadata,
@@ -40,6 +42,8 @@ internal class RequestHandlerProcessor : Processor {
             data[item.name] = CollectedRequestHandler(
                 requestPackageName = item.request.packageName,
                 requestClassName = item.request.className,
+                responsePackageName = item.response.packageName,
+                responseClassName = item.response.className,
                 handlerPackageName = item.handler.packageName,
                 handlerClassName = item.handler.className,
                 metadata = item.metadata,
@@ -50,21 +54,34 @@ internal class RequestHandlerProcessor : Processor {
     }
 
     override fun applySettings(settings: GeneratorSettings): GeneratorSettings {
-        val requestHandlers = data.values.map {
-            RequestHandlerSetting(
-                request = ClassInfo(
-                    packageName = it.requestPackageName,
-                    className = it.requestClassName
-                ),
-                version = it.version,
-                handler = ClassInfo(
-                    packageName = it.handlerPackageName,
-                    className = it.handlerClassName
-                ),
-                metadata = it.metadata,
-                makeByFactory = it.makeByFactory
-            )
-        }
+        val requestHandlers = data.values
+            .filter {
+                it.requestPackageName.isNotEmpty() &&
+                    it.requestClassName.isNotEmpty() &&
+                    it.responsePackageName.isNotEmpty() &&
+                    it.responseClassName.isNotEmpty() &&
+                    it.handlerPackageName.isNotEmpty() &&
+                    it.handlerClassName.isNotEmpty()
+            }
+            .map {
+                RequestHandlerSetting(
+                    request = ClassInfo(
+                        packageName = it.requestPackageName,
+                        className = it.requestClassName
+                    ),
+                    response = ClassInfo(
+                        packageName = it.responsePackageName,
+                        className = it.responseClassName
+                    ),
+                    version = it.version,
+                    handler = ClassInfo(
+                        packageName = it.handlerPackageName,
+                        className = it.handlerClassName
+                    ),
+                    metadata = it.metadata,
+                    makeByFactory = it.makeByFactory
+                )
+            }
         return settings.copy(requestHandlers = requestHandlers)
     }
 
@@ -96,11 +113,6 @@ internal class RequestHandlerProcessor : Processor {
         val key = "$packageName.$className"
         initCollectedRequestHandlerIfNeeded(element, packageName, className)
 
-        // If the Handler is provided enough information, then no need to find data
-        if (processAnnotationProperties(processingEnv, key, element, element.getAnnotation(Handler::class.java))) {
-            return@forEach
-        }
-
         val implementedInterface = (element as TypeElement).interfaces
             .firstOrNull {
                 val e = processingEnv.typeUtils.asElement(it) as? TypeElement ?: return@firstOrNull false
@@ -108,7 +120,7 @@ internal class RequestHandlerProcessor : Processor {
             }
 
         if (null !== implementedInterface) {
-            findImplementedRequest(processingEnv, key, implementedInterface as DeclaredType)
+            findImplementedRequestResponse(processingEnv, key, implementedInterface as DeclaredType)
         }
 
         data[key] = data[key]!!.copy(
@@ -116,55 +128,23 @@ internal class RequestHandlerProcessor : Processor {
         )
     }
 
-    private fun processAnnotationProperties(
-        processingEnv: ProcessingEnvironment,
-        key: String,
-        element: Element,
-        annotation: Handler
-    ): Boolean {
-        if (annotation.type !== Handler.Type.Request) {
-            return false
-        }
-
-        var inputTypeName = ""
-        val mirrors = element.annotationMirrors
-        mirrors.forEach {
-            if (it.annotationType.toString() == FrameworkProcessor.Handler) {
-                it.elementValues.forEach {
-                    if (it.key.simpleName.toString() == "input" &&
-                        it.value.value.toString() != java.lang.Object::class.java.canonicalName
-                    ) {
-                        inputTypeName = it.value.value.toString()
-                    }
-                }
-            }
-        }
-
-        if (inputTypeName.isEmpty()) {
-            return false
-        }
-
-        val inputElement = processingEnv.elementUtils.getTypeElement(inputTypeName)
-        ContractCollector.collect(processingEnv, inputElement)
-        data[key] = data[key]!!.copy(
-            requestPackageName = getPackageNameOfClass(inputElement),
-            requestClassName = inputElement.simpleName.toString(),
-            version = annotation.version,
-            makeByFactory = annotation.factory
-        )
-        return true
-    }
-
-    private fun findImplementedRequest(processingEnv: ProcessingEnvironment, key: String, type: DeclaredType) {
+    private fun findImplementedRequestResponse(processingEnv: ProcessingEnvironment, key: String, type: DeclaredType) {
         if (type.typeArguments.size != 2) {
             return
         }
         val requestType = type.typeArguments.first()
-        val element = processingEnv.typeUtils.asElement(requestType)
-        ContractCollector.collect(processingEnv, element)
+        val requestElement = processingEnv.typeUtils.asElement(requestType)
+        ContractCollector.collect(processingEnv, requestElement)
+
+        val responseType = type.typeArguments.last()
+        val responseElement = processingEnv.typeUtils.asElement(responseType)
+        ContractCollector.collect(processingEnv, responseElement)
         data[key] = data[key]!!.copy(
-            requestPackageName = getPackageNameOfClass(element),
-            requestClassName = element.simpleName.toString()
+            requestPackageName = getPackageNameOfClass(requestElement),
+            requestClassName = requestElement.simpleName.toString(),
+
+            responsePackageName = getPackageNameOfClass(responseElement),
+            responseClassName = responseElement.simpleName.toString()
         )
     }
 
@@ -182,6 +162,8 @@ internal class RequestHandlerProcessor : Processor {
             data[key] = CollectedRequestHandler(
                 requestPackageName = "",
                 requestClassName = "",
+                responsePackageName = "",
+                responseClassName = "",
                 version = 0,
                 handlerPackageName = packageName,
                 handlerClassName = className,
