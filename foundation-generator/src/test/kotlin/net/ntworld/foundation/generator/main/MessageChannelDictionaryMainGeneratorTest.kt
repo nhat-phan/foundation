@@ -34,14 +34,16 @@ class MessageChannelDictionaryMainGeneratorTest : TestSuite() {
                     packageName = "com.generator",
                     className = "CreateSomethingRequest"
                 ),
-                channel = "service"
+                channel = "service",
+                type = ""
             ),
             MessagingSetting(
                 contract = ClassInfo(
                     packageName = "com.generator",
                     className = "UpdateSomethingRequest"
                 ),
-                channel = "service"
+                channel = "service",
+                type = ""
             )
         )
         val contracts = listOf(

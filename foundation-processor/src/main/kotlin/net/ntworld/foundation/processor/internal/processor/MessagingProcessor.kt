@@ -17,7 +17,8 @@ class MessagingProcessor : Processor {
     internal data class CollectedMessaging(
         val packageName: String,
         val className: String,
-        val channel: String
+        val channel: String,
+        val type: String
     )
 
     private val data = mutableMapOf<String, CollectedMessaging>()
@@ -25,19 +26,21 @@ class MessagingProcessor : Processor {
     override fun startProcess(settings: GeneratorSettings) {
         data.clear()
         settings.messagings.forEach { item ->
-            data[item.name] =
-                CollectedMessaging(
-                    packageName = item.contract.packageName,
-                    className = item.contract.className,
-                    channel = item.channel
-                )
+            data[item.name] = CollectedMessaging(
+                packageName = item.contract.packageName,
+                className = item.contract.className,
+                channel = item.channel,
+                type = item.type
+            )
         }
     }
 
     override fun applySettings(settings: GeneratorSettings): GeneratorSettings {
         val messagingSetting = data.values
             .filter {
-                it.packageName.isNotEmpty() && it.className.isNotEmpty() && it.channel.isNotEmpty()
+                it.packageName.isNotEmpty() && it.className.isNotEmpty() && (
+                    it.channel.isNotEmpty() || it.type.isNotEmpty()
+                )
             }
             .map {
                 MessagingSetting(
@@ -45,7 +48,8 @@ class MessagingProcessor : Processor {
                         packageName = it.packageName,
                         className = it.className
                     ),
-                    channel = it.channel
+                    channel = it.channel,
+                    type = it.type
                 )
             }
         return settings.copy(messagings = messagingSetting)
@@ -84,7 +88,8 @@ class MessagingProcessor : Processor {
         data[key] = CollectedMessaging(
             packageName = packageElement.qualifiedName.toString(),
             className = className,
-            channel = messagingAnnotation.channel
+            channel = messagingAnnotation.channel,
+            type = messagingAnnotation.type
         )
     }
 

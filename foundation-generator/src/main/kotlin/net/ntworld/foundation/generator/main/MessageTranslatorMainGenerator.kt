@@ -8,16 +8,18 @@ import net.ntworld.foundation.generator.Utility
 import net.ntworld.foundation.generator.type.ClassInfo
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import net.ntworld.foundation.generator.setting.ContractSetting
+import net.ntworld.foundation.generator.setting.MessagingSetting
 import net.ntworld.foundation.generator.type.Property
 
 object MessageTranslatorMainGenerator {
     fun generate(
         setting: ContractSetting,
+        messaging: MessagingSetting?,
         implementation: ClassInfo,
         properties: Map<String, Property>
     ): GeneratedFile {
         val target = Utility.findMessageTranslatorTarget(setting)
-        val file = buildFile(setting, implementation, properties, target)
+        val file = buildFile(setting, messaging, implementation, properties, target)
         val stringBuffer = StringBuffer()
         file.writeTo(stringBuffer)
 
@@ -26,19 +28,21 @@ object MessageTranslatorMainGenerator {
 
     private fun buildFile(
         setting: ContractSetting,
+        messaging: MessagingSetting?,
         implementation: ClassInfo,
         properties: Map<String, Property>,
         target: ClassInfo
     ): FileSpec {
         val file = FileSpec.builder(target.packageName, target.className)
         GeneratorOutput.addHeader(file, this::class.qualifiedName)
-        file.addType(buildClass(setting, implementation, properties, target))
+        file.addType(buildClass(setting, messaging, implementation, properties, target))
 
         return file.build()
     }
 
     private fun buildClass(
         setting: ContractSetting,
+        messaging: MessagingSetting?,
         implementation: ClassInfo,
         properties: Map<String, Property>,
         target: ClassInfo
@@ -60,9 +64,9 @@ object MessageTranslatorMainGenerator {
             )
 
         buildMakeFunctionIfNeeded(setting, implementation, properties, type)
-        buildCanConvertFunction(setting, type)
+        buildCanConvertFunction(setting, messaging, type)
         buildFromMessageFunction(setting, implementation, type)
-        buildToMessageFunction(setting, implementation, type)
+        buildToMessageFunction(setting, messaging, implementation, type)
         return type.build()
     }
 
@@ -104,13 +108,22 @@ object MessageTranslatorMainGenerator {
         )
     }
 
-    private fun buildCanConvertFunction(setting: ContractSetting, type: TypeSpec.Builder) {
+    private fun buildCanConvertFunction(setting: ContractSetting, messaging: MessagingSetting?, type: TypeSpec.Builder) {
         val code = CodeBlock.builder()
-        code.add("val bodyType = message.attributes[\"bodyType\"]\n")
-        code.add(
-            "return null !== bodyType && bodyType.stringValue == %S\n",
-            setting.contract.fullName()
-        )
+        if (null !== messaging && messaging.type.isNotEmpty()) {
+            code.add("val type = message.attributes[\"type\"]\n")
+            code.add(
+                "return null !== type && type.stringValue == %S\n",
+                messaging.type
+            )
+        } else {
+            code.add("val bodyType = message.attributes[\"bodyType\"]\n")
+            code.add(
+                "return null !== bodyType && bodyType.stringValue == %S\n",
+                setting.contract.fullName()
+            )
+        }
+
 
         type.addFunction(
             FunSpec.builder("canConvert")
@@ -133,10 +146,21 @@ object MessageTranslatorMainGenerator {
         )
     }
 
-    private fun buildToMessageFunction(setting: ContractSetting, implementation: ClassInfo, type: TypeSpec.Builder) {
+    private fun buildToMessageFunction(setting: ContractSetting, messaging: MessagingSetting?, implementation: ClassInfo, type: TypeSpec.Builder) {
         val code = CodeBlock.builder()
         code.add("val attributes = mapOf<String, %T>(\n", Framework.MessageAttribute)
         code.indent()
+        if (null !== messaging && messaging.type.isNotEmpty()) {
+            code
+                .add(
+                    "\"type\" to %T.createStringAttribute(\n",
+                    Framework.MessageUtility
+                )
+                .indent()
+                .add("%S\n", messaging.type)
+                .unindent()
+                .add("),\n")
+        }
 
         code
             .add(

@@ -1,7 +1,9 @@
 package com.generator.contract
 
+import net.ntworld.foundation.Messaging
 import net.ntworld.foundation.cqrs.Command
 
+@Messaging(type = "command.basic-type")
 interface BasicTypeContract : Command {
     val byte: Byte
     val short: Short
