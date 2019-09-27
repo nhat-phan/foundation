@@ -30,7 +30,8 @@ class FoundationProcessor : AbstractProcessor() {
         RequestHandlerProcessor(),
         EventSourcingProcessor(),
         AggregateFactoryProcessor(),
-        FakedPropertyProcessor()
+        FakedPropertyProcessor(),
+        UseProcessor()
     )
 
     override fun getSupportedAnnotationTypes(): MutableSet<String> {
