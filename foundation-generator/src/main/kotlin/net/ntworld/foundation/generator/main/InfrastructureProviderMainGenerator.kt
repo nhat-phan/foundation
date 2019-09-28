@@ -56,7 +56,7 @@ class InfrastructureProviderMainGenerator {
 
     private fun buildClass(platform: Platform, settings: GeneratorSettings, namespace: String?, target: ClassInfo): TypeSpec {
         val type = TypeSpec
-            .classBuilder(ClassName(target.packageName, target.className))
+            .classBuilder(target.toClassName())
             .addModifiers(KModifier.OPEN)
             .superclass(Framework.InfrastructureProvider)
         val init = CodeBlock.builder()

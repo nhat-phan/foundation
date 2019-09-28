@@ -1,20 +1,27 @@
 package com.example
 
-import net.ntworld.foundation.Infrastructure
-import net.ntworld.foundation.LocalBusResolver
-import net.ntworld.foundation.MemorizedInfrastructure
-import net.ntworld.foundation.MessageBroker
-import net.ntworld.foundation.MessageChannelDictionary
+import com.example.contract.CreateTodoCommand
+import net.ntworld.foundation.*
 import net.ntworld.foundation.cqrs.Command
 import net.ntworld.foundation.cqrs.CommandBus
 import net.ntworld.foundation.cqrs.CommandHandler
 import net.ntworld.foundation.fluency.firstCall
+import kotlin.reflect.KClass
 import kotlin.test.Test
 
 open class TestSuite {
 
 }
-//
+
+fun Command.toMessage(infrastructure: Infrastructure): Message {
+    return when(this) {
+        is CreateTodoCommand -> infrastructure.messageTranslatorOf(CreateTodoCommand::class).toMessage(this)
+        else -> {
+            throw Exception()
+        }
+    }
+}
+
 //class RemoteCommandBus(
 //    private val infrastructure: Infrastructure,
 //    private val bus: LocalCommandBus,
@@ -28,8 +35,10 @@ open class TestSuite {
 //        if (null !== handler) {
 //            bus.process(command)
 //        } else {
-//            val message = infrastructure.root.messageTranslatorOf(command::class)
+//            val message = command.toMessage(infrastructure)
 //            val channel = messageChannelDictionary.lookupChannel(message)
+//            val replyChannel = messageChannelDictionary.lookupReplyChannel(message)
+//            messageBroker.send(message, replyTo, 30000)
 //        }
 //    }
 //
