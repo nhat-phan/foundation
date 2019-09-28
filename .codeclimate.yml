@@ -47,6 +47,8 @@ checks:
     config:
       threshold: 100
 exclude_patterns:
-  - 'build/'
-  - 'src/test'
-  - 'src/commonTest'
+  - '**/build/'
+  - '**/src/test'
+  - '**/src/commonTest'
+  - 'foundation/src/commonMain/kotlin/net/ntworld/foundation/FakedData.kt'
+  - 'foundation/src/jvmMain/kotlin/net/ntworld/foundation/util/JavaFakerWrapper.kt'
