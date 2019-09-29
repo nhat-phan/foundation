@@ -9,7 +9,7 @@ interface CommandHandler<T : Command> {
     @Suppress("UNCHECKED_CAST")
     fun execute(command: Command, message: Message?) = handle(command as T)
 
-    fun <T> use(infrastructure: Infrastructure, block: InfrastructureCommandHandlerContext.() -> T): T {
-        return block.invoke(InfrastructureCommandHandlerContext(infrastructure))
+    fun <T> use(infrastructure: Infrastructure, block: InfrastructureCommandHandlerContext.() -> T): Unit {
+        block.invoke(InfrastructureCommandHandlerContext(infrastructure))
     }
 }
