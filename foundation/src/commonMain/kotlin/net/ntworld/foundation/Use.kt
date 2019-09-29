@@ -50,6 +50,8 @@ import kotlin.reflect.KClass
  * Please note that [@Use] with [settings] usually annotated a main class/function
  */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.SOURCE)
+@Repeatable
 annotation class Use(
     val settings: String = "",
     val contract: KClass<out Contract> = Contract::class
