@@ -5,7 +5,7 @@ import net.ntworld.foundation.ServiceBusProcessResult
 
 internal class ServiceBusProcessResultImpl<R : Response>(private val response: R) : ServiceBusProcessResult<R> {
     override fun hasError(): Boolean {
-        return null === response.error
+        return null !== response.error
     }
 
     override fun getResponse(): R {
