@@ -32,4 +32,7 @@ package net.ntworld.foundation
  * - An implementation for **MyEvent**
  * - **LocalEventBus** which wires your event handlers automatically
  */
-interface Event : Contract
+interface Event : Contract {
+
+    companion object
+}

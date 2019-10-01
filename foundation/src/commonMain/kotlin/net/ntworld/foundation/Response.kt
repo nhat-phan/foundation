@@ -6,4 +6,6 @@ interface Response : Contract {
     val isSuccess: Boolean get() = null === error
 
     val isFailure: Boolean get() = null !== error
+
+    companion object
 }

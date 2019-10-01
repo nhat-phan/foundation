@@ -1,7 +1,7 @@
 package net.ntworld.foundation
 
 interface EventBus {
-    fun publish(event: Event)
+    infix fun publish(event: Event)
 
-    fun process(event: Event)
+    infix fun process(event: Event)
 }
