@@ -1,6 +1,7 @@
 package net.ntworld.foundation.generator.main
 
 import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import net.ntworld.foundation.generator.*
 import net.ntworld.foundation.generator.Framework
 import net.ntworld.foundation.generator.Utility
@@ -9,6 +10,7 @@ import net.ntworld.foundation.generator.type.ClassInfo
 import net.ntworld.foundation.generator.type.Constructor
 import net.ntworld.foundation.generator.util.ConstructorComposer
 import net.ntworld.foundation.generator.util.MultiPlatformCodeGenerator
+import kotlin.reflect.KClass
 
 class InfrastructureProviderMainGenerator {
     private data class KnownMessageTranslator(
@@ -140,6 +142,8 @@ class InfrastructureProviderMainGenerator {
 
         val func = FunSpec.builder("idGeneratorOf")
         func.addModifiers(KModifier.OVERRIDE)
+            .addTypeVariable(TypeVariableName.invoke("T: Any"))
+            .addParameter("type", KClass::class.asClassName().parameterizedBy(TypeVariableName.invoke("T")))
             .returns(Framework.IdGenerator)
             .addCode("return ")
             .addCode(code)

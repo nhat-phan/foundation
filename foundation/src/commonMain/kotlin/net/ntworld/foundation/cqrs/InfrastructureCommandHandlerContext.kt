@@ -21,6 +21,9 @@ open class InfrastructureCommandHandlerContext(open val self: Infrastructure) {
     fun <T : Any> idGeneratorOf(type: KClass<T>): IdGenerator = self.idGeneratorOf(type)
 
     @InfrastructureDsl.CommandHandlerDsl
+    fun idGeneratorOf(): IdGenerator = self.idGeneratorOf()
+
+    @InfrastructureDsl.CommandHandlerDsl
     fun commandBus(): CommandBus = self.commandBus()
 
     @InfrastructureDsl.CommandHandlerDsl

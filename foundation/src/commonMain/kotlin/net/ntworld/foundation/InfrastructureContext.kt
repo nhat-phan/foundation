@@ -26,6 +26,9 @@ open class InfrastructureContext(open val self: Infrastructure) {
     fun <T : Any> idGeneratorOf(type: KClass<T>): IdGenerator = self.idGeneratorOf(type)
 
     @InfrastructureDsl.GenericDsl
+    fun idGeneratorOf(): IdGenerator = self.idGeneratorOf()
+
+    @InfrastructureDsl.GenericDsl
     fun queryBus(): QueryBus = self.queryBus()
 
     @InfrastructureDsl.GenericDsl

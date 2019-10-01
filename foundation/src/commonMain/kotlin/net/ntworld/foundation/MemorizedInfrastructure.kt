@@ -8,7 +8,7 @@ import net.ntworld.foundation.cqrs.QueryResult
 import net.ntworld.foundation.eventSourcing.*
 import kotlin.reflect.KClass
 
-class MemorizedInfrastructure(base: Infrastructure) : InfrastructureWrapper(base) {
+open class MemorizedInfrastructure(base: Infrastructure) : InfrastructureWrapper(base) {
     private var _environment: Environment? = null
     private val _aggregateFactories = mutableMapOf<KClass<*>, AggregateFactory<*, *>>()
     private val _dataReceivers = mutableMapOf<KClass<*>, DataReceiver<*>>()
