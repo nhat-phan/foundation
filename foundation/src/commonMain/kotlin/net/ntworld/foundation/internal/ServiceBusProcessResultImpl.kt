@@ -1,5 +1,6 @@
 package net.ntworld.foundation.internal
 
+import net.ntworld.foundation.Error
 import net.ntworld.foundation.Response
 import net.ntworld.foundation.ServiceBusProcessResult
 
@@ -12,9 +13,9 @@ internal class ServiceBusProcessResultImpl<R : Response>(private val response: R
         return response
     }
 
-    override fun ifError(block: (response: R) -> Unit): R {
+    override fun ifError(block: (error: Error) -> Unit): R {
         if (hasError()) {
-            block.invoke(response)
+            block.invoke(response.error!!)
         }
         return response
     }

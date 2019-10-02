@@ -2,10 +2,7 @@ package net.ntworld.foundation.internal
 
 import net.ntworld.foundation.Error
 import net.ntworld.foundation.Response
-import kotlin.test.Test
-import kotlin.test.assertFalse
-import kotlin.test.assertSame
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class ServiceBusProcessResultImplTest {
     data class DummyError(
@@ -34,5 +31,22 @@ class ServiceBusProcessResultImplTest {
         assertSame(successResponse, ServiceBusProcessResultImpl(successResponse).getResponse())
     }
 
+    @Test
+    fun `test ifError`() {
+        val successResponse = DummyResponse(error = null, result = "")
+        ServiceBusProcessResultImpl(successResponse).ifError {
+            throw Exception("Should not reach this line")
+        }
 
+        val failedResponse = DummyResponse(error = DummyError("type", "message", 500), result = "")
+        try {
+            ServiceBusProcessResultImpl(failedResponse).ifError {
+                throw Exception(it.message)
+            }
+        } catch (exception: Exception) {
+            assertEquals("message", exception.message)
+            return
+        }
+        throw Exception("Should throw exception and not reach this line")
+    }
 }
