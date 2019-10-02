@@ -31,7 +31,6 @@ internal object ContractExtensionTestGenerator {
         file: FileSpec.Builder
     ) {
         val make = FunSpec.builder("make")
-        make
             .receiver(setting.contract.toCompanionClassName())
             .returns(setting.contract.toClassName())
 
@@ -52,12 +51,7 @@ internal object ContractExtensionTestGenerator {
         }
 
         optionalProperties.forEachIndexed { index, item ->
-            code.add(
-                "%L = createFakedData(%S)",
-                item.name,
-                item.fakedType
-            )
-
+            code.add("%L = createFakedData(%S)", item.name, item.fakedType)
             if (index != optionalProperties.lastIndex) {
                 code.add(",")
             }

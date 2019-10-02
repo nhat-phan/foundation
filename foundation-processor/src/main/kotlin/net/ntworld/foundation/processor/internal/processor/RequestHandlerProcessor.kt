@@ -54,7 +54,7 @@ internal class RequestHandlerProcessor : Processor {
     }
 
     override fun applySettings(settings: GeneratorSettings): GeneratorSettings {
-        val requestHandlers = data.values
+        return settings.copy(requestHandlers = data.values
             .filter {
                 it.requestPackageName.isNotEmpty() &&
                     it.requestClassName.isNotEmpty() &&
@@ -81,8 +81,7 @@ internal class RequestHandlerProcessor : Processor {
                     metadata = it.metadata,
                     makeByFactory = it.makeByFactory
                 )
-            }
-        return settings.copy(requestHandlers = requestHandlers)
+            })
     }
 
     override fun shouldProcess(
