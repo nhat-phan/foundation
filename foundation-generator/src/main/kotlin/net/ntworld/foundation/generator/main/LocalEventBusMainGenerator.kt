@@ -14,13 +14,7 @@ class LocalEventBusMainGenerator : AbstractLocalBusMainGenerator<EventHandlerSet
 
     override fun buildClass(settings: List<EventHandlerSetting>, target: ClassInfo): TypeSpec.Builder {
         val type = TypeSpec.classBuilder(target.className)
-            .addSuperinterface(Framework.EventBus)
-            .addSuperinterface(
-                Framework.LocalBusResolver.parameterizedBy(
-                    Framework.Event,
-                    getHandlersArrayTypeName()
-                )
-            )
+            .addSuperinterface(Framework.ResolvableEventBus)
 
         buildPublishFunction(type)
         buildProcessFunction(type)

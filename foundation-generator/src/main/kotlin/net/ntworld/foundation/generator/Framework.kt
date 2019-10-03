@@ -27,10 +27,12 @@ internal object Framework {
     val Event = ClassName(namespace, "Event")
     val EventHandler = ClassName(namespace, "EventHandler")
     val EventBus = ClassName(namespace, "EventBus")
+    val ResolvableEventBus = ClassName(namespace, "ResolvableEventBus")
 
     val Request = ClassName(namespace, "Request")
     val Response = ClassName(namespace, "Response")
     val RequestHandler = ClassName(namespace, "RequestHandler")
+    val ResolvableServiceBus = ClassName(namespace, "ResolvableServiceBus")
     val ServiceBus = ClassName(namespace, "ServiceBus")
     val ServiceBusProcessResult = ClassName(namespace, "ServiceBusProcessResult")
 
@@ -39,11 +41,13 @@ internal object Framework {
     val Command = ClassName("$namespace.cqrs", "Command")
     val CommandHandler = ClassName("$namespace.cqrs", "CommandHandler")
     val CommandBus = ClassName("$namespace.cqrs", "CommandBus")
+    val ResolvableCommandBus = ClassName("$namespace.cqrs", "ResolvableCommandBus")
 
     val Query = ClassName("$namespace.cqrs", "Query")
     val QueryResult = ClassName("$namespace.cqrs", "QueryResult")
     val QueryHandler = ClassName("$namespace.cqrs", "QueryHandler")
     val QueryBus = ClassName("$namespace.cqrs", "QueryBus")
+    val ResolvableQueryBus = ClassName("$namespace.cqrs", "ResolvableQueryBus")
 
     val RequestHandlerNotFoundException = ClassName("$namespace.exception", "RequestHandlerNotFoundException")
     val QueryHandlerNotFoundException = ClassName("$namespace.exception", "QueryHandlerNotFoundException")

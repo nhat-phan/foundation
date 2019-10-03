@@ -12,6 +12,6 @@ class LocaQueryBusMainGeneratorTest: TestSuite() {
     fun testGenerate() {
         val allSettings = readSettings()
         val file = LocalQueryBusMainGenerator().generate(allSettings.queryHandlers)
-        println(file.content)
+        assertGeneratedFileMatched(file, "LocalQueryBus/AllInGeneratorTest.txt")
     }
 }

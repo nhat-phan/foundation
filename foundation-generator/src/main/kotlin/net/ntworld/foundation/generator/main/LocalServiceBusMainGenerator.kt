@@ -14,16 +14,7 @@ class LocalServiceBusMainGenerator : AbstractLocalBusMainGenerator<RequestHandle
 
     override fun buildClass(settings: List<RequestHandlerSetting>, target: ClassInfo): TypeSpec.Builder {
         val type = TypeSpec.classBuilder(target.className)
-            .addSuperinterface(Framework.ServiceBus)
-            .addSuperinterface(
-                Framework.LocalBusResolver.parameterizedBy(
-                    Framework.Request.parameterizedBy(TypeVariableName.invoke("*")),
-                    Framework.RequestHandler.parameterizedBy(
-                        TypeVariableName.invoke("*"),
-                        TypeVariableName.invoke("*")
-                    )
-                )
-            )
+            .addSuperinterface(Framework.ResolvableServiceBus)
 
         buildProcessFunction(type)
         buildGetVersioningStrategyFunction(type)

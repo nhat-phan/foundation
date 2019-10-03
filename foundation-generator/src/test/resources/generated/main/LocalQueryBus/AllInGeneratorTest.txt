@@ -1,0 +1,41 @@
+package com.generator.queryHandler
+
+import com.generator.UserInfrastructure
+import com.generator.contract.GetUserByIdQuery
+import kotlin.Suppress
+import net.ntworld.foundation.HandlerVersioningStrategy
+import net.ntworld.foundation.cqrs.Query
+import net.ntworld.foundation.cqrs.QueryHandler
+import net.ntworld.foundation.cqrs.ResolvableQueryBus
+import net.ntworld.foundation.exception.QueryHandlerNotFoundException
+
+open class LocalQueryBus(
+  private val infrastructure: UserInfrastructure
+) : ResolvableQueryBus {
+  @Suppress("UNCHECKED_CAST")
+  override fun <R: net.ntworld.foundation.cqrs.QueryResult> process(query: Query<R>): R {
+    val handler = this.resolve(query)
+    if (null !== handler) {
+      return handler.execute(query = query, message = null) as R
+    }
+    throw QueryHandlerNotFoundException(query.toString())
+  }
+
+  open fun getVersioningStrategy(query: Query<*>): HandlerVersioningStrategy =
+      HandlerVersioningStrategy.useLatestVersion
+
+  override fun resolve(instance: Query<*>): QueryHandler<*, *>? {
+    val strategy = getVersioningStrategy(instance)
+    if (strategy.skip()) {
+      return null
+    }
+
+    return when (instance) {
+      is GetUserByIdQuery -> GetUserByIdQueryHandler(
+        infrastructure = this.infrastructure
+      )
+
+      else -> null
+    }
+  }
+}

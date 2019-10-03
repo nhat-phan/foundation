@@ -16,13 +16,7 @@ class LocalCommandBusMainGenerator: AbstractLocalBusMainGenerator<CommandHandler
 
     override fun buildClass(settings: List<CommandHandlerSetting>, target: ClassInfo): TypeSpec.Builder {
         val type = TypeSpec.classBuilder(target.className)
-            .addSuperinterface(Framework.CommandBus)
-            .addSuperinterface(
-                Framework.LocalBusResolver.parameterizedBy(
-                    Framework.Command,
-                    Framework.CommandHandler.parameterizedBy(TypeVariableName.invoke("*"))
-                )
-            )
+            .addSuperinterface(Framework.ResolvableCommandBus)
 
         buildProcessFunction(type)
         buildGetVersioningStrategyFunction(type)

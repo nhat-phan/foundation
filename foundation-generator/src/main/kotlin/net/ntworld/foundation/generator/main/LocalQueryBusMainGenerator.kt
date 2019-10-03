@@ -14,16 +14,7 @@ class LocalQueryBusMainGenerator : AbstractLocalBusMainGenerator<QueryHandlerSet
 
     override fun buildClass(settings: List<QueryHandlerSetting>, target: ClassInfo): TypeSpec.Builder {
         val type = TypeSpec.classBuilder(target.className)
-            .addSuperinterface(Framework.QueryBus)
-            .addSuperinterface(
-                Framework.LocalBusResolver.parameterizedBy(
-                    Framework.Query.parameterizedBy(TypeVariableName.invoke("*")),
-                    Framework.QueryHandler.parameterizedBy(
-                        TypeVariableName.invoke("*"),
-                        TypeVariableName.invoke("*")
-                    )
-                )
-            )
+            .addSuperinterface(Framework.ResolvableQueryBus)
 
         buildProcessFunction(type)
         buildGetVersioningStrategyFunction(type)
